@@ -1094,7 +1094,7 @@ function renderPersonCard(p){
   return '<div class="person-card" data-name="'+p.name+'" data-rel="'+p.rel+'">'
     + '<span class="name">'+p.name+'</span>'
     + '<span class="rel-badge '+relClass+'">'+relLabel+'</span>'
-    + '<span class="tooltip">'+tip+'</span></div>';
+    + '<span class="tooltip">'+tip+(pathStr?'<span style="font-size:8px;opacity:0.7;display:block;margin-top:1px">'+pathStr+'</span>':'')+'</span></div>';
 }
 
 function renderCouple(persons){
