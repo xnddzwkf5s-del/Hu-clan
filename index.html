@@ -6,1685 +6,503 @@
 <title>胡氏家族世系圖</title>
 <style>
 /* ===== RESET & BASE ===== */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: "Noto Serif TC", "Songti SC", "SimSun", "MingLiU", serif;
-  background: #3a2a1a;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:"Noto Serif TC","Songti SC","SimSun","MingLiU",serif;
+  background:#3a2a1a;min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;padding:4px 0
 }
-
-/* ===== SCROLL ===== */
-.scroll-wrapper {
-  width: 100%;
-  max-width: 1600px;
-  margin: 0 auto;
-  position: relative;
+.scroll-wrapper{width:100%;max-width:2000px;margin:0 auto;position:relative}
+.scroll-container{
+  overflow-x:auto;overflow-y:visible;background:#f5efe4;position:relative;
+  border-left:3px solid #8b7355;border-right:3px solid #8b7355;
+  box-shadow:0 8px 40px rgba(0,0,0,0.3)
 }
-
-.scroll-container {
-  overflow-x: auto;
-  overflow-y: visible;
-  background: #f5efe4;
-  position: relative;
-  border-left: 3px solid #8b7355;
-  border-right: 3px solid #8b7355;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+/* Scroll borders */
+.scroll-top,.scroll-bottom{
+  height:28px;position:relative;
+  background:linear-gradient(90deg,#4a3a4a 0%,#5a4a5a 8%,#6a5a6a 15%,#7a6a7a 22%,#5a4a5a 30%,#4a3a4a 38%,#6a5a6a 46%,#7a6a7a 54%,#5a4a5a 62%,#4a3a4a 70%,#6a5a6a 78%,#7a6a7a 85%,#5a4a5a 92%,#4a3a4a 100%);
+  overflow:hidden
 }
-
-/* ===== DECORATIVE BORDERS ===== */
-.scroll-top, .scroll-bottom {
-  height: 28px;
-  position: relative;
-  background: linear-gradient(90deg,
-    #4a3a4a 0%, #5a4a5a 8%, #6a5a6a 15%, #7a6a7a 22%,
-    #5a4a5a 30%, #4a3a4a 38%, #6a5a6a 46%, #7a6a7a 54%,
-    #5a4a5a 62%, #4a3a4a 70%, #6a5a6a 78%, #7a6a7a 85%,
-    #5a4a5a 92%, #4a3a4a 100%);
-  overflow: hidden;
+.scroll-top::after,.scroll-bottom::after{
+  content:'';position:absolute;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,#c89b3c,#e8b84c,#d4a83a,#c89b3c)
 }
-.scroll-top::after, .scroll-bottom::after {
-  content: '';
-  position: absolute;
-  left: 0; right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #c89b3c, #e8b84c, #d4a83a, #c89b3c);
+.scroll-top::after{bottom:0}
+.scroll-bottom::before{
+  content:'';position:absolute;left:0;right:0;top:0;height:3px;
+  background:linear-gradient(90deg,#c89b3c,#e8b84c,#d4a83a,#c89b3c)
 }
-.scroll-top::after { bottom: 0; }
-.scroll-bottom::before {
-  content: '';
-  position: absolute;
-  left: 0; right: 0; top: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #c89b3c, #e8b84c, #d4a83a, #c89b3c);
+.scroll-top::before{
+  content:'';position:absolute;left:0;right:0;height:20px;
+  background:repeating-linear-gradient(45deg,transparent,transparent 4px,rgba(255,255,255,0.03) 4px,rgba(255,255,255,0.03) 8px)
 }
-.scroll-top::before {
-  content: '';
-  position: absolute;
-  left: 0; right: 0;
-  height: 20px;
-  background: repeating-linear-gradient(
-    45deg,
-    transparent, transparent 4px,
-    rgba(255,255,255,0.03) 4px, rgba(255,255,255,0.03) 8px
-  );
-}
-
-.scroll-bottom {
-  margin-top: 0;
-}
-
-/* ===== WATERMARK ===== */
-.scroll-container::before {
-  content: '';
-  position: absolute;
-  inset: 0;
+/* Watermark */
+.scroll-container::before{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
   background:
-    radial-gradient(ellipse 300px 120px at 20% 15%, rgba(180,160,130,0.08) 0%, transparent 70%),
-    radial-gradient(ellipse 250px 100px at 50% 35%, rgba(170,150,120,0.06) 0%, transparent 70%),
-    radial-gradient(ellipse 280px 110px at 75% 55%, rgba(160,140,110,0.07) 0%, transparent 70%),
-    radial-gradient(ellipse 200px 80px at 30% 75%, rgba(175,155,125,0.05) 0%, transparent 70%),
-    radial-gradient(ellipse 350px 150px at 60% 85%, rgba(165,145,115,0.06) 0%, transparent 70%);
-  pointer-events: none;
-  z-index: 0;
+    radial-gradient(ellipse 300px 120px at 20% 15%,rgba(180,160,130,0.08) 0%,transparent 70%),
+    radial-gradient(ellipse 250px 100px at 50% 35%,rgba(170,150,120,0.06) 0%,transparent 70%),
+    radial-gradient(ellipse 280px 110px at 75% 55%,rgba(160,140,110,0.07) 0%,transparent 70%),
+    radial-gradient(ellipse 200px 80px at 30% 75%,rgba(175,155,125,0.05) 0%,transparent 70%),
+    radial-gradient(ellipse 350px 150px at 60% 85%,rgba(165,145,115,0.06) 0%,transparent 70%)
 }
-
-/* ===== HEADER ===== */
-.header {
-  background: linear-gradient(180deg, #2a1a0a, #3a2a1a);
-  padding: 24px 30px 18px;
-  text-align: center;
-  border-bottom: 2px solid #c89b3c;
-  position: relative;
+/* Header */
+.header{
+  background:linear-gradient(180deg,#2a1a0a,#3a2a1a);padding:24px 30px 18px;
+  text-align:center;border-bottom:2px solid #c89b3c;position:relative
 }
-.header::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 10%; right: 10%;
-  height: 1px;
-  background: #8b7355;
+.header::after{content:'';position:absolute;bottom:-4px;left:10%;right:10%;height:1px;background:#8b7355}
+.header h1{color:#e8d5a8;font-size:26px;font-weight:700;letter-spacing:8px;text-shadow:0 1px 3px rgba(0,0,0,0.5)}
+.header .subtitle{color:#c8b080;font-size:13px;letter-spacing:4px;margin-top:4px}
+/* Search */
+.search-area{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:14px 20px 10px;background:rgba(245,239,228,0.95);
+  border-bottom:1px solid #c8b898;position:sticky;top:0;z-index:100;backdrop-filter:blur(4px)
 }
-.header h1 {
-  color: #e8d5a8;
-  font-size: 26px;
-  font-weight: 700;
-  letter-spacing: 8px;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+.search-area label{color:#5a4a3a;font-size:14px;font-weight:600;letter-spacing:1px}
+#searchBox{
+  padding:7px 14px;border:1px solid #b8a888;border-radius:4px;font-size:15px;
+  width:320px;background:#faf6ed;color:#3a2a1a;font-family:inherit;outline:none;transition:border-color 0.2s
 }
-.header .subtitle {
-  color: #c8b080;
-  font-size: 13px;
-  letter-spacing: 4px;
-  margin-top: 4px;
+#searchBox:focus{border-color:#c89b3c;box-shadow:0 0 0 2px rgba(200,155,60,0.15)}
+#searchBox::placeholder{color:#a09080}
+.search-count{font-size:12px;color:#8a7a6a;min-width:60px}
+/* ===== TREE ===== */
+.tree{
+  padding:20px 20px 30px;position:relative;z-index:1;
+  display:flex;gap:2px;align-items:flex-start;min-height:400px
 }
-
-/* ===== SEARCH ===== */
-.search-area {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 14px 20px 10px;
-  background: rgba(245,239,228,0.9);
-  border-bottom: 1px solid #c8b898;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  backdrop-filter: blur(4px);
+/* ===== BRANCH ===== */
+.branch{
+  flex:0 0 auto;position:relative;padding:12px 10px 20px;
+  border-left:4px solid;border-radius:4px;margin:0 3px;
+  min-width:100px;max-width:440px
 }
-.search-area label {
-  color: #5a4a3a;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 1px;
+.branch-header{
+  text-align:center;font-size:12px;font-weight:700;letter-spacing:2px;
+  color:#5a4a3a;padding:2px 8px 10px;border-bottom:1px solid #c8b898;margin-bottom:6px
 }
-#searchBox {
-  padding: 7px 14px;
-  border: 1px solid #b8a888;
-  border-radius: 4px;
-  font-size: 15px;
-  width: 280px;
-  background: #faf6ed;
-  color: #3a2a1a;
-  font-family: inherit;
-  outline: none;
-  transition: border-color 0.2s;
-}
-#searchBox:focus {
-  border-color: #c89b3c;
-  box-shadow: 0 0 0 2px rgba(200,155,60,0.15);
-}
-#searchBox::placeholder { color: #a09080; }
-.search-count {
-  font-size: 12px;
-  color: #8a7a6a;
-  min-width: 60px;
-}
-
-/* ===== TREE CONTAINER ===== */
-.tree {
-  padding: 30px 40px 30px;
-  position: relative;
-  z-index: 1;
-  min-width: 1400px;
-}
-
-/* ===== GENERATION ROW ===== */
-.gen-row {
-  position: relative;
-  margin-bottom: 20px;
-}
-.gen-row:last-child { margin-bottom: 0; }
-
-.gen-label {
-  position: absolute;
-  left: -18px;
-  top: 50%;
-  transform: translateY(-50%) rotate(-90deg);
-  font-size: 12px;
-  color: #8a7a6a;
-  letter-spacing: 3px;
-  white-space: nowrap;
-  font-weight: 600;
-}
-.gen-label-inner {
-  display: inline-block;
-  background: #f5efe4;
-  padding: 4px 10px;
-  border: 1px solid #c8b898;
-  border-radius: 3px;
-  color: #6a5a4a;
-}
-
-/* ===== FAMILY GROUP ===== */
-.family-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 3px;
-  align-items: center;
-  padding: 8px 0;
-  position: relative;
-}
-
 /* ===== PERSON CARD ===== */
-.person {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 6px 4px;
-  position: relative;
-  cursor: default;
-  min-width: 32px;
-  transition: all 0.2s;
+.person-card{
+  display:flex;flex-direction:column;align-items:center;padding:4px 3px;
+  border-radius:4px;position:relative;cursor:pointer;transition:all 0.2s;min-width:28px
 }
-.person:hover {
-  background: rgba(200,155,60,0.08);
-  border-radius: 4px;
+.person-card:hover{background:rgba(200,155,60,0.15)}
+.person-card .name{
+  writing-mode:vertical-rl;text-orientation:upright;
+  font-size:14px;line-height:1.1;letter-spacing:1px;color:#2a1a0a;white-space:nowrap
 }
-.person.hidden { display: none !important; }
-.person.highlight {
-  background: rgba(200,155,60,0.25);
-  border-radius: 4px;
-  box-shadow: 0 0 0 2px #c89b3c;
+.person-card .rel-badge{
+  display:inline-block;font-size:9px;padding:1px 4px;border-radius:3px;
+  margin-top:2px;font-weight:700;line-height:1.3;letter-spacing:0
 }
-
-/* Vertical name writing */
-.person-name {
-  writing-mode: vertical-rl;
-  text-orientation: upright;
-  font-size: 15px;
-  line-height: 1.2;
-  letter-spacing: 1px;
-  color: #2a1a0a;
-  white-space: nowrap;
-  position: relative;
+.rel-son{background:#c0392b;color:#fff}
+.rel-daughter{background:#e67e22;color:#fff}
+.rel-wife{background:#8e44ad;color:#fff}
+.rel-husband{background:#2980b9;color:#fff}
+.rel-ancestor{background:#7f8c8d;color:#fff}
+.rel-spouse{background:#16a085;color:#fff}
+.rel-unknown{background:#95a5a6;color:#fff}
+/* Couple */
+.couple{
+  display:flex;flex-direction:row;align-items:center;gap:1px;
+  position:relative;padding:0 2px
 }
-.person-name .spouse-sep {
-  font-size: 11px;
-  color: #8a7a6a;
+.couple .marriage-dot{
+  width:3px;height:3px;border-radius:50%;background:#a08060;flex-shrink:0;margin:0 1px
 }
-
-/* Partner/Spouse card (non-Hu surnames) */
-.person.partner .person-name {
-  color: #7a5a3a;
-  font-size: 13px;
+/* ===== TREE NODE ===== */
+.tree-node{
+  display:flex;flex-direction:column;align-items:center;position:relative
 }
-
-/* ===== RELATIONSHIP MARKERS ===== */
-.rel-marker {
-  display: inline-block;
-  font-size: 10px;
-  padding: 1px 4px;
-  border-radius: 3px;
-  margin-top: 2px;
-  font-weight: 700;
-  line-height: 1.3;
-  letter-spacing: 0;
+/* Parent content (person card + vertical line down) */
+.parent-unit{
+  display:flex;flex-direction:column;align-items:center;position:relative
 }
-.rel-son { background: #c0392b; color: #fff; }
-.rel-daughter { background: #e67e22; color: #fff; }
-.rel-wife { background: #8e44ad; color: #fff; }
-.rel-husband { background: #2980b9; color: #fff; }
-.rel-unknown { background: #7f8c8d; color: #fff; }
-
-/* ===== BRANCH HEADER ===== */
-.branch-header {
-  font-size: 13px;
-  color: #5a4a3a;
-  font-weight: 700;
-  letter-spacing: 2px;
-  padding: 6px 12px 6px 8px;
-  border-right: 2px solid #c8b898;
-  margin-right: 4px;
-  white-space: nowrap;
+/* Vertical line from parent down */
+.v-line{
+  width:3px;height:18px;background:#8b4513;flex-shrink:0;border-radius:1px
 }
-
-/* ===== NESTED GROUPS (parent-child) ===== */
-.parent-unit {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  margin: 0 4px;
+/* Children section */
+.children-section{
+  display:flex;gap:4px;position:relative;padding-top:0;justify-content:center;flex-wrap:wrap
 }
-.parent-row {
-  display: flex;
-  gap: 2px;
-  align-items: center;
-  position: relative;
+/* Horizontal bar over children */
+.h-bar{
+  position:absolute;top:0;left:15%;right:15%;height:3px;
+  background:#8b4513;border-radius:1px;z-index:1
 }
-.parent-row::after {
-  content: '';
-  position: absolute;
-  bottom: -8px;
-  left: 50%;
-  width: 2px;
-  height: 8px;
-  background: #8b4513;
+.h-bar.single{display:none}
+/* Vertical line up from child to horizontal bar */
+.children-section>.tree-node::before{
+  content:'';position:absolute;top:-18px;left:50%;
+  width:3px;height:18px;background:#8b4513;z-index:2;border-radius:1px
 }
-.children-row {
-  display: flex;
-  gap: 2px;
-  align-items: center;
-  padding-top: 10px;
-  position: relative;
+/* No children - no v-line needed */
+.tree-node.leaf .v-line{display:none}
+/* Highlight states */
+.person-card.active{
+  background:rgba(200,155,60,0.25)!important;
+  box-shadow:0 0 0 2px #c89b3c!important
 }
-.children-row::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 10%;
-  right: 10%;
-  height: 2px;
-  background: #8b4513;
+.person-card.highlight-match{
+  background:rgba(231,76,60,0.2)!important;
+  box-shadow:0 0 0 2px #e74c3c!important;animation:pulse 0.6s ease-in-out 3
 }
-
-/* Vertical connector from parent to children group */
-.parent-unit::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  width: 2px;
-  height: 10px;
-  background: #8b4513;
+@keyframes pulse{50%{box-shadow:0 0 0 4px rgba(231,76,60,0.4)}}
+.person-card.dimmed{opacity:0.35}
+/* Tooltip */
+.person-card .tooltip{
+  display:none;position:absolute;bottom:calc(100% + 6px);left:50%;
+  transform:translateX(-50%);background:#3a2a1a;color:#e8d5a8;
+  padding:3px 8px;border-radius:3px;font-size:11px;white-space:nowrap;
+  z-index:50;pointer-events:none;border:1px solid #c89b3c
 }
-
-/* ===== TREE LINE CONNECTORS ===== */
-.tree-line-h {
-  width: 12px;
-  height: 2px;
-  background: #8b4513;
-  flex-shrink: 0;
-  margin: 0 1px;
+.person-card:hover .tooltip{display:block}
+.person-card .tooltip::after{
+  content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  border:4px solid transparent;border-top-color:#3a2a1a
 }
-.tree-line-v {
-  width: 2px;
-  height: 14px;
-  background: #8b4513;
-  flex-shrink: 0;
-  margin: 0 auto;
+/* Legend */
+.legend{
+  display:flex;gap:18px;align-items:center;padding:10px 30px;
+  background:#efe8da;border-top:1px solid #d8c8b8;font-size:12px;flex-wrap:wrap
 }
-
-/* ===== GENERATION DIVIDER ===== */
-.gen-divider {
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #8b7355 20%, #8b7355 80%, transparent);
-  margin: 6px 0 10px;
-  position: relative;
+.legend-item{display:flex;align-items:center;gap:5px;color:#5a4a3a}
+.legend-box{display:inline-block;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:700;color:#fff}
+/* Responsive */
+@media(max-width:768px){
+  .scroll-container{border-left:none;border-right:none}
+  .header h1{font-size:20px;letter-spacing:4px}
+  .header{padding:16px 14px 12px}
+  .search-area{flex-wrap:wrap;padding:10px 12px}
+  #searchBox{width:100%}
+  .tree{padding:12px 8px;flex-wrap:wrap;gap:8px;min-height:auto}
+  .branch{max-width:100%;margin:0;min-width:130px}
+  .branch-header{font-size:11px}
+  .person-card .name{font-size:12px}
+  .scroll-top,.scroll-bottom{height:18px}
 }
-.gen-divider::after {
-  content: attr(data-label);
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  background: #f5efe4;
-  padding: 0 16px;
-  font-size: 12px;
-  color: #8a7a6a;
-  letter-spacing: 2px;
-}
-
-/* ===== BRACKET CONNECTORS ===== */
-.children-bracket {
-  position: relative;
-  display: flex;
-  align-items: flex-start;
-  margin: 0 2px;
-}
-.children-bracket::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 10px;
-  right: 10px;
-  height: 2px;
-  background: #8b4513;
-}
-
-/* ===== IN-LAW SECTION ===== */
-.inlaw-section {
-  margin-top: 20px;
-  padding-top: 16px;
-  border-top: 2px dashed #c8b898;
-  position: relative;
-}
-.inlaw-section-title {
-  position: absolute;
-  top: -10px;
-  left: 30px;
-  background: #f5efe4;
-  padding: 0 12px;
-  font-size: 12px;
-  color: #8a7a6a;
-  letter-spacing: 2px;
-}
-.inlaw-group {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 2px 1px;
-  align-items: center;
-  margin: 4px 0;
-}
-.inlaw-surname {
-  font-size: 12px;
-  color: #5a4a3a;
-  font-weight: 700;
-  padding: 2px 8px 2px 4px;
-  border-right: 1px solid #c8b898;
-  margin-right: 4px;
-}
-.inlaw-name {
-  writing-mode: vertical-rl;
-  text-orientation: upright;
-  font-size: 12px;
-  color: #6a5a4a;
-  padding: 2px 3px;
-}
-
-/* ===== LEGEND ===== */
-.legend {
-  display: flex;
-  gap: 18px;
-  align-items: center;
-  padding: 10px 30px;
-  background: #efe8da;
-  border-top: 1px solid #d8c8b8;
-  font-size: 12px;
-  flex-wrap: wrap;
-}
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  color: #5a4a3a;
-}
-.legend-box {
-  display: inline-block;
-  padding: 1px 6px;
-  border-radius: 3px;
-  font-size: 11px;
-  font-weight: 700;
-  color: #fff;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
-  .scroll-container { border-left: none; border-right: none; }
-  .header h1 { font-size: 20px; letter-spacing: 4px; }
-  .header { padding: 16px 14px 12px; }
-  .search-area { flex-wrap: wrap; padding: 10px 12px; }
-  #searchBox { width: 100%; }
-  .tree { padding: 20px 16px; min-width: auto; }
-  .person-name { font-size: 13px; }
-  .gen-label { display: none; }
-  .branch-header { font-size: 11px; padding: 4px 8px; }
-  .scroll-top, .scroll-bottom { height: 18px; }
-}
-
-/* ===== SCROLLBAR STYLING ===== */
-.scroll-container::-webkit-scrollbar { height: 8px; }
-.scroll-container::-webkit-scrollbar-track { background: #e8dcc8; }
-.scroll-container::-webkit-scrollbar-thumb {
-  background: #8b7355;
-  border-radius: 4px;
-}
-.scroll-container::-webkit-scrollbar-thumb:hover { background: #6a5a4a; }
-
-/* ===== GENERATION CONNECTOR LINES ===== */
-.parent-connector {
-  position: relative;
-}
-.parent-connector::after {
-  content: '';
-  position: absolute;
-  bottom: -6px;
-  left: 50%;
-  width: 2px;
-  height: 6px;
-  background: #8b4513;
-}
-
-/* ===== SUB-FAMILY GROUPING ===== */
-.sub-family {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 0 6px;
-  position: relative;
-}
-.sub-family-label {
-  font-size: 11px;
-  color: #8a7a6a;
-  margin-bottom: 2px;
-  letter-spacing: 1px;
-}
-.sub-family-members {
-  display: flex;
-  gap: 2px;
-  align-items: center;
-}
-
-/* ===== SPACER ===== */
-.family-spacer {
-  width: 20px;
-  flex-shrink: 0;
-}
-
-/* ===== BADGE FOR GENERATION ===== */
-.gen-badge {
-  display: inline-block;
-  font-size: 10px;
-  color: #8a7a6a;
-  border: 1px solid #c8b898;
-  border-radius: 3px;
-  padding: 1px 6px;
-  margin: 0 8px 0 2px;
-  white-space: nowrap;
-}
-
-/* ===== COUPLE CONTAINER ===== */
-.couple {
-  display: inline-flex;
-  align-items: center;
-  gap: 1px;
-  position: relative;
-}
-.couple::before {
-  content: '';
-  width: 8px;
-  height: 1px;
-  background: #a08060;
-  position: absolute;
-  left: 50%;
-  bottom: 8px;
-  transform: translateX(-50%);
-}
-.couple .person:first-child::after {
-  content: '';
-  position: absolute;
-  right: -2px;
-  top: 50%;
-  width: 4px;
-  height: 1px;
-  background: #a08060;
-}
-
-/* ===== MARRIAGE LINE ===== */
-.marriage-line {
-  width: 8px;
-  height: 1px;
-  background: #a08060;
-  flex-shrink: 0;
-}
+/* Scrollbar */
+.scroll-container::-webkit-scrollbar{height:8px}
+.scroll-container::-webkit-scrollbar-track{background:#e8dcc8}
+.scroll-container::-webkit-scrollbar-thumb{background:#8b7355;border-radius:4px}
+.scroll-container::-webkit-scrollbar-thumb:hover{background:#6a5a4a}
 </style>
 </head>
 <body>
-
 <div class="scroll-wrapper">
   <div class="scroll-top"></div>
-
   <div class="scroll-container">
-    <!-- Header -->
     <div class="header">
       <h1>胡氏家族世系圖</h1>
       <div class="subtitle">Hu Family Genealogy · 家譜卷軸</div>
     </div>
-
-    <!-- Search -->
     <div class="search-area">
       <label for="searchBox">🔍 搜尋</label>
       <input type="text" id="searchBox" placeholder="輸入姓名搜尋…" autocomplete="off">
       <span class="search-count" id="searchCount"></span>
+      <span style="font-size:11px;color:#a09080">· 點選姓名高亮世系</span>
     </div>
-
-    <!-- Tree -->
-    <div class="tree" id="tree">
-
-      <!-- ===== GENERATION 1: FOUNDERS ===== -->
-      <div class="gen-row">
-        <div class="gen-label"><span class="gen-label-inner">第一世</span></div>
-        <div class="family-group">
-          <span class="branch-header">始 祖</span>
-          <div class="person" data-name="胡叟和">
-            <span class="person-name">胡叟和</span>
-            <span class="rel-marker rel-son">祖</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡旺忠">
-            <span class="person-name">胡旺忠</span>
-            <span class="rel-marker rel-unknown">不详</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡清和">
-            <span class="person-name">胡清和</span>
-            <span class="rel-marker rel-son">祖</span>
-          </div>
-          <div class="marriage-line"></div>
-          <div class="person partner" data-name="关亚好">
-            <span class="person-name">关亚好</span>
-            <span class="rel-marker rel-wife">妻</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="gen-divider" data-label="第一世 → 第二世"></div>
-
-      <!-- ===== GENERATION 2 ===== -->
-      <div class="gen-row">
-        <div class="gen-label"><span class="gen-label-inner">第二世</span></div>
-
-        <!-- 旺忠's children -->
-        <div class="family-group">
-          <span class="branch-header">旺忠 支</span>
-          <div class="person" data-name="胡顺兴">
-            <span class="person-name">胡顺兴</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡顺华">
-            <span class="person-name">胡顺华</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡顺均">
-            <span class="person-name">胡顺均</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡顺五">
-            <span class="person-name">胡顺五</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡顺肇">
-            <span class="person-name">胡顺肇</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡金儿">
-            <span class="person-name">胡金儿</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person partner" data-name="谢女宝">
-            <span class="person-name">谢女宝</span>
-            <span class="rel-marker rel-wife">媳</span>
-          </div>
-        </div>
-
-        <div class="family-spacer"></div>
-
-        <!-- Other Gen 2 -->
-        <div class="family-group">
-          <span class="branch-header">他 支</span>
-          <div class="person" data-name="胡连庆">
-            <span class="person-name">胡连庆</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡发庆">
-            <span class="person-name">胡发庆</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="周柱庆">
-            <span class="person-name">周柱庆</span>
-            <span class="rel-marker rel-unknown">庆</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡顺珍">
-            <span class="person-name">胡顺珍</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="gen-divider" data-label="第二世 → 第三世"></div>
-
-      <!-- ===== GENERATION 3 ===== -->
-      <div class="gen-row">
-        <div class="gen-label"><span class="gen-label-inner">第三世</span></div>
-
-        <!-- 顺字辈 descendants -->
-        <div class="family-group">
-          <span class="branch-header">顺字辈 支</span>
-
-          <!-- Couple: 胡潮沃 / 林薇笑 -->
-          <div class="couple">
-            <div class="person" data-name="胡潮沃">
-              <span class="person-name">胡潮沃</span>
-              <span class="rel-marker rel-son">儿</span>
-            </div>
-            <div class="person partner" data-name="林薇笑">
-              <span class="person-name">林薇笑</span>
-              <span class="rel-marker rel-wife">媳</span>
-            </div>
-          </div>
-          <div class="tree-line-h"></div>
-
-          <!-- Couple: 胡潮溢 / 苏秀英 -->
-          <div class="couple">
-            <div class="person" data-name="胡潮溢">
-              <span class="person-name">胡潮溢</span>
-              <span class="rel-marker rel-son">儿</span>
-            </div>
-            <div class="person partner" data-name="苏秀英">
-              <span class="person-name">苏秀英</span>
-              <span class="rel-marker rel-wife">媳</span>
-            </div>
-          </div>
-          <div class="tree-line-h"></div>
-
-          <!-- Couple: 胡潮汉 / 郑秀丽 -->
-          <div class="couple">
-            <div class="person" data-name="胡潮汉">
-              <span class="person-name">胡潮汉</span>
-              <span class="rel-marker rel-son">儿</span>
-            </div>
-            <div class="person partner" data-name="郑秀丽">
-              <span class="person-name">郑秀丽</span>
-              <span class="rel-marker rel-wife">媳</span>
-            </div>
-          </div>
-          <div class="tree-line-h"></div>
-
-          <!-- Couple: 胡潮漳 / 谢秀宝 -->
-          <div class="couple">
-            <div class="person" data-name="胡潮漳">
-              <span class="person-name">胡潮漳</span>
-              <span class="rel-marker rel-son">儿</span>
-            </div>
-            <div class="person partner" data-name="谢秀宝">
-              <span class="person-name">谢秀宝</span>
-              <span class="rel-marker rel-wife">媳</span>
-            </div>
-          </div>
-          <div class="tree-line-h"></div>
-
-          <!-- Couple: 胡潮青 / 林彩珠 -->
-          <div class="couple">
-            <div class="person" data-name="胡潮青">
-              <span class="person-name">胡潮青</span>
-              <span class="rel-marker rel-son">儿</span>
-            </div>
-            <div class="person partner" data-name="林彩珠">
-              <span class="person-name">林彩珠</span>
-              <span class="rel-marker rel-wife">媳</span>
-            </div>
-          </div>
-          <div class="tree-line-h"></div>
-
-          <!-- Singles -->
-          <div class="person" data-name="胡潮英">
-            <span class="person-name">胡潮英</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡秀英">
-            <span class="person-name">胡秀英</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-
-          <!-- Couple: 胡少群 / 黄本强 -->
-          <div class="couple">
-            <div class="person" data-name="胡少群">
-              <span class="person-name">胡少群</span>
-              <span class="rel-marker rel-daughter">女</span>
-            </div>
-            <div class="person partner" data-name="黄本强">
-              <span class="person-name">黄本强</span>
-              <span class="rel-marker rel-husband">婿</span>
-            </div>
-          </div>
-          <div class="tree-line-h"></div>
-
-          <!-- Couple: 胡秀珍 / 林友康 -->
-          <div class="couple">
-            <div class="person" data-name="胡秀珍">
-              <span class="person-name">胡秀珍</span>
-              <span class="rel-marker rel-daughter">女</span>
-            </div>
-            <div class="person partner" data-name="林友康">
-              <span class="person-name">林友康</span>
-              <span class="rel-marker rel-husband">婿</span>
-            </div>
-          </div>
-          <div class="tree-line-h"></div>
-
-          <!-- Single daughters -->
-          <div class="person" data-name="胡玉珍">
-            <span class="person-name">胡玉珍</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡玉娇">
-            <span class="person-name">胡玉娇</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡玉玲">
-            <span class="person-name">胡玉玲</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-        </div>
-
-        <div class="family-spacer"></div>
-
-        <!-- 维显 branch -->
-        <div class="family-group">
-          <span class="branch-header">维显 支</span>
-
-          <div class="couple">
-            <div class="person" data-name="胡龙科">
-              <span class="person-name">胡龙科</span>
-              <span class="rel-marker rel-son">儿</span>
-            </div>
-            <div class="person partner" data-name="吴凤德">
-              <span class="person-name">吴凤德</span>
-              <span class="rel-marker rel-wife">媳</span>
-            </div>
-          </div>
-          <div class="tree-line-h"></div>
-
-          <div class="couple">
-            <div class="person" data-name="胡美豪">
-              <span class="person-name">胡美豪</span>
-              <span class="rel-marker rel-daughter">女</span>
-            </div>
-            <div class="person partner" data-name="林国汉">
-              <span class="person-name">林国汉</span>
-              <span class="rel-marker rel-husband">婿</span>
-            </div>
-          </div>
-          <div class="tree-line-h"></div>
-
-          <div class="couple">
-            <div class="person" data-name="胡龙森">
-              <span class="person-name">胡龙森</span>
-              <span class="rel-marker rel-son">儿</span>
-            </div>
-            <div class="person partner" data-name="黄月玉">
-              <span class="person-name">黄月玉</span>
-              <span class="rel-marker rel-wife">媳</span>
-            </div>
-          </div>
-          <div class="tree-line-h"></div>
-
-          <div class="couple">
-            <div class="person" data-name="胡龙弼">
-              <span class="person-name">胡龙弼</span>
-              <span class="rel-marker rel-son">儿</span>
-            </div>
-            <div class="person partner" data-name="吕宝珍">
-              <span class="person-name">吕宝珍</span>
-              <span class="rel-marker rel-wife">媳</span>
-            </div>
-          </div>
-          <div class="tree-line-h"></div>
-
-          <div class="couple">
-            <div class="person" data-name="胡龙迪">
-              <span class="person-name">胡龙迪</span>
-              <span class="rel-marker rel-son">儿</span>
-            </div>
-            <div class="person partner" data-name="游秀蕊">
-              <span class="person-name">游秀蕊</span>
-              <span class="rel-marker rel-wife">媳</span>
-            </div>
-          </div>
-          <div class="tree-line-h"></div>
-
-          <div class="couple">
-            <div class="person" data-name="胡美丽">
-              <span class="person-name">胡美丽</span>
-              <span class="rel-marker rel-daughter">女</span>
-            </div>
-            <div class="person partner" data-name="陈亚旺">
-              <span class="person-name">陈亚旺</span>
-              <span class="rel-marker rel-husband">婿</span>
-            </div>
-          </div>
-          <div class="tree-line-h"></div>
-
-          <div class="couple">
-            <div class="person" data-name="胡美秀">
-              <span class="person-name">胡美秀</span>
-              <span class="rel-marker rel-daughter">女</span>
-            </div>
-            <div class="person partner" data-name="龚羽华">
-              <span class="person-name">龚羽华</span>
-              <span class="rel-marker rel-husband">婿</span>
-            </div>
-          </div>
-          <div class="tree-line-h"></div>
-
-          <!-- Additional -->
-          <div class="person" data-name="黄妙玲">
-            <span class="person-name">黄妙玲</span>
-            <span class="rel-marker rel-unknown">眷</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="司徒小芳">
-            <span class="person-name">司徒小芳</span>
-            <span class="rel-marker rel-unknown">眷</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="杨观新">
-            <span class="person-name">杨观新</span>
-            <span class="rel-marker rel-unknown">眷</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡美缘">
-            <span class="person-name">胡美缘</span>
-            <span class="rel-marker rel-unknown">眷</span>
-          </div>
-        </div>
-
-        <div class="family-spacer"></div>
-
-        <!-- 维达 branch -->
-        <div class="family-group">
-          <span class="branch-header">维达 支</span>
-
-          <div class="person" data-name="胡龙勇">
-            <span class="person-name">胡龙勇</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡龙迎">
-            <span class="person-name">胡龙迎</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡龙强">
-            <span class="person-name">胡龙强</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="couple">
-            <div class="person" data-name="胡国欢">
-              <span class="person-name">胡国欢</span>
-              <span class="rel-marker rel-son">儿</span>
-            </div>
-            <div class="person partner" data-name="关银欢">
-              <span class="person-name">关银欢</span>
-              <span class="rel-marker rel-wife">媳</span>
-            </div>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="周美月">
-            <span class="person-name">周美月</span>
-            <span class="rel-marker rel-unknown">眷</span>
-          </div>
-        </div>
-
-        <div class="family-spacer"></div>
-
-        <!-- 维富 branch -->
-        <div class="family-group">
-          <span class="branch-header">维富 支</span>
-
-          <div class="couple">
-            <div class="person" data-name="胡现龙">
-              <span class="person-name">胡现龙</span>
-              <span class="rel-marker rel-son">儿</span>
-            </div>
-            <div class="person partner" data-name="李亚明">
-              <span class="person-name">李亚明</span>
-              <span class="rel-marker rel-wife">媳</span>
-            </div>
-          </div>
-          <div class="tree-line-h"></div>
-
-          <div class="person" data-name="胡业龙">
-            <span class="person-name">胡业龙</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-
-          <div class="couple">
-            <div class="person" data-name="胡均龙">
-              <span class="person-name">胡均龙</span>
-              <span class="rel-marker rel-son">儿</span>
-            </div>
-            <div class="person partner" data-name="关如娣">
-              <span class="person-name">关如娣</span>
-              <span class="rel-marker rel-wife">媳</span>
-            </div>
-          </div>
-          <div class="tree-line-h"></div>
-
-          <div class="person" data-name="胡锐龙">
-            <span class="person-name">胡锐龙</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡运女">
-            <span class="person-name">胡运女</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-
-          <div class="couple">
-            <div class="person" data-name="胡超仪">
-              <span class="person-name">胡超仪</span>
-              <span class="rel-marker rel-daughter">女</span>
-            </div>
-            <div class="person partner" data-name="麦志光">
-              <span class="person-name">麦志光</span>
-              <span class="rel-marker rel-husband">婿</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="family-spacer"></div>
-
-        <!-- 维源 branch -->
-        <div class="family-group">
-          <span class="branch-header">维源 支</span>
-
-          <div class="couple">
-            <div class="person" data-name="胡龙亿">
-              <span class="person-name">胡龙亿</span>
-              <span class="rel-marker rel-son">儿</span>
-            </div>
-            <div class="person partner" data-name="胡桂霞">
-              <span class="person-name">胡桂霞</span>
-              <span class="rel-marker rel-wife">媳</span>
-            </div>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡龙赞">
-            <span class="person-name">胡龙赞</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-        </div>
-
-        <div class="family-spacer"></div>
-
-        <!-- 清和 branch -->
-        <div class="family-group">
-          <span class="branch-header">清和 支</span>
-
-          <div class="couple">
-            <div class="person" data-name="司徒元洪">
-              <span class="person-name">司徒元洪</span>
-              <span class="rel-marker rel-husband">婿</span>
-            </div>
-            <div class="person" data-name="胡运美">
-              <span class="person-name">胡运美</span>
-              <span class="rel-marker rel-daughter">女</span>
-            </div>
-          </div>
-          <div class="tree-line-h"></div>
-
-          <div class="couple">
-            <div class="person" data-name="马龙亿">
-              <span class="person-name">马龙亿</span>
-              <span class="rel-marker rel-son">儿</span>
-            </div>
-            <div class="person partner" data-name="胡桂霞">
-              <span class="person-name">胡桂霞</span>
-              <span class="rel-marker rel-wife">媳</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="gen-divider" data-label="第三世 → 第四世"></div>
-
-      <!-- ===== GENERATION 4 ===== -->
-      <div class="gen-row">
-        <div class="gen-label"><span class="gen-label-inner">第四世</span></div>
-
-        <!-- 潮字辈 descendants -->
-        <div class="family-group">
-          <span class="branch-header">潮字辈 后</span>
-
-          <div class="person" data-name="胡锦明">
-            <span class="person-name">胡锦明</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡美莲">
-            <span class="person-name">胡美莲</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡锦鹏">
-            <span class="person-name">胡锦鹏</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡美琳">
-            <span class="person-name">胡美琳</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡锦为">
-            <span class="person-name">胡锦为</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡锦弟">
-            <span class="person-name">胡锦弟</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡美莲b">
-            <span class="person-name">胡美莲</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡美萍">
-            <span class="person-name">胡美萍</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡淋">
-            <span class="person-name">胡淋</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡羽冰">
-            <span class="person-name">胡羽冰</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡锦羽">
-            <span class="person-name">胡锦羽</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-        </div>
-
-        <div class="family-spacer"></div>
-
-        <!-- 龙字辈 descendants -->
-        <div class="family-group">
-          <span class="branch-header">龙字辈 后</span>
-
-          <!-- 碧字辈 -->
-          <div class="person" data-name="胡碧霞">
-            <span class="person-name">胡碧霞</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡碧君">
-            <span class="person-name">胡碧君</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡碧勋">
-            <span class="person-name">胡碧勋</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡碧清">
-            <span class="person-name">胡碧清</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡碧琳">
-            <span class="person-name">胡碧琳</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡碧彤">
-            <span class="person-name">胡碧彤</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡碧欣">
-            <span class="person-name">胡碧欣</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="family-spacer" style="width:12px"></div>
-
-          <!-- 渐字辈 -->
-          <div class="person" data-name="胡渐威">
-            <span class="person-name">胡渐威</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡渐雄">
-            <span class="person-name">胡渐雄</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡渐锋">
-            <span class="person-name">胡渐锋</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡渐镇">
-            <span class="person-name">胡渐镇</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡渐辉">
-            <span class="person-name">胡渐辉</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡渐卓">
-            <span class="person-name">胡渐卓</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡渐多">
-            <span class="person-name">胡渐多</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡渐彦">
-            <span class="person-name">胡渐彦</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡渐逊">
-            <span class="person-name">胡渐逊</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡渐逸">
-            <span class="person-name">胡渐逸</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡渐植">
-            <span class="person-name">胡渐植</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡渐欣">
-            <span class="person-name">胡渐欣</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="family-spacer" style="width:12px"></div>
-
-          <!-- 国字辈 -->
-          <div class="person" data-name="胡国欢">
-            <span class="person-name">胡国欢</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡国林">
-            <span class="person-name">胡国林</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡国樟">
-            <span class="person-name">胡国樟</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡国麟">
-            <span class="person-name">胡国麟</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡国麒">
-            <span class="person-name">胡国麒</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡国晋">
-            <span class="person-name">胡国晋</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-        </div>
-
-        <div class="family-spacer"></div>
-
-        <!-- 维富 descendants -->
-        <div class="family-group">
-          <span class="branch-header">维富 后</span>
-
-          <div class="person" data-name="胡祖华">
-            <span class="person-name">胡祖华</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡志雄">
-            <span class="person-name">胡志雄</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡鼎周">
-            <span class="person-name">胡鼎周</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡齐爱">
-            <span class="person-name">胡齐爱</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡西回">
-            <span class="person-name">胡西回</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡景群">
-            <span class="person-name">胡景群</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡健明">
-            <span class="person-name">胡健明</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡辉强">
-            <span class="person-name">胡辉强</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="family-spacer" style="width:8px"></div>
-
-          <!-- 麦 family -->
-          <div class="person" data-name="麦永海">
-            <span class="person-name">麦永海</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="麦永曙">
-            <span class="person-name">麦永曙</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="麦永波">
-            <span class="person-name">麦永波</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="麦美英">
-            <span class="person-name">麦美英</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡月莲">
-            <span class="person-name">胡月莲</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡月梅">
-            <span class="person-name">胡月梅</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="gen-divider" data-label="第四世 → 第五世"></div>
-
-      <!-- ===== GENERATION 5 (Youngest) ===== -->
-      <div class="gen-row">
-        <div class="gen-label"><span class="gen-label-inner">第五世</span></div>
-
-        <div class="family-group">
-          <span class="branch-header">最幼輩</span>
-
-          <div class="person" data-name="胡翠殷">
-            <span class="person-name">胡翠殷</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡翠雯">
-            <span class="person-name">胡翠雯</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡翠珊">
-            <span class="person-name">胡翠珊</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡翠殿">
-            <span class="person-name">胡翠殿</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡嘉玮">
-            <span class="person-name">胡嘉玮</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡嘉盈">
-            <span class="person-name">胡嘉盈</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡嘉馨">
-            <span class="person-name">胡嘉馨</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡帼麟">
-            <span class="person-name">胡帼麟</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡帼栋">
-            <span class="person-name">胡帼栋</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡帼轩">
-            <span class="person-name">胡帼轩</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡帼埈">
-            <span class="person-name">胡帼埈</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡国林">
-            <span class="person-name">胡国林</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡国樟">
-            <span class="person-name">胡国樟</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡淑雯">
-            <span class="person-name">胡淑雯</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡淑芬">
-            <span class="person-name">胡淑芬</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡淑惠">
-            <span class="person-name">胡淑惠</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡淑娴">
-            <span class="person-name">胡淑娴</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡诗敏">
-            <span class="person-name">胡诗敏</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡诗雅">
-            <span class="person-name">胡诗雅</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡诗葡">
-            <span class="person-name">胡诗葡</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡诗苑">
-            <span class="person-name">胡诗苑</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡轩厚">
-            <span class="person-name">胡轩厚</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡宏骏">
-            <span class="person-name">胡宏骏</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡宗毅">
-            <span class="person-name">胡宗毅</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡霭欣">
-            <span class="person-name">胡霭欣</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡锦胜">
-            <span class="person-name">胡锦胜</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡滕林">
-            <span class="person-name">胡滕林</span>
-            <span class="rel-marker rel-son">儿</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡照莴">
-            <span class="person-name">胡照莴</span>
-            <span class="rel-marker rel-unknown">眷</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡乔淇">
-            <span class="person-name">胡乔淇</span>
-            <span class="rel-marker rel-unknown">眷</span>
-          </div>
-          <div class="tree-line-h"></div>
-          <div class="person" data-name="胡懔倩">
-            <span class="person-name">胡懔倩</span>
-            <span class="rel-marker rel-daughter">女</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- ===== IN-LAW FAMILIES ===== -->
-      <div class="inlaw-section">
-        <div class="inlaw-section-title">外戚家屬</div>
-
-        <div style="display:flex; flex-wrap:wrap; gap:10px 20px; padding:6px 0;">
-
-          <!-- 黄家 -->
-          <div class="inlaw-group">
-            <span class="inlaw-surname">黄</span>
-            <span class="inlaw-name">黄明耀</span>
-            <span style="width:4px"></span>
-            <span class="inlaw-name">黄明康</span>
-          </div>
-
-          <!-- 林家 -->
-          <div class="inlaw-group">
-            <span class="inlaw-surname">林</span>
-            <span class="inlaw-name">林明扬</span>
-            <span style="width:4px"></span>
-            <span class="inlaw-name">林亚立</span>
-            <span style="width:4px"></span>
-            <span class="inlaw-name">林仪香</span>
-          </div>
-
-          <!-- 叶家 -->
-          <div class="inlaw-group">
-            <span class="inlaw-surname">叶</span>
-            <span class="inlaw-name">叶玮琪</span>
-            <span style="width:4px"></span>
-            <span class="inlaw-name">叶健咏</span>
-            <span style="width:4px"></span>
-            <span class="inlaw-name">叶瑾熙</span>
-            <span style="width:4px"></span>
-            <span class="inlaw-name">叶瑾毅</span>
-          </div>
-
-          <!-- 陈家 -->
-          <div class="inlaw-group">
-            <span class="inlaw-surname">陈</span>
-            <span class="inlaw-name">陈俊豪</span>
-            <span style="width:4px"></span>
-            <span class="inlaw-name">陈子豪</span>
-            <span style="width:4px"></span>
-            <span class="inlaw-name">陈雯芊</span>
-            <span style="width:4px"></span>
-            <span class="inlaw-name">陈一亿</span>
-          </div>
-
-          <!-- 黎家 -->
-          <div class="inlaw-group">
-            <span class="inlaw-surname">黎</span>
-            <span class="inlaw-name">黎殿颂</span>
-            <span style="width:4px"></span>
-            <span class="inlaw-name">黎馥馨</span>
-            <span style="width:4px"></span>
-            <span class="inlaw-name">黎殷玮</span>
-            <span style="width:4px"></span>
-            <span class="inlaw-name">黎劲祥</span>
-            <span style="width:4px"></span>
-            <span class="inlaw-name">黎殷维</span>
-            <span style="width:4px"></span>
-            <span class="inlaw-name">黎殷颂</span>
-          </div>
-
-          <!-- 周家 -->
-          <div class="inlaw-group">
-            <span class="inlaw-surname">周</span>
-            <span class="inlaw-name">周峙翔</span>
-          </div>
-
-          <!-- 苏家 -->
-          <div class="inlaw-group">
-            <span class="inlaw-surname">苏</span>
-            <span class="inlaw-name">苏尉铨</span>
-            <span style="width:4px"></span>
-            <span class="inlaw-name">苏尉汉</span>
-          </div>
-
-          <!-- 郑家 -->
-          <div class="inlaw-group">
-            <span class="inlaw-surname">郑</span>
-            <span class="inlaw-name">郑明强</span>
-            <span style="width:4px"></span>
-            <span class="inlaw-name">郑健嘉</span>
-          </div>
-
-          <!-- 邓家 -->
-          <div class="inlaw-group">
-            <span class="inlaw-surname">邓</span>
-            <span class="inlaw-name">邓富霞</span>
-            <span style="width:4px"></span>
-            <span class="inlaw-name">邓镇锋</span>
-            <span style="width:4px"></span>
-            <span class="inlaw-name">邓竣泽</span>
-          </div>
-
-        </div>
-      </div>
-
-    </div><!-- /tree -->
-
-    <!-- Legend -->
+    <div class="tree" id="tree"></div>
     <div class="legend">
-      <span class="legend-item"><span class="legend-box" style="background:#c0392b">儿</span> 兒子</span>
+      <span class="legend-item"><span class="legend-box" style="background:#c0392b">兒</span> 兒子</span>
       <span class="legend-item"><span class="legend-box" style="background:#e67e22">女</span> 女兒</span>
       <span class="legend-item"><span class="legend-box" style="background:#8e44ad">媳</span> 媳婦</span>
       <span class="legend-item"><span class="legend-box" style="background:#2980b9">婿</span> 女婿</span>
-      <span class="legend-item"><span class="legend-box" style="background:#7f8c8d">眷</span> 家眷</span>
-      <span class="legend-item" style="margin-left:auto; font-size:11px; color:#8a7a6a;">姓名採直式書寫</span>
+      <span class="legend-item"><span class="legend-box" style="background:#16a085">妻</span> 妻子</span>
+      <span class="legend-item"><span class="legend-box" style="background:#95a5a6">?</span> 不詳</span>
+      <span class="legend-item" style="margin-left:auto;font-size:11px;color:#8a7a6a;">
+        棕色粗線 = 親子關係
+      </span>
     </div>
-
-  </div><!-- /scroll-container -->
-
+  </div>
   <div class="scroll-bottom"></div>
 </div>
 
 <script>
-(function() {
-  const searchBox = document.getElementById('searchBox');
-  const searchCount = document.getElementById('searchCount');
-  const allPeople = document.querySelectorAll('.person');
+// ===== TREE DATA =====
+const BRANCH_COLORS = {
+  shouhe:  { hex:'#3498db', bg:'rgba(52,152,219,0.04)' },
+  wangzhong:{hex:'#27ae60', bg:'rgba(39,174,96,0.04)' },
+  qinghe:  { hex:'#f39c12', bg:'rgba(243,156,18,0.04)' },
+  weixian: { hex:'#9b59b6', bg:'rgba(155,89,182,0.04)' },
+  weida:   { hex:'#e74c3c', bg:'rgba(231,76,60,0.04)' },
+  weifu:   { hex:'#e67e22', bg:'rgba(230,126,34,0.04)' },
+  weiyou:  { hex:'#95a5a6', bg:'rgba(149,165,166,0.04)' },
+  weiyuan: { hex:'#1abc9c', bg:'rgba(26,188,156,0.04)' }
+};
 
-  function doSearch(query) {
-    const trimmed = query.trim();
-    if (!trimmed) {
-      allPeople.forEach(p => p.classList.remove('highlight', 'hidden'));
-      searchCount.textContent = '';
-      return;
+function P(name,rel){return{name,rel}}
+function family(persons,children){
+  return{persons:Array.isArray(persons)?persons:[persons], children:children||[]}
+}
+
+const treeData = [
+  // === 叟和公 (blue) ===
+  {
+    id:'shouhe',label:'叟和公',...BRANCH_COLORS.shouhe,
+    root:family([P('胡叟和','祖')],[])
+  },
+  // === 旺忠公 (green) ===
+  {
+    id:'wangzhong',label:'旺忠公',...BRANCH_COLORS.wangzhong,
+    root:family([P('胡旺忠','?')],[
+      family([P('胡顺兴','兒'),P('谢女宝','媳')],[
+        family([P('胡潮沃','兒'),P('林薇笑','媳')],[
+          family([P('胡锦明','兒')]),
+          family([P('胡美莲','女')])
+        ]),
+        family([P('胡潮溢','兒'),P('苏秀英','媳')],[
+          family([P('胡锦鹏','兒')]),
+          family([P('胡美琳','女')])
+        ]),
+        family([P('胡潮汉','兒'),P('郑秀丽','媳')],[
+          family([P('胡锦为','兒')]),
+          family([P('胡锦弟','兒')])
+        ]),
+        family([P('胡潮漳','兒'),P('谢秀宝','媳')],[
+          family([P('胡美莲','女')]),
+          family([P('胡美萍','女')])
+        ]),
+        family([P('胡潮青','兒'),P('林彩珠','媳')],[
+          family([P('胡淋','女')]),
+          family([P('胡羽冰','女')]),
+          family([P('胡锦羽','兒')])
+        ]),
+        family([P('胡潮英','女')]),
+        family([P('胡秀英','女')]),
+        family([P('胡少群','女'),P('黄本强','婿')]),
+        family([P('胡秀珍','女'),P('林友康','婿')]),
+        family([P('胡玉珍','女')]),
+        family([P('胡玉娇','女')]),
+        family([P('胡玉玲','女')])
+      ]),
+      family([P('胡顺华','兒')]),
+      family([P('胡顺均','兒')]),
+      family([P('胡顺五','兒')]),
+      family([P('胡顺肇','兒')]),
+      family([P('胡金儿','女')])
+    ])
+  },
+  // === 清和公 (gold) ===
+  {
+    id:'qinghe',label:'清和公',...BRANCH_COLORS.qinghe,
+    root:family([P('胡清和','祖'),P('关亚好','妻')],[
+      family([P('司徒元洪','婿'),P('胡运美','女')],[
+        family([P('司徒振兴','兒'),P('谢运月霞','媳')]),
+        family([P('司徒少霞','女'),P('陈东兴','婿')]),
+        family([P('司徒永全','兒'),P('陈金英','媳')])
+      ]),
+      family([P('马龙亿','兒'),P('胡桂霞','媳')],[
+        family([P('胡渐卓','兒'),P('谢淑贞','媳')]),
+        family([P('胡国林','兒')])
+      ]),
+      family([P('郑国和','婿'),P('郑彩惠','女')]),
+      family([P('邓国辉','婿'),P('胡彩月','女')]),
+      family([P('陈庆安','婿'),P('陈彩虹','女')]),
+      family([P('胡渐辉','兒'),P('刘碧云','媳')]),
+      family([P('胡渐威','兒'),P('刘秀英','媳')]),
+      family([P('黎迪侨','婿'),P('胡碧翠','女')]),
+      family([P('胡渐雄','兒'),P('钟玉芬','媳')]),
+      family([P('胡碧君','女'),P('周碧文','婿')]),
+      family([P('胡碧勋','兒'),P('叶培郁','媳')])
+    ])
+  },
+  // === 维显公 (purple) ===
+  {
+    id:'weixian',label:'维显公',...BRANCH_COLORS.weixian,
+    root:family([P('胡维显','祖'),P('黄金凤','妻'),P('周秀菊','妻')],[
+      family([P('胡龙科','兒'),P('吴凤德','媳')],[
+        family([P('黄明耀','眷')]),
+        family([P('黄明康','眷')])
+      ]),
+      family([P('胡美豪','女'),P('林国汉','婿')]),
+      family([P('胡龙森','兒'),P('黄月玉','媳')]),
+      family([P('胡龙弼','兒'),P('吕宝珍','媳')]),
+      family([P('胡龙迪','兒'),P('游秀蕊','媳')]),
+      family([P('胡美丽','女'),P('陈亚旺','婿')]),
+      family([P('胡美秀','女'),P('龚羽华','婿')]),
+      family([P('黄妙玲','眷')]),
+      family([P('司徒小芳','眷')]),
+      family([P('杨观新','眷')]),
+      family([P('胡美缘','眷')])
+    ])
+  },
+  // === 维达公 (red) ===
+  {
+    id:'weida',label:'维达公',...BRANCH_COLORS.weida,
+    root:family([P('胡维达','祖'),P('周美容','妻')],[
+      family([P('胡龙勇','兒')]),
+      family([P('胡龙迎','兒')]),
+      family([P('胡龙强','兒')]),
+      family([P('胡国欢','兒'),P('关银欢','媳')]),
+      family([P('周美月','眷')])
+    ])
+  },
+  // === 维富公 (orange) ===
+  {
+    id:'weifu',label:'维富公',...BRANCH_COLORS.weifu,
+    root:family([P('胡维富','祖'),P('关月眉','妻')],[
+      family([P('胡现龙','兒'),P('李亚明','媳')]),
+      family([P('胡业龙','兒')]),
+      family([P('胡均龙','兒'),P('关如娣','媳')]),
+      family([P('胡锐龙','兒')]),
+      family([P('胡运女','女')]),
+      family([P('胡超仪','女'),P('麦志光','婿')])
+    ])
+  },
+  // === 维有公 (gray) ===
+  {
+    id:'weiyou',label:'维有公',...BRANCH_COLORS.weiyou,
+    root:family([P('胡维有','?')],[])
+  },
+  // === 维源公 (teal) ===
+  {
+    id:'weiyuan',label:'维源公',...BRANCH_COLORS.weiyuan,
+    root:family([P('胡维源','祖'),P('关氏','妻')],[
+      family([P('胡龙亿','兒'),P('胡桂霞','媳')]),
+      family([P('胡龙赞','兒')]),
+      family([P('胡桂霞','女')])
+    ])
+  }
+];
+
+// ===== RENDER =====
+function renderPersonCard(p){
+  var relClass = p.rel==='?'||p.rel==='不详'?'rel-unknown'
+    : p.rel==='祖'||p.rel==='眷'?'rel-ancestor'
+    : p.rel==='兒'||p.rel==='儿'?'rel-son'
+    : p.rel==='女'?'rel-daughter'
+    : p.rel==='媳'?'rel-wife'
+    : p.rel==='婿'?'rel-husband'
+    : p.rel==='妻'?'rel-spouse'
+    : 'rel-unknown';
+  var relLabel = p.rel;
+  var tip = p.rel==='祖'?'始祖 '+p.name
+    : p.rel==='妻'?'配偶 '+p.name
+    : p.rel==='兒'||p.rel==='儿'?'兒子 '+p.name
+    : p.rel==='女'?'女兒 '+p.name
+    : p.rel==='媳'?'媳婦(嫁入) '+p.name
+    : p.rel==='婿'?'女婿(娶胡家女) '+p.name
+    : p.rel==='?'||p.rel==='不详'?'不詳 '+p.name
+    : p.rel==='眷'?'家眷 '+p.name
+    : p.name;
+  return '<div class="person-card" data-name="'+p.name+'" data-rel="'+p.rel+'">'
+    + '<span class="name">'+p.name+'</span>'
+    + '<span class="rel-badge '+relClass+'">'+relLabel+'</span>'
+    + '<span class="tooltip">'+tip+'</span></div>';
+}
+
+function renderCouple(persons){
+  if(persons.length===1) return renderPersonCard(persons[0]);
+  var h='<div class="couple">';
+  for(var i=0;i<persons.length;i++){
+    h+=renderPersonCard(persons[i]);
+    if(i<persons.length-1) h+='<span class="marriage-dot"></span>';
+  }
+  return h+'</div>';
+}
+
+function renderNode(node){
+  if(!node) return '';
+  var hasKids = node.children && node.children.length>0;
+  var singleChild = hasKids && node.children.length===1;
+  var cls = 'tree-node'+(hasKids?'':' leaf');
+
+  var h='<div class="'+cls+'">';
+  // Parent unit
+  h+='<div class="parent-unit">';
+  h+=renderCouple(node.persons);
+  if(hasKids) h+='<div class="v-line"></div>';
+  h+='</div>';
+
+  if(hasKids){
+    h+='<div class="children-section">';
+    h+='<div class="h-bar'+(singleChild?' single':'')+'"></div>';
+    for(var i=0;i<node.children.length;i++){
+      h+=renderNode(node.children[i]);
     }
+    h+='</div>';
+  }
+  return h+'</div>';
+}
 
-    let matchCount = 0;
-    allPeople.forEach(p => {
-      const name = p.getAttribute('data-name') || '';
-      if (name.includes(trimmed)) {
-        p.classList.add('highlight');
-        p.classList.remove('hidden');
-        matchCount++;
-      } else {
-        p.classList.remove('highlight');
-        p.classList.add('hidden');
+function renderBranch(branch){
+  return '<div class="branch" data-branch="'+branch.id
+    +'" style="border-left-color:'+branch.hex+';background:'+branch.bg+'">'
+    + '<div class="branch-header" style="color:'+branch.hex+'">'+branch.label+'</div>'
+    + renderNode(branch.root)
+    + '</div>';
+}
+
+// ===== INIT =====
+(function(){
+  var treeEl=document.getElementById('tree');
+  treeData.forEach(function(b){treeEl.innerHTML+=renderBranch(b);});
+
+  // Click to highlight lineage within same branch
+  document.querySelectorAll('.person-card').forEach(function(card){
+    card.addEventListener('click',function(e){
+      e.stopPropagation();
+      var all=document.querySelectorAll('.person-card');
+      if(this.classList.contains('active')){
+        all.forEach(function(c){c.classList.remove('active','dimmed');});
+        return;
+      }
+      all.forEach(function(c){c.classList.remove('active','dimmed');});
+      var branch=this.closest('.branch');
+      if(branch){
+        branch.querySelectorAll('.person-card').forEach(function(c){c.classList.add('active');});
+        document.querySelectorAll('.branch').forEach(function(b){
+          if(b!==branch){
+            b.querySelectorAll('.person-card').forEach(function(c){c.classList.add('dimmed');});
+          }
+        });
       }
     });
+  });
 
-    searchCount.textContent = matchCount > 0 ? `找到 ${matchCount} 人` : '無結果';
-  }
-
-  searchBox.addEventListener('input', function() { doSearch(this.value); });
-
-  // Clear search on Escape
-  searchBox.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-      this.value = '';
-      doSearch('');
-      this.blur();
+  // Click outside to clear
+  document.addEventListener('dblclick',function(){
+    document.querySelectorAll('.person-card').forEach(function(c){c.classList.remove('active','dimmed');});
+  });
+  document.addEventListener('click',function(e){
+    if(!e.target.closest('.person-card')){
+      document.querySelectorAll('.person-card').forEach(function(c){c.classList.remove('active','dimmed');});
     }
   });
 
-  // Smooth reveal on load
-  setTimeout(() => {
-    document.querySelector('.scroll-container').style.opacity = '1';
-  }, 100);
+  // Search
+  var searchBox=document.getElementById('searchBox');
+  var searchCount=document.getElementById('searchCount');
+  var allCards=document.querySelectorAll('.person-card');
+
+  function doSearch(q){
+    var t=q.trim();
+    allCards.forEach(function(c){c.classList.remove('highlight-match','dimmed');});
+    if(!t){searchCount.textContent='';return;}
+    var m=0,first=null;
+    allCards.forEach(function(c){
+      var n=c.getAttribute('data-name')||'';
+      if(n.indexOf(t)!==-1){
+        c.classList.add('highlight-match');m++;
+        if(!first) first=c;
+      }else{
+        c.classList.add('dimmed');
+      }
+    });
+    searchCount.textContent=m>0?'找到 '+m+' 人':'無結果';
+    if(first) first.scrollIntoView({behavior:'smooth',block:'center'});
+  }
+
+  searchBox.addEventListener('input',function(){doSearch(this.value);});
+  searchBox.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){this.value='';doSearch('');this.blur();}
+  });
 })();
 </script>
-
 </body>
 </html>
