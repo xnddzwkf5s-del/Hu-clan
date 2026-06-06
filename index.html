@@ -1057,7 +1057,7 @@ const treeData = [
 ];
 
 // ===== TREE ENRICHMENT (IDs + expanded state) =====
-(function(){var _idC=1;function en(n,d,si,c){n._id=_idC++;n._expanded=false;n._code=c;n._path=(n._path||[]).concat(si);(n.children||[]).forEach(function(ch,i){ch._path=n._path.slice();en(ch,d+1,i,c)});}treeData.forEach(function(b){en(b.root,0,0,b.code)});})();
+(function(){var _idC=1;function en(n,d,si,c){n._id=_idC++;n._expanded=false;n._code=c;n._path=(n._path||[]).concat(si);(n.persons||[]).forEach(function(p){p._path=n._path.slice();p._code=c;});(n.children||[]).forEach(function(ch,i){ch._path=n._path.slice();en(ch,d+1,i,c)});}treeData.forEach(function(b){en(b.root,0,0,b.code)});})();
 
 function countDesc(n){var c=0;function w(x){(x.children||[]).forEach(function(ch){c++;w(ch)});}w(n);return c}
 
