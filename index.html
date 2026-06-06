@@ -1,1367 +1,3758 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>胡氏家族世系图</title>
-<style>
-/* ===== RESET & BASE ===== */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{
-  font-family:"Noto Serif TC","Songti SC","SimSun","MingLiU",serif;
-  background:#3a2a1a;min-height:100vh;display:flex;flex-direction:column;
-  align-items:center;padding:4px 0
-}
-.scroll-wrapper{width:100%;max-width:2000px;margin:0 auto;position:relative}
-.scroll-container{
-  overflow-x:auto;overflow-y:visible;background:#f5efe4;position:relative;
-  border-left:3px solid #8b7355;border-right:3px solid #8b7355;
-  box-shadow:0 8px 40px rgba(0,0,0,0.3)
-}
-/* Scroll borders */
-.scroll-top,.scroll-bottom{
-  height:28px;position:relative;
-  background:linear-gradient(90deg,#4a3a4a 0%,#5a4a5a 8%,#6a5a6a 15%,#7a6a7a 22%,#5a4a5a 30%,#4a3a4a 38%,#6a5a6a 46%,#7a6a7a 54%,#5a4a5a 62%,#4a3a4a 70%,#6a5a6a 78%,#7a6a7a 85%,#5a4a5a 92%,#4a3a4a 100%);
-  overflow:hidden
-}
-.scroll-top::after,.scroll-bottom::after{
-  content:'';position:absolute;left:0;right:0;height:3px;
-  background:linear-gradient(90deg,#c89b3c,#e8b84c,#d4a83a,#c89b3c)
-}
-.scroll-top::after{bottom:0}
-.scroll-bottom::before{
-  content:'';position:absolute;left:0;right:0;top:0;height:3px;
-  background:linear-gradient(90deg,#c89b3c,#e8b84c,#d4a83a,#c89b3c)
-}
-.scroll-top::before{
-  content:'';position:absolute;left:0;right:0;height:20px;
-  background:repeating-linear-gradient(45deg,transparent,transparent 4px,rgba(255,255,255,0.03) 4px,rgba(255,255,255,0.03) 8px)
-}
-/* Watermark */
-.scroll-container::before{
-  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
-  background:
-    radial-gradient(ellipse 300px 120px at 20% 15%,rgba(180,160,130,0.08) 0%,transparent 70%),
-    radial-gradient(ellipse 250px 100px at 50% 35%,rgba(170,150,120,0.06) 0%,transparent 70%),
-    radial-gradient(ellipse 280px 110px at 75% 55%,rgba(160,140,110,0.07) 0%,transparent 70%),
-    radial-gradient(ellipse 200px 80px at 30% 75%,rgba(175,155,125,0.05) 0%,transparent 70%),
-    radial-gradient(ellipse 350px 150px at 60% 85%,rgba(165,145,115,0.06) 0%,transparent 70%)
-}
-/* Header */
-.header{
-  background:linear-gradient(180deg,#2a1a0a,#3a2a1a);padding:24px 30px 18px;
-  text-align:center;border-bottom:2px solid #c89b3c;position:relative
-}
-.header::after{content:'';position:absolute;bottom:-4px;left:10%;right:10%;height:1px;background:#8b7355}
-.header h1{color:#e8d5a8;font-size:26px;font-weight:700;letter-spacing:8px;text-shadow:0 1px 3px rgba(0,0,0,0.5)}
-.header .subtitle{color:#c8b080;font-size:13px;letter-spacing:4px;margin-top:4px}
-/* ===== NAVIGATION ===== */
-.nav-bar{
-  display:flex;align-items:center;justify-content:center;gap:6px;
-  padding:10px 20px;background:rgba(245,239,228,0.97);
-  border-bottom:1px solid #c8b898;position:sticky;top:0;z-index:200;
-  backdrop-filter:blur(4px);flex-wrap:wrap
-}
-.nav-btn{
-  padding:8px 18px;border:1px solid #b8a888;border-radius:6px;
-  background:#efe8da;color:#5a4a3a;font-size:14px;font-weight:600;
-  cursor:pointer;transition:all 0.2s;font-family:inherit;
-  letter-spacing:1px;user-select:none;white-space:nowrap
-}
-.nav-btn:hover{background:#e8dcc8;border-color:#8b7355}
-.nav-btn.active{background:#d4a83a;color:#2a1a0a;border-color:#c89b3c;box-shadow:0 1px 4px rgba(200,155,60,0.3)}
-/* ===== PAGE CONTAINERS ===== */
-.page{display:none;position:relative;z-index:1}
-.page.active{display:block}
-/* ===== TREE PAGE ===== */
-/* Search */
-.search-area{
-  display:flex;align-items:center;justify-content:center;gap:10px;
-  padding:14px 20px 10px;background:rgba(245,239,228,0.95);
-  border-bottom:1px solid #c8b898;position:sticky;top:48px;z-index:100;backdrop-filter:blur(4px)
-}
-.search-area label{color:#5a4a3a;font-size:14px;font-weight:600;letter-spacing:1px}
-#searchBox{
-  padding:7px 14px;border:1px solid #b8a888;border-radius:4px;font-size:15px;
-  width:320px;background:#faf6ed;color:#3a2a1a;font-family:inherit;outline:none;transition:border-color 0.2s
-}
-#searchBox:focus{border-color:#c89b3c;box-shadow:0 0 0 2px rgba(200,155,60,0.15)}
-#searchBox::placeholder{color:#a09080}
-.search-count{font-size:12px;color:#8a7a6a;min-width:60px}
-/* ===== TREE ===== */
-.tree{
-  padding:20px 20px 30px;position:relative;z-index:1;
-  display:flex;flex-direction:column;gap:6px;min-height:auto
-}
-/* ===== BRANCH ===== */
-.branch{
-  flex:none;width:100%;position:relative;padding:8px 14px 14px;
-  border-left:4px solid;border-radius:4px;margin:2px 0;
-  min-width:auto;max-width:none
-}
-.branch-header{
-  font-size:14px;font-weight:700;letter-spacing:2px;
-  color:#5a4a3a;padding:8px 14px;cursor:pointer;border-radius:4px;
-  margin-bottom:0;display:flex;align-items:center;gap:8px;user-select:none;
-  border-bottom:none;transition:background 0.15s
-}
-.branch-header:hover{background:rgba(0,0,0,0.06)}
-.branch-header .toggle-btn{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;font-size:16px;font-weight:700;color:#fff;flex-shrink:0}
-.branch.collapsed .branch-header .toggle-btn{background:#c0392b}
-.branch:not(.collapsed) .branch-header .toggle-btn{background:#27ae60}
-.branch.collapsed>.tree-node{display:none}
-/* ===== PERSON CARD ===== */
-.person-card{
-  display:flex;flex-direction:column;align-items:center;padding:4px 3px;
-  border-radius:4px;position:relative;cursor:pointer;transition:all 0.2s;min-width:28px
-}
-.person-card:hover{background:rgba(200,155,60,0.15)}
-.person-card .name{
-  writing-mode:vertical-rl;text-orientation:upright;
-  font-size:14px;line-height:1.1;letter-spacing:1px;color:#2a1a0a;white-space:nowrap
-}
-.person-card .rel-badge{
-  display:inline-block;font-size:9px;padding:1px 4px;border-radius:3px;
-  margin-top:2px;font-weight:700;line-height:1.3;letter-spacing:0
-}
-.rel-son{background:#c0392b;color:#fff}
-.rel-daughter{background:#e67e22;color:#fff}
-.rel-wife{background:#8e44ad;color:#fff}
-.rel-husband{background:#2980b9;color:#fff}
-.rel-ancestor{background:#7f8c8d;color:#fff}
-.rel-spouse{background:#16a085;color:#fff}
-.rel-unknown{background:#95a5a6;color:#fff}
-/* Couple */
-.couple{
-  display:flex;flex-direction:row;align-items:center;gap:1px;
-  position:relative;padding:0 2px
-}
-.couple .marriage-dot{
-  width:3px;height:3px;border-radius:50%;background:#a08060;flex-shrink:0;margin:0 1px
-}
-/* ===== TREE NODE ===== */
-.tree-node{
-  display:flex;flex-direction:column;align-items:center;position:relative
-}
-/* Parent content (person card + vertical line down) */
-.parent-unit{
-  display:flex;flex-direction:column;align-items:center;position:relative
-}
-/* Vertical line from parent down */
-.v-line{
-  width:3px;height:18px;background:#8b4513;flex-shrink:0;border-radius:1px
-}
-/* Children section */
-.children-section{
-  display:flex;gap:4px;position:relative;padding-top:0;justify-content:center;flex-wrap:wrap
-}
-/* Horizontal bar over children */
-.h-bar{
-  position:absolute;top:0;left:15%;right:15%;height:3px;
-  background:#8b4513;border-radius:1px;z-index:1
-}
-.h-bar.single{display:none}
-/* Vertical line up from child to horizontal bar */
-.children-section>.tree-node::before{
-  content:'';position:absolute;top:-18px;left:50%;
-  width:3px;height:18px;background:#8b4513;z-index:2;border-radius:1px
-}
-/* No children - no v-line needed */
-.tree-node.leaf .v-line{display:none}
-/* Highlight states */
-.person-card.active{
-  background:rgba(200,155,60,0.25)!important;
-  box-shadow:0 0 0 2px #c89b3c!important
-}
-.person-card.highlight-match{
-  background:rgba(231,76,60,0.2)!important;
-  box-shadow:0 0 0 2px #e74c3c!important;animation:pulse 0.6s ease-in-out 3
-}
-@keyframes pulse{50%{box-shadow:0 0 0 4px rgba(231,76,60,0.4)}}
-.person-card.dimmed{opacity:0.35}
-/* Tooltip */
-.person-card .tooltip{
-  display:none;position:absolute;bottom:calc(100% + 6px);left:50%;
-  transform:translateX(-50%);background:#3a2a1a;color:#e8d5a8;
-  padding:3px 8px;border-radius:3px;font-size:11px;white-space:nowrap;
-  z-index:50;pointer-events:none;border:1px solid #c89b3c
-}
-.person-card:hover .tooltip{display:block}
-.person-card .tooltip::after{
-  content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
-  border:4px solid transparent;border-top-color:#3a2a1a
-}
-/* Legend */
-.legend{
-  display:flex;gap:18px;align-items:center;padding:10px 30px;
-  background:#efe8da;border-top:1px solid #d8c8b8;font-size:12px;flex-wrap:wrap
-}
-.legend-item{display:flex;align-items:center;gap:5px;color:#5a4a3a}
-.legend-box{display:inline-block;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:700;color:#fff}
-/* ===== CONTENT PAGES ===== */
-.content-page{
-  padding:30px 40px 40px;max-width:900px;margin:0 auto;
-  line-height:1.8;color:#3a2a1a
-}
-.content-page h2{
-  font-size:22px;color:#2a1a0a;border-bottom:2px solid #c89b3c;
-  padding-bottom:8px;margin:28px 0 16px;letter-spacing:2px
-}
-.content-page h3{
-  font-size:18px;color:#4a3a2a;margin:22px 0 10px;letter-spacing:1px
-}
-.content-page p{margin:10px 0;font-size:15px;text-align:justify}
-.content-page ul{margin:10px 0 10px 24px;list-style:none}
-.content-page ul li{padding:4px 0;font-size:15px;position:relative}
-.content-page ul li::before{content:'•';color:#c89b3c;font-weight:700;position:absolute;left:-18px}
-.content-page .feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px;margin:12px 0}
-.content-page .feature-grid dt{font-weight:700;color:#5a4a3a;font-size:14px;border-bottom:1px dashed #d8c8b8;padding-bottom:2px;margin-bottom:4px}
-.content-page .feature-grid dd{font-size:14px;color:#5a4a3a;margin:0 0 8px 0}
-.content-page .branch-list{display:grid;grid-template-columns:1fr 1fr;gap:6px 20px;margin:10px 0}
-.content-page .branch-item{display:flex;align-items:center;gap:8px;padding:4px 8px;border-radius:4px;font-size:14px}
-.content-page .branch-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
-/* Poem page */
-.poem-section{text-align:center;margin:24px 0}
-.poem-line{font-size:28px;letter-spacing:12px;line-height:2;color:#2a1a0a;font-weight:700}
-.poem-line .char{display:inline-block;width:36px;text-align:center;font-size:28px}
-.poem-desc{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:20px 0}
-.poem-desc h4{font-size:15px;color:#4a3a2a;margin-bottom:6px;border-bottom:1px solid #d8c8b8;padding-bottom:4px}
-.poem-desc p,.poem-desc ul{font-size:14px;line-height:1.7}
-.poem-desc ul{list-style:none;padding:0;margin:0}
-.poem-desc ul li{padding:3px 0;font-size:14px;position:relative;padding-left:16px}
-.poem-desc ul li::before{content:'•';color:#c89b3c;font-weight:700;position:absolute;left:0}
-/* Card style */
-.card{
-  background:rgba(255,255,255,0.4);border:1px solid #d8c8b8;
-  border-radius:8px;padding:20px 24px;margin:16px 0
-}
-.card h3{margin-top:0}
-/* Genealogy page */
-.gen-text{font-family:"Noto Serif TC","Songti SC","SimSun","MingLiU",serif;font-size:14px;line-height:1.9;margin:10px 0}
-.gen-text .gen-item{padding:3px 0}
-.gen-text .gen-arrow{color:#c89b3c;font-weight:700;padding:0 4px}
-.gen-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px}
-.gen-table th,.gen-table td{border:1px solid #d8c8b8;padding:6px 10px;text-align:left}
-.gen-table th{background:#efe8da;color:#4a3a2a;font-weight:700}
-.gen-table tr:nth-child(even){background:rgba(245,239,228,0.5)}
-/* Responsive */
-@media(max-width:768px){
-  .scroll-container{border-left:none;border-right:none}
-  .header h1{font-size:20px;letter-spacing:4px}
-  .header{padding:16px 14px 12px}
-  .nav-btn{padding:6px 12px;font-size:12px}
-  .search-area{flex-wrap:wrap;padding:10px 12px;top:44px}
-  #searchBox{width:100%}
-  .tree{padding:12px 8px;flex-wrap:wrap;gap:8px;min-height:auto;flex-direction:column}
-  .branch{max-width:100%;margin:2px 0;min-width:auto}
-  .branch-header{font-size:11px}
-  .person-card .name{font-size:12px}
-  .scroll-top,.scroll-bottom{height:18px}
-  .content-page{padding:20px 16px}
-  .content-page h2{font-size:18px}
-  .poem-line{font-size:20px;letter-spacing:6px}
-  .poem-line .char{width:28px;font-size:20px}
-  .poem-desc{grid-template-columns:1fr;gap:14px}
-  .content-page .feature-grid{grid-template-columns:1fr}
-  .content-page .branch-list{grid-template-columns:1fr}
-  .gen-table{font-size:12px}
-  .gen-table th,.gen-table td{padding:4px 6px}
-}
-/* Scrollbar */
-.scroll-container::-webkit-scrollbar{height:8px}
-.scroll-container::-webkit-scrollbar-track{background:#e8dcc8}
-.scroll-container::-webkit-scrollbar-thumb{background:#8b7355;border-radius:4px}
-.scroll-container::-webkit-scrollbar-thumb:hover{background:#6a5a4a}
-/* ===== COLLAPSE/EXPAND ===== */
-.collapsed > .children-section{display:none}
-/* Toggle button */
-.parent-unit{position:relative}
-.toggle-btn{
-  position:absolute;bottom:-11px;left:50%;transform:translateX(-50%);
-  z-index:20;width:22px;height:22px;border-radius:50%;
-  background:#8b4513;color:#fff;font-size:10px;font-weight:700;
-  line-height:22px;text-align:center;cursor:pointer;user-select:none;
-  font-family:monospace;transition:background 0.15s;border:2px solid #f5efe4
-}
-.toggle-btn:hover{background:#6b3510;transform:translateX(-50%) scale(1.1)}
-.toggle-btn.expand-all{width:auto;border-radius:11px;padding:0 8px;min-width:22px}
-/* When collapsed, show toggle btn on parent-unit hover */
-.collapsed .toggle-btn{background:#c0392b;border-color:#f5efe4}
-.expanded .toggle-btn{background:#27ae60;border-color:#f5efe4}
-/* Hide toggle btn on leaf nodes (no children) */
-.tree-node.leaf .toggle-btn{display:none}
-/* ===== GENEALOGY PAGE ===== */
-.content-page{max-width:1200px;margin:0 auto;padding:30px;color:#2a1a0a}
-.content-page h2{font-size:22px;text-align:center;margin-bottom:4px;letter-spacing:3px}
-.content-page h3{font-size:17px;margin:28px 0 10px;border-bottom:1px solid #c8b898;padding-bottom:4px;color:#4a3a2a}
-.content-page .subtitle{text-align:center;color:#8a7a6a;font-size:13px;margin-bottom:20px}
-.content-page .en{font-size:11px;color:#8a7a6a;font-style:italic;margin-bottom:8px}
-.content-page .note{font-size:10px;color:#7a6a5a;margin-top:6px}
-.gen-table{width:100%;border-collapse:collapse;margin:8px 0 14px;font-size:12px;font-family:inherit}
-.gen-table th,.gen-table td{border:1px solid #c8b898;padding:3px 6px;text-align:center}
-.gen-table th{background:#e8ddd0;font-weight:700;color:#3a2a1a}
-.gen-table td{background:#faf6ed;color:#2a1a0a}
-.gen-table tr:hover td{background:#f0e8d8}
-.migration-text{font-family:"KaiTi SC","STKaiti","Noto Serif CJK SC",serif;font-size:13px;line-height:1.8;margin:8px 0 16px;padding:12px 16px;background:rgba(250,246,237,0.5);border-left:3px solid #c8b898;border-radius:2px}
-.migration-text p{margin:6px 0}
-.migration-text strong{color:#4a3a2a}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>胡氏族谱 Hu Clan Genealogy</title>
+  <meta name="description" content="Interactive Hu family genealogy from Yellow Emperor to present">
+  <!-- Open Graph tags for WeChat/WhatsApp sharing -->
+  <meta property="og:title" content="胡氏族谱 Hu Clan Genealogy">
+  <meta property="og:description" content="Interactive Hu family genealogy">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://xnddzwkf5s-del.github.io/Hu-clan/">
+  <link rel="canonical" href="https://xnddzwkf5s-del.github.io/Hu-clan/">
 
-</style>
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #FAF9F6;
+      color: #1a1a1a;
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a { color: #c89b3c; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ===== LAYOUT ===== */
+    .site-wrapper {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ===== HEADER ===== */
+    .site-header {
+      text-align: center;
+      padding: 48px 24px 24px;
+      border-bottom: 2px solid #c89b3c;
+      margin-bottom: 0;
+    }
+    .site-header h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: #1a1a1a;
+    }
+    .site-header h1 .zh { display: block; }
+    .site-header h1 .en {
+      font-size: 1.2rem;
+      font-weight: 400;
+      opacity: 0.6;
+      letter-spacing: 0.02em;
+    }
+    .site-header .subtitle {
+      margin-top: 8px;
+      font-size: 13px;
+      opacity: 0.6;
+      letter-spacing: 0.05em;
+    }
+
+    /* ===== NAVIGATION ===== */
+    .main-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #FAF9F6;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 20px;
+      border: 2px solid transparent;
+      border-radius: 24px;
+      background: transparent;
+      color: #1a1a1a;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+    .nav-btn:hover {
+      background: rgba(200, 155, 60, 0.08);
+      border-color: rgba(200, 155, 60, 0.3);
+    }
+    .nav-btn.active {
+      background: #c89b3c;
+      color: #fff;
+      font-weight: 700;
+      border-color: #c89b3c;
+    }
+    .nav-btn .nav-icon { font-size: 16px; }
+
+    /* ===== MAIN ===== */
+    .site-main { padding: 32px 0 48px; }
+
+    /* ===== PAGES ===== */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ===== INTRO & POEM & GENEALOGY ===== */
+    .content-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+    .content-card h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+      color: #1a1a1a;
+    }
+    .content-card h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+      margin-top: 24px;
+      color: #1a1a1a;
+    }
+    .content-card p {
+      margin-bottom: 12px;
+    }
+    .content-card .placeholder-text {
+      opacity: 0.4;
+      font-style: italic;
+    }
+
+    /* ===== TREE TOOLBAR ===== */
+    .tree-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 24px;
+      background: #fff;
+      padding: 16px 24px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    }
+    .tree-toolbar .toolbar-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      opacity: 0.5;
+      margin-right: 4px;
+    }
+    .tree-search {
+      flex: 1;
+      min-width: 180px;
+      max-width: 320px;
+      position: relative;
+    }
+    .tree-search input {
+      width: 100%;
+      padding: 8px 12px 8px 36px;
+      border: 1px solid rgba(0,0,0,0.12);
+      border-radius: 8px;
+      font-size: 14px;
+      background: #FAF9F6;
+      outline: none;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+    .tree-search input:focus {
+      border-color: #c89b3c;
+      box-shadow: 0 0 0 2px rgba(200, 155, 60, 0.15);
+    }
+    .tree-search .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0.35;
+      font-size: 14px;
+      pointer-events: none;
+    }
+    .tree-search .clear-btn {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      opacity: 0.35;
+      font-size: 14px;
+      padding: 2px 4px;
+      display: none;
+      font-family: inherit;
+    }
+    .tree-search .clear-btn:hover { opacity: 0.7; }
+    .tree-search .clear-btn.visible { display: block; }
+
+    .branch-filter {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+    .branch-filter .filter-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      opacity: 0.5;
+      margin-right: 4px;
+    }
+    .branch-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 16px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1.5px solid transparent;
+      background: rgba(0,0,0,0.04);
+      color: #1a1a1a;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+    .branch-chip:hover { background: rgba(0,0,0,0.07); }
+    .branch-chip .chip-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .branch-chip.active {
+      background: rgba(200, 155, 60, 0.12);
+      border-color: #c89b3c;
+      font-weight: 600;
+    }
+
+    .tree-actions {
+      display: flex;
+      gap: 8px;
+      margin-left: auto;
+    }
+    .tree-action-btn {
+      padding: 6px 14px;
+      border: 1px solid rgba(0,0,0,0.12);
+      border-radius: 8px;
+      background: #fff;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: inherit;
+      color: #1a1a1a;
+      white-space: nowrap;
+    }
+    .tree-action-btn:hover {
+      background: #FAF9F6;
+      border-color: rgba(0,0,0,0.2);
+    }
+
+    /* ===== TREE CONTAINER ===== */
+    #tree-container {
+      min-height: 400px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      padding: 24px;
+      overflow-x: auto;
+    }
+    #tree-container .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 24px;
+      text-align: center;
+      color: rgba(26,26,26,0.35);
+    }
+    #tree-container .empty-state .empty-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.4;
+    }
+    #tree-container .empty-state .empty-text {
+      font-size: 15px;
+      font-style: italic;
+    }
+
+    /* ===== TREE PERSON CARDS (rendered by tree-renderer.js) ===== */
+    .tree-card {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 80px;
+      height: 100px;
+      background: #fff;
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      padding: 6px 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .tree-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      border-radius: 8px 0 0 8px;
+    }
+    .tree-card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06);
+    }
+    .tree-card .card-name {
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.2;
+      margin-bottom: 2px;
+    }
+    .tree-card .card-name-zh {
+      writing-mode: horizontal-tb;
+    }
+    .tree-card .card-label {
+      font-size: 11px;
+      opacity: 0.7;
+      font-style: italic;
+      line-height: 1.2;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .tree-card .card-dates {
+      font-size: 10px;
+      opacity: 0.5;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+    .tree-card .card-branch-dot {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+    .tree-card.highlighted {
+      box-shadow: 0 0 0 3px #c89b3c, 0 4px 12px rgba(200, 155, 60, 0.25);
+    }
+    .tree-card.muted {
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    /* ===== LEGEND ===== */
+    .legend {
+      margin-top: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 16px 24px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    }
+    .legend .legend-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      opacity: 0.5;
+      margin-right: 8px;
+      display: flex;
+      align-items: center;
+    }
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      margin-right: 4px;
+    }
+    .legend-item .legend-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .legend-item .legend-name {
+      opacity: 0.8;
+    }
+
+    /* ===== FOOTER ===== */
+    .site-footer {
+      text-align: center;
+      padding: 32px 24px;
+      border-top: 1px solid rgba(0,0,0,0.06);
+      font-size: 13px;
+      opacity: 0.6;
+    }
+    .site-footer a { color: #c89b3c; }
+
+    /* ===== BRANCH COLORS ===== */
+    .branch-weixian { --branch-color: #7c3aed; }
+    .branch-weida { --branch-color: #dc2626; }
+    .branch-weifu { --branch-color: #ea580c; }
+    .branch-weihao { --branch-color: #db2777; }
+    .branch-weiyuan { --branch-color: #0891b2; }
+    .branch-weiyou { --branch-color: #6b7280; }
+    .branch-qinghe { --branch-color: #d97706; }
+    .branch-wangzhong { --branch-color: #059669; }
+    .branch-shouhe { --branch-color: #2563eb; }
+
+    .tree-card.branch-weixian::before { background: #7c3aed; }
+    .tree-card.branch-weida::before { background: #dc2626; }
+    .tree-card.branch-weifu::before { background: #ea580c; }
+    .tree-card.branch-weihao::before { background: #db2777; }
+    .tree-card.branch-weiyuan::before { background: #0891b2; }
+    .tree-card.branch-weiyou::before { background: #6b7280; }
+    .tree-card.branch-qinghe::before { background: #d97706; }
+    .tree-card.branch-wangzhong::before { background: #059669; }
+    .tree-card.branch-shouhe::before { background: #2563eb; }
+
+    .tree-card .card-branch-dot.branch-weixian { background: #7c3aed; }
+    .tree-card .card-branch-dot.branch-weida { background: #dc2626; }
+    .tree-card .card-branch-dot.branch-weifu { background: #ea580c; }
+    .tree-card .card-branch-dot.branch-weihao { background: #db2777; }
+    .tree-card .card-branch-dot.branch-weiyuan { background: #0891b2; }
+    .tree-card .card-branch-dot.branch-weiyou { background: #6b7280; }
+    .tree-card .card-branch-dot.branch-qinghe { background: #d97706; }
+    .tree-card .card-branch-dot.branch-wangzhong { background: #059669; }
+    .tree-card .card-branch-dot.branch-shouhe { background: #2563eb; }
+
+    .legend-swatch.branch-weixian { background: #7c3aed; }
+    .legend-swatch.branch-weida { background: #dc2626; }
+    .legend-swatch.branch-weifu { background: #ea580c; }
+    .legend-swatch.branch-weihao { background: #db2777; }
+    .legend-swatch.branch-weiyuan { background: #0891b2; }
+    .legend-swatch.branch-weiyou { background: #6b7280; }
+    .legend-swatch.branch-qinghe { background: #d97706; }
+    .legend-swatch.branch-wangzhong { background: #059669; }
+    .legend-swatch.branch-shouhe { background: #2563eb; }
+
+    /* ===== BRANCH NAMES ===== */
+    .branch-label-weixian::after { content: '潍县 (Weixian)'; }
+    .branch-label-weida::after { content: '潍达 (Weida)'; }
+    .branch-label-weifu::after { content: '潍福 (Weifu)'; }
+    .branch-label-weihao::after { content: '潍浩 (Weihao)'; }
+    .branch-label-weiyuan::after { content: '潍源 (Weiyuan)'; }
+    .branch-label-weiyou::after { content: '潍有 (Weiyou)'; }
+    .branch-label-qinghe::after { content: '清河 (Qinghe)'; }
+    .branch-label-wangzhong::after { content: '王忠 (Wangzhong)'; }
+    .branch-label-shouhe::after { content: '守和 (Shouhe)'; }
+
+    /* ===== CONTENT PAGES EXTRA STYLES ===== */
+
+    /* Page header within sections */
+    .page-header {
+      text-align: center;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .page-title {
+      font-size: 1.6rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+    .page-subtitle {
+      font-size: 14px;
+      opacity: 0.55;
+      letter-spacing: 0.03em;
+    }
+
+    /* Bilingual rows */
+    .bilingual-row { margin-bottom: 8px; }
+    .bilingual-block { margin-bottom: 8px; }
+    .bilingual-block p { margin-bottom: 4px; }
+
+    /* Section heading (content cards) */
+    .section-heading {
+      font-size: 1.3rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-bottom: 16px;
+      color: #1a1a1a;
+    }
+
+    /* Features grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 16px;
+      background: #FAF9F6;
+      border-radius: 8px;
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+    .feature-icon { font-size: 24px; flex-shrink: 0; line-height: 1.2; }
+    .feature-label {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 2px;
+      color: #1a1a1a;
+    }
+    .feature-desc {
+      font-size: 12px;
+      opacity: 0.6;
+      margin: 0;
+    }
+
+    /* Branch tags */
+    .branches-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .branch-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      background: color-mix(in srgb, var(--tag-color, #999) 10%, #fff);
+      border: 1.5px solid var(--tag-color, #999);
+      color: var(--tag-color, #999);
+    }
+
+    /* Poem page */
+    .poem-card {
+      background: #fdfaee;
+      border: 2px solid #c89b3c;
+      border-radius: 12px;
+      padding: 32px 24px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .poem-display {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+    }
+    .poem-line {
+      display: flex;
+      gap: 0;
+    }
+    .poem-char {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      font-size: 24px;
+      font-weight: 600;
+      font-family: "Noto Serif SC", "SimSun", "KaiTi", serif;
+      color: #1a1a1a;
+      border: 1px solid rgba(200, 155, 60, 0.2);
+      background: #fff;
+      margin: 0;
+    }
+    .poem-char:first-child {
+      border-radius: 8px 0 0 8px;
+    }
+    .poem-char:last-child {
+      border-radius: 0 8px 8px 0;
+    }
+
+    /* Poem table */
+    .poem-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .poem-table th {
+      text-align: left;
+      padding: 10px 12px;
+      background: #f5efe4;
+      border-bottom: 2px solid #c89b3c;
+      font-weight: 600;
+    }
+    .poem-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .col-char { width: 30%; font-weight: 600; }
+    .cell-char { font-size: 16px; }
+    .cell-en { font-size: 14px; opacity: 0.75; }
+
+    /* Gap list */
+    .gap-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .gap-list li {
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .gap-list li:last-child { border-bottom: none; }
+    .gap-list .zh, .gap-list .en {
+      display: block;
+    }
+    .gap-list .en {
+      font-size: 13px;
+      opacity: 0.65;
+    }
+
+    /* Genealogy page */
+    .genealogy-section {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      padding: 28px 32px;
+      margin-bottom: 24px;
+    }
+    .section-desc {
+      font-size: 14px;
+      margin-bottom: 16px;
+      opacity: 0.7;
+      line-height: 1.5;
+    }
+    .section-desc .zh, .section-desc .en {
+      display: block;
+    }
+    .section-desc .en {
+      font-size: 13px;
+      opacity: 0.7;
+      margin-top: 2px;
+    }
+
+    /* Tables */
+    .table-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .gen-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      text-align: left;
+    }
+    .gen-table th {
+      padding: 10px 12px;
+      background: #f5efe4;
+      border-bottom: 2px solid #c89b3c;
+      font-weight: 600;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .gen-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    .gen-table tbody tr:hover {
+      background: rgba(200, 155, 60, 0.04);
+    }
+    .gen-table-narrow td:first-child {
+      width: 30%;
+      font-weight: 600;
+    }
+    .table-note {
+      margin-top: 12px;
+      font-size: 13px;
+      opacity: 0.6;
+      line-height: 1.5;
+    }
+    .table-note .en-sm {
+      display: block;
+      font-size: 12px;
+      opacity: 0.7;
+      margin-top: 2px;
+    }
+    .en-sm {
+      font-size: 12px;
+      opacity: 0.65;
+      display: block;
+    }
+    th .en-sm {
+      font-weight: 400;
+    }
+
+    /* Classical text blocks */
+    .classical-text {
+      line-height: 1.8;
+    }
+    .classical-text p {
+      margin-bottom: 16px;
+    }
+    .classical-text strong {
+      color: #1a1a1a;
+    }
+    .classical-text .en-sm {
+      display: block;
+      margin-top: 8px;
+      margin-bottom: 16px;
+    }
+    .sub-heading {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-top: 20px;
+      margin-bottom: 8px;
+      color: #1a1a1a;
+    }
+
+    /* ===== RESPONSIVE: TABLET ===== */
+    @media (max-width: 900px) {
+      .site-wrapper { padding: 0 16px; }
+      .site-header h1 { font-size: 1.6rem; }
+      .site-header { padding: 32px 16px 20px; }
+      .main-nav { gap: 8px; padding: 10px 16px; }
+      .nav-btn { padding: 6px 14px; font-size: 13px; }
+      .tree-toolbar { flex-direction: column; align-items: stretch; padding: 12px 16px; }
+      .tree-search { max-width: 100%; }
+      .tree-actions { margin-left: 0; justify-content: flex-end; }
+      .branch-filter { width: 100%; }
+      .content-card { padding: 24px; }
+      #tree-container { padding: 16px; }
+      .legend { padding: 12px 16px; }
+      .genealogy-section { padding: 20px; }
+      .poem-char { width: 40px; height: 40px; font-size: 20px; }
+      .features-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ===== RESPONSIVE: MOBILE ===== */
+    @media (max-width: 600px) {
+      .site-wrapper { padding: 0 12px; }
+      .site-header h1 { font-size: 1.3rem; }
+      .site-header .subtitle { font-size: 12px; }
+      .main-nav { gap: 6px; padding: 8px 12px; }
+      .nav-btn { padding: 5px 12px; font-size: 12px; }
+      .nav-btn .nav-icon { font-size: 13px; }
+      .content-card { padding: 16px; border-radius: 6px; }
+      .content-card h2 { font-size: 1.2rem; }
+      #tree-container { padding: 12px; min-height: 300px; }
+      .tree-card { width: 60px; height: 75px; }
+      .tree-card .card-name { font-size: 12px; }
+      .tree-card .card-label { font-size: 10px; }
+      .tree-card .card-dates { font-size: 9px; }
+      .legend { gap: 8px; padding: 10px 12px; }
+      .legend .legend-title { width: 100%; margin-bottom: 4px; }
+      .site-footer { padding: 24px 12px; font-size: 12px; }
+      .tree-toolbar { padding: 10px 12px; }
+      .branch-chip { font-size: 11px; padding: 3px 8px; }
+      .genealogy-section { padding: 16px; }
+      .gen-table { font-size: 12px; }
+      .gen-table th, .gen-table td { padding: 6px 8px; }
+      .page-title { font-size: 1.3rem; }
+      .poem-card { padding: 20px 12px; }
+      .poem-char { width: 32px; height: 32px; font-size: 17px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .branches-list { justify-content: center; }
+    }
+
+    /* ===== UTILITY ===== */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      border: 0;
+    }
+    .text-center { text-align: center; }
+    .mt-8 { margin-top: 8px; }
+    .mt-16 { margin-top: 16px; }
+    .mb-16 { margin-bottom: 16px; }
+    .mb-24 { margin-bottom: 24px; }
+    .gap-8 { gap: 8px; }
+  </style>
 </head>
 <body>
-<div class="scroll-wrapper">
-  <div class="scroll-top"></div>
-  <div class="scroll-container">
-    <div class="header">
-      <h1>胡氏家族世系图</h1>
-      <div class="subtitle">Hu Family Genealogy · 家譜卷軸</div>
-    </div>
+
+  <div class="site-wrapper">
+
+    <!-- ===== HEADER ===== -->
+    <header class="site-header">
+      <h1>
+        <span class="zh">胡氏族谱</span>
+        <span class="en">Hu Clan Genealogy</span>
+      </h1>
+      <p class="subtitle">From the Yellow Emperor to the Present Day · 黄帝传承至今</p>
+    </header>
 
     <!-- ===== NAVIGATION ===== -->
-    <div class="nav-bar">
-      <button class="nav-btn" data-page="intro">📖 简介</button>
-      <button class="nav-btn" data-page="poem">📜 字辈诗</button>
-      <button class="nav-btn" data-page="genealogy">📚 族譜</button>
-      <button class="nav-btn active" data-page="tree">🌳 世系图</button>
+    <nav class="main-nav" aria-label="Main navigation">
+      <button class="nav-btn" data-page="intro" aria-controls="page-intro">
+        <span class="nav-icon">📖</span> 简介 Intro
+      </button>
+      <button class="nav-btn" data-page="poem" aria-controls="page-poem">
+        <span class="nav-icon">🖋️</span> 族诗 Poem
+      </button>
+      <button class="nav-btn" data-page="genealogy" aria-controls="page-genealogy">
+        <span class="nav-icon">📜</span> 世系 Genealogy
+      </button>
+      <button class="nav-btn" data-page="tree" aria-controls="page-tree">
+        <span class="nav-icon">🌳</span> 树图 Tree
+      </button>
+    </nav>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="site-main">
+
+      <!-- ===== INTRO PAGE ===== -->
+      <section id="page-intro" class="page active" role="tabpanel">
+<!-- ============================================================
+  PAGE 1: INTRODUCTION (#intro)
+  ============================================================ -->
+<div id="intro" class="page-section">
+
+  <!-- ===== HEADER ===== -->
+  <div class="page-header">
+    <h1 class="page-title">胡氏族谱</h1>
+    <p class="page-subtitle">Hu Clan Genealogy</p>
+  </div>
+
+  <!-- ===== ABOUT / 关于 ===== -->
+  <div class="content-card">
+    <div class="bilingual-row">
+      <div class="bilingual-block">
+        <p class="zh">这个互动家谱记录了胡氏家族四千多年的世系传承——从黄帝（公元前2698年）至今。涵盖了从安定（宁夏）到广东再到海外的婚姻、后代及各分支。</p>
+      </div>
+      <div class="bilingual-block">
+        <p class="en">This interactive family tree documents the Hu (胡) clan lineage spanning over 4,000 years — from the Yellow Emperor (2698 BCE) to the present day. It captures marriages, descendants, and the branches that spread from Anding (Ningxia) to Guangdong, and eventually overseas.</p>
+      </div>
     </div>
+  </div>
 
-    <!-- ===== INTRODUCTION PAGE ===== -->
-    <div class="page" id="page-intro">
-      <div class="content-page">
-        <h2>胡氏族譜 Hu Clan Genealogy</h2>
+  <!-- ===== CLAN ORIGINS / 族源 ===== -->
+  <div class="content-card">
+    <h2 class="section-heading">📜 族源 Clan Origins</h2>
+    <div class="bilingual-row">
+      <div class="bilingual-block">
+        <p class="zh">胡氏源出黄帝轩辕氏，传至虞舜。舜帝三十三世孙胡公媯满，于西周初年受封于陈（今河南淮阳），因谥号"胡公"，为胡氏得姓始祖。重要分支安定胡氏，定居今宁夏固原。</p>
+      </div>
+      <div class="bilingual-block">
+        <p class="en">The Hu surname traces back to the Yellow Emperor (黄帝) and Emperor Shun (虞舜). Duke Hu Gui Man (胡公媯满), enfeoffed as ruler of Chen State (陈国) ca. 1046 BCE, is regarded as the founding ancestor of the Hu surname. The Anding Hu (安定胡氏) branch, centered in present-day Guyuan, Ningxia, became the most prestigious lineage.</p>
+      </div>
+    </div>
+  </div>
 
-        <h3>关于本网站 About This Site</h3>
-        <p>This interactive family tree documents the Hu (胡) clan lineage across multiple generations. From founding ancestors to the youngest generation, the tree captures marriages, descendants, and the branches that spread across villages and overseas.</p>
-
-        <h3>网站特色 Features</h3>
-        <ul>
-          <li>互動式世系图 — Interactive family tree with collapse/expand</li>
-          <li>八大分支彩色标识 — 8 color-coded branches for easy identification</li>
-          <li>即时搜寻 — Real-time name search with auto-expand</li>
-          <li>中英双语 — Bilingual Chinese/English content</li>
-        </ul>
-
-        <h3>家族源流 Clan Origins</h3>
-        <p>The Hu surname traces back to the Yellow Emperor (黄帝) and Emperor Shun (虞舜). Duke Hu Gui Man (胡公媯滿), enfeoffed as ruler of Chen State (陈国) ca. 1046 BCE, is regarded as the founding ancestor of the Hu surname.</p>
-        <p>The Anding Hu (安定胡氏) branch, centered in present-day Guyuan, Ningxia, became the most prestigious lineage. From there, branches spread across China and eventually overseas.</p>
-
-        <h3>分支概览 Branches at a Glance</h3>
-        <p>The tree contains 9 branches, each shown in a distinct color:</p>
-        <div class="branch-list">
-          <div class="branch-item"><span class="branch-dot" style="background:#3498db"></span> 叟和公 — Founding ancestor</div>
-          <div class="branch-item"><span class="branch-dot" style="background:#27ae60"></span> 旺忠公 — Early lineage</div>
-          <div class="branch-item"><span class="branch-dot" style="background:#f39c12"></span> 清和公 — Side branch</div>
-          <div class="branch-item"><span class="branch-dot" style="background:#9b59b6"></span> 维显公 — Major branch</div>
-          <div class="branch-item"><span class="branch-dot" style="background:#e74c3c"></span> 维达公 — Major branch</div>
-          <div class="branch-item"><span class="branch-dot" style="background:#e67e22"></span> 维富公 — Major branch</div>
-          <div class="branch-item"><span class="branch-dot" style="background:#e84393"></span> 维豪公 — Major branch</div>
-          <div class="branch-item"><span class="branch-dot" style="background:#95a5a6"></span> 维有公 — Minor branch</div>
-          <div class="branch-item"><span class="branch-dot" style="background:#1abc9c"></span> 维源公 — Minor branch</div>
+  <!-- ===== FEATURES / 特色 ===== -->
+  <div class="content-card">
+    <h2 class="section-heading">✨ 特色 Features</h2>
+    <div class="features-grid">
+      <div class="feature-item">
+        <span class="feature-icon">🌳</span>
+        <div>
+          <h3 class="feature-label">互动世系图</h3>
+          <p class="feature-desc">Interactive tree with collapse/expand</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">🎨</span>
+        <div>
+          <h3 class="feature-label">9色分支</h3>
+          <p class="feature-desc">9 color-coded branches</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">🔍</span>
+        <div>
+          <h3 class="feature-label">即时搜索</h3>
+          <p class="feature-desc">Real-time search, auto-expand ancestors</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">🌐</span>
+        <div>
+          <h3 class="feature-label">中英双语</h3>
+          <p class="feature-desc">Chinese + English throughout</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">📱</span>
+        <div>
+          <h3 class="feature-label">响应式</h3>
+          <p class="feature-desc">Works on desktop, tablet, mobile</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">💡</span>
+        <div>
+          <h3 class="feature-label">悬浮提示</h3>
+          <p class="feature-desc">Hover for details &amp; family path</p>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- ===== GENERATION POEM PAGE ===== -->
-    <div class="page" id="page-poem">
-      <div class="content-page">
-        <h2>胡氏字辈诗 — Hu Clan Generation Poem</h2>
+  <!-- ===== 9 BRANCHES / 九大分支 ===== -->
+  <div class="content-card">
+    <h2 class="section-heading">🌿 九大分支 9 Branches</h2>
+    <div class="branches-list">
+      <span class="branch-tag" style="--tag-color:#9b59b6;">维显公 WX</span>
+      <span class="branch-tag" style="--tag-color:#e74c3c;">维达公 WD</span>
+      <span class="branch-tag" style="--tag-color:#e67e22;">维富公 WF</span>
+      <span class="branch-tag" style="--tag-color:#e84393;">维豪公 WH</span>
+      <span class="branch-tag" style="--tag-color:#1abc9c;">维源公 WY</span>
+      <span class="branch-tag" style="--tag-color:#95a5a6;">维有公 WU</span>
+      <span class="branch-tag" style="--tag-color:#f39c12;">清和公 QH</span>
+      <span class="branch-tag" style="--tag-color:#27ae60;">旺忠公 WZ</span>
+      <span class="branch-tag" style="--tag-color:#3498db;">叟和公 SH</span>
+    </div>
+  </div>
 
-        <div class="card poem-section">
-          <div class="poem-line">
-            <span class="char">公</span><span class="char">甫</span><span class="char">柱</span><span class="char">襄</span><span class="char">协</span>
-            <span class="char">奕</span><span class="char">世</span><span class="char">永</span><span class="char">昌</span><span class="char">和</span>
-          </div>
-          <div class="poem-line">
-            <span class="char">维</span><span class="char">持</span><span class="char">忠</span><span class="char">厚</span><span class="char">道</span>
-            <span class="char">连</span><span class="char">捷</span><span class="char">文</span><span class="char">物</span><span class="char">魁</span>
-          </div>
-        </div>
+</div><!-- /intro -->
+</section>
 
-        <h3>How It Works</h3>
+      <!-- ===== POEM PAGE ===== -->
+      <section id="page-poem" class="page" role="tabpanel">
+<div id="poem" class="page-section">
 
-        <div class="poem-desc">
-          <div>
-            <h4>如何运作 (中文)</h4>
-            <p>胡氏家族男孩出生后，取两个字的名。第一个字是辈分字（由诗中固定），第二个字由父母选擇。同辈兄弟共用同一字，强化家族认同。</p>
-            <ul>
-              <li>公字辈：胡公X</li>
-              <li>甫字辈：胡甫X</li>
-              <li>依次类推</li>
-            </ul>
-          </div>
-          <div>
-            <h4>How It Works (English)</h4>
-            <p>Each boy gets a two-character given name. The first character is fixed by the poem (generation), the second chosen by parents. Cousins share the first character.</p>
-            <ul>
-              <li>公 generation: Hu Gong X</li>
-              <li>甫 generation: Hu Fu X</li>
-              <li>And so on.</li>
-            </ul>
-          </div>
-        </div>
+  <div class="page-header">
+    <h1 class="page-title">胡氏字辈诗</h1>
+    <p class="page-subtitle">Hu Clan Generation Poem</p>
+  </div>
 
-        <h3>The Ancestor's Intent</h3>
-
-        <div class="poem-desc">
-          <div>
-            <h4>先祖寄意 (中文)</h4>
-            <p>第一行「公甫柱襄协奕世永昌和」致敬奠基者，表达对家族世代昌盛团结的愿望。</p>
-            <p>第二行「维持忠厚道连捷文物魁」转向道德教诲与科举功名的期望。</p>
-            <p>整体脉络：尊崇先辈 → 和睦共处 → 绵延不绝 → 践行美德 → 以学成就非凡。</p>
-          </div>
-          <div>
-            <h4>The Ancestor's Intent (English)</h4>
-            <p>Line 1 honours the founders and wishes for enduring prosperity and unity.</p>
-            <p>Line 2 instructs in loyalty, virtue, and academic achievement.</p>
-            <p>Arc: Honour the past → Live in harmony → Endure → Pursue virtue → Achieve through learning.</p>
-          </div>
-        </div>
-
-        <h3>Why Gaps Exist</h3>
-
-        <div class="poem-desc">
-          <div>
-            <h4>字辈斷層原因 (中文)</h4>
-            <ul>
-              <li>字义过时 — 部分古字现代父母认为老土难读</li>
-              <li>迁徙海外 — 与祖祠失联，字辈失传</li>
-              <li>现代取名偏好 — 依喜好而非辈分</li>
-              <li>族譜遗失 — 字辈随之失传</li>
-            </ul>
-          </div>
-          <div>
-            <h4>Why Gaps Exist (English)</h4>
-            <ul>
-              <li>Outdated characters</li>
-              <li>Migration/diaspora broke oral tradition</li>
-              <li>Modern naming preferences</li>
-              <li>Lost genealogies</li>
-            </ul>
-          </div>
-        </div>
+  <!-- ===== THE POEM ===== -->
+  <div class="poem-card">
+    <div class="poem-display">
+      <div class="poem-line">
+        <span class="poem-char">公</span>
+        <span class="poem-char">甫</span>
+        <span class="poem-char">柱</span>
+        <span class="poem-char">襄</span>
+        <span class="poem-char">协</span>
+      </div>
+      <div class="poem-line">
+        <span class="poem-char">奕</span>
+        <span class="poem-char">世</span>
+        <span class="poem-char">永</span>
+        <span class="poem-char">昌</span>
+        <span class="poem-char">和</span>
+      </div>
+      <div class="poem-line">
+        <span class="poem-char">维</span>
+        <span class="poem-char">持</span>
+        <span class="poem-char">忠</span>
+        <span class="poem-char">厚</span>
+        <span class="poem-char">道</span>
+      </div>
+      <div class="poem-line">
+        <span class="poem-char">连</span>
+        <span class="poem-char">捷</span>
+        <span class="poem-char">文</span>
+        <span class="poem-char">物</span>
+        <span class="poem-char">魁</span>
       </div>
     </div>
+  </div>
 
-    <!-- ===== GENEALOGY PAGE ===== -->
-    <div class="page" id="page-genealogy">
-      <div class="content-page genealogy-full">
-        <h2>胡氏族譜文獻 — Hu Clan Genealogy Record</h2>
-        <p class="subtitle">完整世系记录，从黄帝至明清时期</p>
+  <!-- ===== LINE-BY-LINE TRANSLATION ===== -->
+  <div class="content-card">
+    <h2 class="section-heading">📖 逐句释义 Line-by-Line Meaning</h2>
+    <table class="poem-table">
+      <thead>
+        <tr>
+          <th class="col-char">中文</th>
+          <th class="col-en">English Meaning</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="cell-char">公甫柱襄协</td>
+          <td class="cell-en">Ancestral founding, pillars of harmony</td>
+        </tr>
+        <tr>
+          <td class="cell-char">奕世永昌和</td>
+          <td class="cell-en">Through endless generations, lasting peace</td>
+        </tr>
+        <tr>
+          <td class="cell-char">维持忠厚道</td>
+          <td class="cell-en">Uphold loyalty, generosity, the virtuous way</td>
+        </tr>
+        <tr>
+          <td class="cell-char">连捷文物魁</td>
+          <td class="cell-en">Swift successive triumphs — masters of letters</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-        <!-- ===== SECTION 1 ===== -->
-        <h3>一、黄帝至虞舜世系</h3>
-        <p class="en">From the Yellow Emperor (Xuanyuan) to Emperor Shun of Yu — 9 generations.</p>
-        <table class="gen-table">
-          <thead><tr><th>黄帝世代</th><th>西元年份</th><th>朝代</th><th>继承人</th><th>子嗣</th></tr></thead>
-          <tbody>
-            <tr><td>1</td><td>前2698~前2597</td><td>黄帝</td><td>轩辕氏</td><td>玄囂、昌意、子安</td></tr>
-            <tr><td>2</td><td>前2598~前2515</td><td></td><td>昌意</td><td>顓頊</td></tr>
-            <tr><td>3</td><td>前2514~前2437</td><td></td><td>顓頊</td><td>窮蟬</td></tr>
-            <tr><td>4</td><td></td><td></td><td>窮蟬</td><td>敬康</td></tr>
-            <tr><td>5</td><td></td><td></td><td>敬康</td><td>句望</td></tr>
-            <tr><td>6</td><td></td><td></td><td>句望</td><td>橋牛</td></tr>
-            <tr><td>7</td><td></td><td></td><td>橋牛</td><td>瞽瞍</td></tr>
-            <tr><td>8</td><td></td><td></td><td>瞽瞍</td><td>重华（舜帝）</td></tr>
-            <tr><td>9</td><td>前2257~前2208</td><td>虞</td><td>帝舜</td><td></td></tr>
-          </tbody>
-        </table>
-        <p class="note">从黄帝至虞舜共传9世。</p>
-
-        <!-- ===== SECTION 2 ===== -->
-        <h3>二、虞舜至胡公滿世系</h3>
-        <p class="en">From Emperor Shun to Duke Hu Gui Man, founding ancestor of the Hu surname — 34 generations.</p>
-        <table class="gen-table">
-          <thead><tr><th>世代</th><th>西元年份</th><th>朝代</th><th>继承人</th><th>子嗣</th></tr></thead>
-          <tbody>
-            <tr><td>9</td><td>前2257~前2208</td><td>虞舜</td><td>虞舜</td><td>商均</td></tr>
-            <tr><td>10</td><td>前2207~</td><td>商</td><td>商均</td><td>箕伯</td></tr>
-            <tr><td>11</td><td></td><td></td><td>箕伯</td><td>强余</td></tr>
-            <tr><td>12</td><td></td><td></td><td>强余</td><td>虞頡</td></tr>
-            <tr><td>13</td><td>约~前1766</td><td></td><td>虞思</td><td>有龙</td></tr>
-            <tr><td>14</td><td></td><td></td><td>有龙</td><td>寿肸</td></tr>
-            <tr><td>15</td><td></td><td></td><td>寿肸</td><td>叔仪</td></tr>
-            <tr><td>16</td><td></td><td></td><td>叔仪</td><td>康仲</td></tr>
-            <tr><td>17</td><td></td><td></td><td>康仲</td><td>祖媯</td></tr>
-            <tr><td>18</td><td></td><td></td><td>祖媯</td><td>期、发</td></tr>
-            <tr><td>19</td><td></td><td></td><td>发</td><td>媯方</td></tr>
-            <tr><td>20</td><td></td><td></td><td>媯方</td><td>振</td></tr>
-            <tr><td>21</td><td></td><td></td><td>振</td><td>维</td></tr>
-            <tr><td>22</td><td></td><td></td><td>维</td><td>寿固</td></tr>
-            <tr><td>23</td><td></td><td></td><td>寿固</td><td>敖</td></tr>
-            <tr><td>24</td><td></td><td></td><td>敖</td><td>胜</td></tr>
-            <tr><td>25</td><td></td><td></td><td>胜</td><td>元捷</td></tr>
-            <tr><td>26</td><td></td><td></td><td>元捷</td><td>偃</td></tr>
-            <tr><td>27</td><td></td><td></td><td>偃</td><td>姑猛</td></tr>
-            <tr><td>28</td><td></td><td></td><td>姑猛</td><td>公允</td></tr>
-            <tr><td>29</td><td></td><td></td><td>公允</td><td>藺</td></tr>
-            <tr><td>30</td><td></td><td></td><td>藺</td><td>填叔</td></tr>
-            <tr><td>31</td><td></td><td></td><td>填叔</td><td>野</td></tr>
-            <tr><td>32</td><td></td><td></td><td>野</td><td>無斁</td></tr>
-            <tr><td>33</td><td></td><td></td><td>無斁</td><td>留</td></tr>
-            <tr><td>34</td><td></td><td></td><td>留</td><td>叔正</td></tr>
-            <tr><td>35</td><td></td><td></td><td>叔正</td><td>獻子</td></tr>
-            <tr><td>36</td><td></td><td></td><td>獻子</td><td>亞寿</td></tr>
-            <tr><td>37</td><td></td><td></td><td>亞寿</td><td>原寿</td></tr>
-            <tr><td>38</td><td></td><td></td><td>原寿</td><td>夢延</td></tr>
-            <tr><td>39</td><td></td><td></td><td>夢延</td><td>闕父</td></tr>
-            <tr><td>40</td><td>前1150~前1094</td><td>西周</td><td>胡公滿（媯滿）</td><td>犀候、皋羊</td></tr>
-          </tbody>
-        </table>
-        <p class="note">从虞舜至胡公媯滿共传34世。因谥号「胡公」，故为胡氏得姓始祖。</p>
-
-        <!-- ===== SECTION 3 ===== -->
-        <h3>三、陈国君主世系</h3>
-        <p class="en">Rulers of the State of Chen — from Duke Hu (ca. 1046 BCE) through the Spring and Autumn period.</p>
-        <table class="gen-table">
-          <thead><tr><th>朝代</th><th>谥号</th><th>姓</th><th>名</th><th>子嗣</th><th>说明</th></tr></thead>
-          <tbody>
-            <tr><td>西周</td><td>胡公</td><td>媯</td><td>滿</td><td>犀候、皋羊</td><td>陈国开国君主，胡氏得姓始祖</td></tr>
-            <tr><td>西周</td><td>申公</td><td>媯</td><td>犀候</td><td>突、庚</td><td></td></tr>
-            <tr><td>西周</td><td>相公</td><td>媯</td><td>皋羊</td><td></td><td></td></tr>
-            <tr><td>西周</td><td>孝公</td><td>媯</td><td>突</td><td>圉</td><td></td></tr>
-            <tr><td>西周</td><td>慎公</td><td>媯</td><td>圉</td><td>宁</td><td></td></tr>
-            <tr><td>西周</td><td>幽公</td><td>媯</td><td>宁</td><td>孝</td><td></td></tr>
-            <tr><td>西周</td><td>僖公</td><td>媯</td><td>孝</td><td>灵、宣</td><td></td></tr>
-            <tr><td>西周</td><td>武公</td><td>媯</td><td>灵</td><td>说、燮</td><td></td></tr>
-            <tr><td>西周</td><td>夷公</td><td>媯</td><td>说</td><td></td><td></td></tr>
-            <tr><td>春秋</td><td>平公</td><td>媯</td><td>燮</td><td></td><td></td></tr>
-            <tr><td>春秋</td><td>文公</td><td>媯</td><td>圉</td><td>鲍、佗</td><td></td></tr>
-            <tr><td>春秋</td><td>桓公</td><td>媯</td><td>鲍</td><td>免、躍、林、杵臼</td><td></td></tr>
-            <tr><td>春秋</td><td>厲公</td><td>媯</td><td>陀</td><td>躍</td><td></td></tr>
-            <tr><td>春秋</td><td>利公</td><td>媯</td><td>躍</td><td></td><td></td></tr>
-            <tr><td>春秋</td><td>庄公</td><td>媯</td><td>林</td><td></td><td></td></tr>
-            <tr><td>春秋</td><td>宣公</td><td>媯</td><td>杵臼</td><td>御寇、款、子西、子仲、子楚</td><td></td></tr>
-            <tr><td>春秋</td><td>穆公</td><td>媯</td><td>款</td><td>朔</td><td></td></tr>
-            <tr><td>春秋</td><td>共公</td><td>媯</td><td>朔</td><td>平国</td><td></td></tr>
-            <tr><td>春秋</td><td>灵公</td><td>媯</td><td>平国</td><td>午</td><td></td></tr>
-            <tr><td>春秋</td><td>—</td><td>媯</td><td>夏徵舒</td><td></td><td>自立为君</td></tr>
-            <tr><td>春秋</td><td>成公</td><td>媯</td><td>午</td><td>彊、招、过、黄</td><td></td></tr>
-            <tr><td>春秋</td><td>哀公</td><td>媯</td><td>彊</td><td>偃师、留、胜</td><td></td></tr>
-            <tr><td>春秋</td><td>悼公</td><td>媯</td><td>偃师</td><td>吴</td><td></td></tr>
-            <tr><td>春秋</td><td>公子</td><td>媯</td><td>留</td><td></td><td>陈滅于楚</td></tr>
-          </tbody>
-        </table>
-
-        <!-- ===== SECTION 4 ===== -->
-        <h3>四、陈国君主年代表</h3>
-        <p class="en">Chen State ruler chronology with reign dates.</p>
-        <table class="gen-table">
-          <thead><tr><th>君次</th><th>谥号</th><th>西元年份</th><th>在位年</th><th>朝代</th></tr></thead>
-          <tbody>
-            <tr><td>1</td><td>胡公</td><td>前1046~前986</td><td>60</td><td>西周</td></tr>
-            <tr><td>2</td><td>申公</td><td>前985~前960</td><td>25</td><td>西周</td></tr>
-            <tr><td>3</td><td>相公</td><td>前960~前915</td><td>45</td><td>西周</td></tr>
-            <tr><td>4</td><td>孝公</td><td>前915~前879</td><td>36</td><td>西周</td></tr>
-            <tr><td>5</td><td>慎公</td><td>前879~前856</td><td>23</td><td>西周</td></tr>
-            <tr><td>6</td><td>幽公</td><td>前855~前832</td><td>23</td><td>西周</td></tr>
-            <tr><td>7</td><td>僖公</td><td>前832~前796</td><td>36</td><td>西周</td></tr>
-            <tr><td>8</td><td>武公</td><td>前796~前781</td><td>15</td><td>西周</td></tr>
-            <tr><td>9</td><td>夷公</td><td>前781~前778</td><td>3</td><td>西周</td></tr>
-            <tr><td>10</td><td>平公</td><td>前778~前755</td><td>23</td><td>春秋</td></tr>
-            <tr><td>11</td><td>文公</td><td>前755~前745</td><td>10</td><td>春秋</td></tr>
-            <tr><td>12</td><td>桓公</td><td>前745~前707</td><td>38</td><td>春秋</td></tr>
-            <tr><td>13</td><td>厲公</td><td>前707~前700</td><td>7</td><td>春秋</td></tr>
-            <tr><td>14</td><td>利公</td><td>前700</td><td>5月</td><td>春秋</td></tr>
-            <tr><td>15</td><td>庄公</td><td>前700~前693</td><td>7</td><td>春秋</td></tr>
-            <tr><td>16</td><td>宣公</td><td>前693~前648</td><td>45</td><td>春秋</td></tr>
-            <tr><td>17</td><td>穆公</td><td>前648~前632</td><td>16</td><td>春秋</td></tr>
-            <tr><td>18</td><td>共公</td><td>前632~前614</td><td>18</td><td>春秋</td></tr>
-            <tr><td>19</td><td>灵公</td><td>前614~前599</td><td>15</td><td>春秋</td></tr>
-            <tr><td>—</td><td>夏徵舒</td><td>前599~前598</td><td>1</td><td>春秋</td></tr>
-            <tr><td>20</td><td>成公</td><td>前598~前568</td><td>30</td><td>春秋</td></tr>
-            <tr><td>21</td><td>哀公</td><td>前568~前534</td><td>34</td><td>春秋</td></tr>
-            <tr><td>22</td><td>悼公</td><td>前534</td><td>數月</td><td>春秋</td></tr>
-          </tbody>
-        </table>
-
-        <!-- ===== SECTION 5 ===== -->
-        <h3>五、安定胡氏世系</h3>
-        <p class="en">Anding Hu lineage — the most prestigious Hu branch, centered in Anding (present-day Guyuan, Ningxia).</p>
-        <table class="gen-table">
-          <thead><tr><th>朝代</th><th>爵位</th><th>名諱</th><th>子嗣</th></tr></thead>
-          <tbody>
-            <tr><td>西漢</td><td></td><td>胡建</td><td>涵</td></tr>
-            <tr><td>西漢</td><td></td><td>胡涵</td><td>文</td></tr>
-            <tr><td>西漢</td><td></td><td>胡文</td><td>敏</td></tr>
-            <tr><td>西漢</td><td></td><td>胡敏</td><td>崇</td></tr>
-            <tr><td>西漢</td><td></td><td>胡崇</td><td>惠</td></tr>
-            <tr><td>新莽</td><td></td><td>胡惠</td><td>剛</td></tr>
-            <tr><td>东漢</td><td></td><td>胡剛</td><td>玄成</td></tr>
-            <tr><td>东漢</td><td></td><td>胡玄成</td><td>聰</td></tr>
-            <tr><td>东漢</td><td></td><td>胡聰</td><td>崇禧、伯禧</td></tr>
-            <tr><td>东漢</td><td></td><td>胡崇禧</td><td>贤、赞</td></tr>
-            <tr><td>东漢</td><td></td><td>胡贤</td><td>辉、腾</td></tr>
-            <tr><td>东漢</td><td></td><td>胡辉</td><td>广</td></tr>
-            <tr><td>东漢</td><td>恭侯</td><td>胡广</td><td>平、华</td></tr>
-            <tr><td>东漢</td><td></td><td>胡平</td><td>珏、班</td></tr>
-            <tr><td>三国</td><td></td><td>胡班</td><td>辛</td></tr>
-            <tr><td>三国</td><td></td><td>胡辛</td><td>貞</td></tr>
-            <tr><td>三国</td><td></td><td>胡貞</td><td>质</td></tr>
-            <tr><td>三国</td><td>貞侯</td><td>胡质</td><td>威</td></tr>
-            <tr><td>西晉</td><td></td><td>胡威</td><td>宪</td></tr>
-            <tr><td>西晉</td><td></td><td>胡宪</td><td>彪、子範</td></tr>
-            <tr><td>西晉</td><td></td><td>胡彪</td><td>奮</td></tr>
-            <tr><td></td><td></td><td>胡奮</td><td>华</td></tr>
-            <tr><td>东晉</td><td></td><td>胡华</td><td>哲</td></tr>
-            <tr><td>东晉</td><td></td><td>胡哲</td><td>明之、儒</td></tr>
-            <tr><td>东晉</td><td></td><td>胡明之</td><td>德基</td></tr>
-            <tr><td>十六国</td><td></td><td>胡德基</td><td>懷宁</td></tr>
-          </tbody>
-        </table>
-        <p class="note">胡质定居安定（今宁夏固原），形成「安定胡氏家族」。</p>
-
-        <!-- ===== SECTION 6 ===== -->
-        <h3>六、世代编号对照表（西漢至西晉）</h3>
-        <p class="en">Generation numbering spanning Western Han to Western Jin (ca. 80 BCE – 275 CE).</p>
-        <table class="gen-table">
-          <thead><tr><th>总世代</th><th>分支世代</th><th>西元年份</th><th>朝代</th><th>爵位</th></tr></thead>
-          <tbody>
-            <tr><td>74</td><td>33</td><td></td><td>西漢</td><td></td></tr>
-            <tr><td>75</td><td>34</td><td>前80</td><td>西漢</td><td></td></tr>
-            <tr><td>76</td><td>35</td><td></td><td>西漢</td><td></td></tr>
-            <tr><td>77</td><td>36</td><td>前80</td><td>西漢</td><td></td></tr>
-            <tr><td>78</td><td>37</td><td>前73</td><td>西漢</td><td></td></tr>
-            <tr><td>79</td><td>38</td><td></td><td>西漢</td><td></td></tr>
-            <tr><td>80</td><td>39</td><td>前48</td><td>西漢</td><td></td></tr>
-            <tr><td>81</td><td>40</td><td>前32</td><td>西漢</td><td></td></tr>
-            <tr><td>82</td><td>41</td><td>25</td><td>新莽</td><td></td></tr>
-            <tr><td>83</td><td>42</td><td></td><td>东漢</td><td></td></tr>
-            <tr><td>84</td><td>43</td><td></td><td>东漢</td><td></td></tr>
-            <tr><td>85</td><td>44</td><td></td><td>东漢</td><td></td></tr>
-            <tr><td>86</td><td>45</td><td></td><td>东漢</td><td></td></tr>
-            <tr><td>87</td><td>46</td><td>136</td><td>东漢</td><td></td></tr>
-            <tr><td>88</td><td>47</td><td></td><td>东漢</td><td></td></tr>
-            <tr><td>89</td><td>48</td><td></td><td>东漢</td><td>恭侯</td></tr>
-            <tr><td>90</td><td>49</td><td></td><td>东漢</td><td></td></tr>
-            <tr><td>91</td><td>50</td><td></td><td>三国</td><td></td></tr>
-            <tr><td>92</td><td>51</td><td></td><td>三国</td><td></td></tr>
-            <tr><td>93</td><td>52</td><td>220</td><td>三国</td><td></td></tr>
-            <tr><td>94</td><td>53</td><td></td><td>三国</td><td></td></tr>
-            <tr><td>95</td><td>54</td><td>275</td><td>三国</td><td>貞侯</td></tr>
-            <tr><td>96</td><td>55</td><td></td><td>西晉</td><td></td></tr>
-            <tr><td>97</td><td>56</td><td></td><td>西晉</td><td></td></tr>
-            <tr><td>98</td><td>57</td><td></td><td>西晉</td><td></td></tr>
-            <tr><td>99</td><td>58</td><td></td><td>西晉</td><td></td></tr>
-          </tbody>
-        </table>
-
-        <h3>宋元世代编号对照表</h3>
-        <p class="en">Song / Yuan dynasty generation numbers.</p>
-        <table class="gen-table">
-          <thead><tr><th>总世代</th><th>分支世</th><th>世系</th><th>次系</th><th>朝代</th></tr></thead>
-          <tbody>
-            <tr><td>131</td><td>90</td><td>4</td><td></td><td>宋</td></tr>
-            <tr><td>132</td><td>91</td><td>5</td><td></td><td>宋</td></tr>
-            <tr><td>133</td><td>92</td><td>6</td><td></td><td>宋</td></tr>
-            <tr><td>134</td><td>93</td><td>7</td><td></td><td>宋</td></tr>
-            <tr><td>135</td><td>94</td><td>8</td><td></td><td>宋</td></tr>
-            <tr><td>136</td><td>95</td><td>9</td><td></td><td>宋</td></tr>
-            <tr><td>137</td><td>96</td><td>10</td><td></td><td>宋</td></tr>
-            <tr><td>138</td><td>97</td><td>11</td><td></td><td>宋</td></tr>
-            <tr><td>139</td><td>98</td><td>12</td><td></td><td>宋</td></tr>
-            <tr><td>140</td><td>99</td><td>13</td><td></td><td>宋</td></tr>
-            <tr><td>141</td><td>100</td><td>14</td><td></td><td>宋</td></tr>
-            <tr><td>142</td><td>101</td><td>15</td><td>1</td><td>宋</td></tr>
-            <tr><td>143</td><td>102</td><td>16</td><td>2</td><td>元</td></tr>
-            <tr><td>144</td><td>103</td><td>17</td><td>3</td><td>元</td></tr>
-            <tr><td>145</td><td>104</td><td>18</td><td>4</td><td>元</td></tr>
-          </tbody>
-        </table>
-
-        <!-- ===== SECTION 7 ===== -->
-        <h3>七、安定胡氏先祖名录</h3>
-        <table class="gen-table">
-          <thead><tr><th>名諱</th><th>備注</th></tr></thead>
-          <tbody>
-            <tr><td>赞</td><td></td></tr>
-            <tr><td>腾</td><td></td></tr>
-            <tr><td>华</td><td></td></tr>
-            <tr><td>班</td><td></td></tr>
-            <tr><td>子範</td><td></td></tr>
-            <tr><td>之、儒</td><td></td></tr>
-            <tr><td>基</td><td></td></tr>
-            <tr><td>宁</td><td></td></tr>
-            <tr><td>伯禧</td><td></td></tr>
-          </tbody>
-        </table>
-
-        <!-- ===== SECTION 8 ===== -->
-        <h3>八、莲溪村胡氏世系</h3>
-        <p class="en">The Lianxi Village branch — migrated from Nanchang, Jiangxi to Guangdong (Ming to Qing dynasties, ca. 1504–1787).</p>
-        <table class="gen-table">
-          <thead><tr><th>世次</th><th>名諱</th><th>子嗣</th><th>生平</th></tr></thead>
-          <tbody>
-            <tr><td>1</td><td>连溪</td><td>景文、景行</td><td>諱寅，字朝瞻。创立莲溪村。终于弘治十七年甲子（1504）三月十三</td></tr>
-            <tr><td>2</td><td>景文</td><td>友直、友誠</td><td>号乐恒</td></tr>
-            <tr><td>3</td><td>友誠</td><td>孔湛、孔澤、孔泓</td><td>号靜江，字以实。置田産为祠祭之业</td></tr>
-            <tr><td>4</td><td>孔泓</td><td>公显、公熙</td><td>号堅白</td></tr>
-            <tr><td>5</td><td>公熙</td><td>明彥、英彥</td><td>諱爌，号覺宇。恩平学庠生。寿八十一</td></tr>
-            <tr><td>6</td><td>英彥</td><td>奇遇、子达、子琳、子祥、子充</td><td>諱穗秀，官名起凤。寿八十六</td></tr>
-            <tr><td>7</td><td>子琳</td><td>勤丽、勤翼</td><td>諱自琳。寿八十二</td></tr>
-            <tr><td>8</td><td>勤翼</td><td>协溥、协湛</td><td>寿五十二</td></tr>
-            <tr><td>9</td><td>协湛</td><td>奕賀、奕賞、奕贵、奕賽</td><td>寿四十二</td></tr>
-            <tr><td>10</td><td>奕賀</td><td>珥世、衡世、雅世、靄世</td><td>諱宗聖，国子监太学生。寿六十一</td></tr>
-            <tr><td>11</td><td>珥世</td><td>秉仁、秉义、秉礼、秉智、秉信</td><td>諱石亭</td></tr>
-            <tr><td>12</td><td>秉智</td><td>乐昌、節昌、义昌</td><td></td></tr>
-            <tr><td>13</td><td>乐昌</td><td>清和</td><td></td></tr>
-            <tr><td>14</td><td>清和</td><td>维富、维有、维源、维豪、维显、维达</td><td></td></tr>
-            <tr><td>15</td><td>维显</td><td>龙赞、龙亿、龙科、龙森、龙弼、龙迪、龙勇</td><td></td></tr>
-          </tbody>
-        </table>
-        <p class="note">从连溪公至维显公共传34世，计约1,105年。</p>
-
-        <!-- ===== SECTION 9 ===== -->
-        <h3>九、祖源迁徙录</h3>
-        <p class="en">Ancestral migration records and burial sites — transcribed from the original clan genealogy.</p>
-        <div class="migration-text">
-          <p><strong>迁粵始祖记</strong></p>
-          <p>居江西南昌府南昌县之麦山村。在宋宝佑二年（1254年），宦游广东知广州事，寄居新会，去城百余里地，在开平的梁都（即现在的开平百合镇）娶妾卢氏，生一子良甫。及暮年，有从弟均寿公至，与之归，而卢太姚之母子独恋故土，不肯行，躲之，遂居焉。厥后竟不知佑祖之歿，所及十余世，历明、迄清。至清康熙己酉年（1669年），朴生翁接江西回书，始知佑祖葬于麦山上名石潭龟形艮寅山坤申向。</p>
-          <p><span class="en">[Summary: The ancestor served as an official in Guangzhou in 1254 (Song Dynasty). He settled in Xinhui, married Lady Lu in Kaiping, and his descendants have remained in Guangdong ever since.]</span></p>
-
-          <p><strong>祖墓记录</strong></p>
-          <p>祖终葬于旧村青龙嘴古名山豬兜西向。祖墳光緒八年岁次壬午（1882年）重修。</p>
-          <p>祖终葬于石岩嶺西向。光緒年间迁葬官潮坡，又名孩兒山。</p>
-          <p>祖终葬于麻慈嶺巳丙向。</p>
-
-          <p><strong>彥弘公</strong></p>
-          <p>字彥弘。祖行年五十大创基业，因工人以富戶取硇砂不敷，遂屈于獄，八月十二日，祖寿终焉，葬于官潮坡巳丙向。</p>
-
-          <p><strong>浩公</strong></p>
-          <p>諱浩，字叔广。祖寿八十六，终于九月初七日，葬于蜆崗大塘头土。</p>
-
-          <p><strong>朝瞻公</strong></p>
-          <p>諱寅，字朝瞻。创立莲溪村。终于弘治十七年甲子（1504年）三月十三，葬于土名大塘坑牛形丙午向。</p>
-        </div>
-
-        <!-- ===== SUMMARY ===== -->
-        <h3>附：家族源流概述</h3>
-        <div class="migration-text">
-          <p>中华民族胡姓，源出有虞氏。黄帝（轩辕氏）→ 昌意 → 顓頊 → 窮蟬 → 敬康 → 句望 → 橋牛 → 瞽瞍 → 虞舜（重华）。舜帝三十三世孙媯滿，于西周初年受封于陈（今河南淮阳），为陈国开国君主。因谥号「胡公」，其后裔遂以谥为姓，奉胡公滿为胡氏得姓始祖。</p>
-          <p>陈国传国二十余世，历西周至春秋。胡氏后裔中重要一支，定居安定（今宁夏固原），形成「安定胡氏家族」，为胡姓重要郡望。西漢至十六国时期，安定胡氏世系绵延不绝。</p>
-          <p>宋元时期，胡氏世代编号延续。至明代，有胡寅（字朝瞻）自江西南昌府南昌县之麦山村宦游广东，寄居新会，后定居开平，创立莲溪村。其后世繁衍，历明、清两朝，共传34世，计约1,105年。</p>
-          <p>此譜记載了从黄帝至明清时期胡氏家族完整的世系传承，是研究胡氏家族历史的重要文獻。</p>
-        </div>
-
+  <!-- ===== HOW IT WORKS ===== -->
+  <div class="content-card">
+    <h2 class="section-heading">🧩 字辈如何运作 How It Works</h2>
+    <div class="bilingual-row">
+      <div class="bilingual-block">
+        <p class="zh">字辈，又称派语、行第，是家族中用于区分辈分、命名排行的固定用字系统。每一代人在名字中嵌入一个特定的字，同辈者共用同一字，从而一眼可知长幼次序。胡氏字辈诗共二十字，划分五句，每句五字，构成完整的世代循环。从"公"字辈到"魁"字辈，每个字代表一代人，世代相承，不可逾越。</p>
+      </div>
+      <div class="bilingual-block">
+        <p class="en">The generation poem (字辈诗) is a fixed sequence of characters used to name each generation within the clan. Every person in the same generation embeds the same character in their given name, making seniority and generational rank immediately clear at a glance. The Hu clan poem contains 20 characters arranged in four 5-character lines. Each character marks one generation, from "Gong" (公) through "Kui" (魁).</p>
       </div>
     </div>
+  </div>
 
-    <!-- ===== FAMILY TREE PAGE ===== -->
-    <div class="page active" id="page-tree">
-      <div class="search-area">
-        <label for="searchBox">🔍 搜寻</label>
-        <input type="text" id="searchBox" placeholder="輸入姓名搜寻…" autocomplete="off">
-        <span class="search-count" id="searchCount"></span>
-        <span style="font-size:11px;color:#a09080">· 点选姓名高亮世系</span>
+  <!-- ===== THE ANCESTOR'S INTENT ===== -->
+  <div class="content-card">
+    <h2 class="section-heading">🎯 先祖寄意 The Ancestor's Intent</h2>
+    <div class="bilingual-row">
+      <div class="bilingual-block">
+        <p class="zh">胡氏先祖选定这二十个字，不仅仅是为了区分辈分，更是将家族的价值观与期望嵌入子孙的名字之中。头十字"公甫柱襄协·奕世永昌和"寄语后代铭记祖德、团结和睦、世代昌隆。后十字"维持忠厚道·连捷文物魁"则勉励后人持守忠厚之道，在文教事业中取得成就。每一个字都是一份嘱托，镌刻在族人的名字里，代代相传。</p>
       </div>
-      <div class="tree" id="tree"></div>
-      <div class="legend">
-        <span class="legend-item"><span class="legend-box" style="background:#c0392b">兒</span> 兒子</span>
-        <span class="legend-item"><span class="legend-box" style="background:#e67e22">女</span> 女兒</span>
-        <span class="legend-item"><span class="legend-box" style="background:#8e44ad">媳</span> 媳婦</span>
-        <span class="legend-item"><span class="legend-box" style="background:#2980b9">婿</span> 女婿</span>
-        <span class="legend-item"><span class="legend-box" style="background:#16a085">妻</span> 妻子</span>
-        <span class="legend-item"><span class="legend-box" style="background:#95a5a6">?</span> 不详</span>
-        <span class="legend-item" style="margin-left:auto;font-size:11px;color:#8a7a6a;">
-          棕色粗線 = 親子关系
-        </span>
+      <div class="bilingual-block">
+        <p class="en">The Hu ancestors chose these twenty characters not merely to mark generational rank, but to weave the clan's values and aspirations into the very names of their descendants. The first ten characters call upon later generations to honour ancestral virtue, maintain harmony, and ensure lasting prosperity. The final ten urge descendants to uphold loyalty and generosity, and to excel in scholarship and cultural achievement. Each character is a charge — inscribed in the bearer's name, passed down across generations.</p>
       </div>
     </div>
+  </div>
+
+  <!-- ===== WHY GAPS EXIST ===== -->
+  <div class="content-card">
+    <h2 class="section-heading">❓ 为何存在代际空白 Why Gaps Exist</h2>
+    <div class="bilingual-row">
+      <ul class="gap-list">
+        <li>
+          <span class="zh">迁徙导致字辈传承中断 — 部分族人迁往他乡后，未能及时获取新的字辈诗。</span>
+          <span class="en">Migration disrupted transmission — branches that moved away lacked access to updated generation poems.</span>
+        </li>
+        <li>
+          <span class="zh">战乱与动荡时期，家谱散佚，字辈记忆失传。</span>
+          <span class="en">Wars and upheaval caused genealogical records to be lost, taking the generation sequence with them.</span>
+        </li>
+        <li>
+          <span class="zh">不同分支采用不同字辈系统，后代合并时产生错位。</span>
+          <span class="en">Different branches adopted divergent naming systems, causing misalignment when lineages were later merged.</span>
+        </li>
+        <li>
+          <span class="zh">口传误记 — 世代久远，字辈顺序在口耳相传中出现偏差。</span>
+          <span class="en">Oral transmission errors — over many generations the exact sequence drifted through repeated telling.</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- /poem -->
+</section>
+
+      <!-- ===== GENEALOGY PAGE ===== -->
+      <section id="page-genealogy" class="page" role="tabpanel">
+<div id="genealogy" class="page-section">
+
+  <div class="page-header">
+    <h1 class="page-title">胡氏世系</h1>
+    <p class="page-subtitle">Hu Clan Genealogy Records</p>
+  </div>
+
+  <!-- ===== SECTION 1: 黄帝至虞舜世系 ===== -->
+  <div class="genealogy-section">
+    <h2 class="section-heading">一、黄帝至虞舜世系</h2>
+    <p class="section-desc">
+      <span class="zh">从黄帝（轩辕氏）至虞舜 — 共9世。</span>
+      <span class="en">From the Yellow Emperor (Xuanyuan) to Emperor Shun of Yu — 9 generations.</span>
+    </p>
+
+    <table class="gen-table">
+      <thead>
+        <tr>
+          <th>黄帝世代<br><span class="en-sm">Yellow Emperor Gen.</span></th>
+          <th>西元年份<br><span class="en-sm">Year (BCE)</span></th>
+          <th>朝代<br><span class="en-sm">Dynasty</span></th>
+          <th>继承人<br><span class="en-sm">Successor</span></th>
+          <th>子嗣<br><span class="en-sm">Offspring</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>前2698~前2597</td><td>黄帝</td><td>轩辕氏</td><td>玄嚣、昌意、子安</td></tr>
+        <tr><td>2</td><td>前2598~前2515</td><td></td><td>昌意</td><td>颛顼</td></tr>
+        <tr><td>3</td><td>前2514~前2437</td><td></td><td>颛顼</td><td>穷蝉</td></tr>
+        <tr><td>4</td><td></td><td></td><td>穷蝉</td><td>敬康</td></tr>
+        <tr><td>5</td><td></td><td></td><td>敬康</td><td>句望</td></tr>
+        <tr><td>6</td><td></td><td></td><td>句望</td><td>桥牛</td></tr>
+        <tr><td>7</td><td></td><td></td><td>桥牛</td><td>瞽瞍</td></tr>
+        <tr><td>8</td><td></td><td></td><td>瞽瞍</td><td>重华（舜帝）</td></tr>
+        <tr><td>9</td><td>前2257~前2208</td><td>虞</td><td>帝舜</td><td></td></tr>
+      </tbody>
+    </table>
+    <p class="table-note">从黄帝至虞舜共传9世。<span class="en-sm">From the Yellow Emperor to Emperor Shun: 9 generations.</span></p>
+  </div>
+
+  <!-- ===== SECTION 2: 虞舜至胡公满世系 ===== -->
+  <div class="genealogy-section">
+    <h2 class="section-heading">二、虞舜至胡公满世系</h2>
+    <p class="section-desc">
+      <span class="zh">从虞舜至胡公妫满，胡氏得姓始祖 — 共34世（黄帝世系第9至42代）。</span>
+      <span class="en">From Emperor Shun to Duke Hu Gui Man, founding ancestor of the Hu surname — 34 generations (Yellow Emperor Gen. 9 to 42).</span>
+    </p>
+
+    <div class="table-scroll">
+      <table class="gen-table">
+        <thead>
+          <tr>
+            <th>黄帝世代<br><span class="en-sm">Y.E. Gen.</span></th>
+            <th>西元年份<br><span class="en-sm">Year</span></th>
+            <th>朝代<br><span class="en-sm">Dynasty</span></th>
+            <th>诸侯国名<br><span class="en-sm">State</span></th>
+            <th>谥号<br><span class="en-sm">Title</span></th>
+            <th>继承人<br><span class="en-sm">Name</span></th>
+            <th>子嗣<br><span class="en-sm">Offspring</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>9</td><td>前2257~前2208</td><td>舜帝</td><td></td><td></td><td>虞舜</td><td>商均</td></tr>
+          <tr><td>10</td><td>前2207~</td><td>商</td><td></td><td></td><td>商均</td><td>箕伯</td></tr>
+          <tr><td>11</td><td></td><td></td><td></td><td></td><td>箕伯</td><td>强余</td></tr>
+          <tr><td>12</td><td></td><td></td><td></td><td></td><td>强余</td><td>虞颉</td></tr>
+          <tr><td>13</td><td>约~前1766</td><td></td><td></td><td></td><td>虞思</td><td>有龙</td></tr>
+          <tr><td>14</td><td></td><td></td><td></td><td></td><td>有龙</td><td>寿肸</td></tr>
+          <tr><td>15</td><td></td><td></td><td></td><td></td><td>寿肸</td><td>叔仪</td></tr>
+          <tr><td>16</td><td></td><td></td><td></td><td></td><td>叔仪</td><td>康仲</td></tr>
+          <tr><td>17</td><td></td><td></td><td></td><td></td><td>康仲</td><td>祖妫</td></tr>
+          <tr><td>18</td><td></td><td></td><td></td><td></td><td>祖妫</td><td>期、发</td></tr>
+          <tr><td>19</td><td></td><td></td><td></td><td>虞侯</td><td>发</td><td>妫方</td></tr>
+          <tr><td>20</td><td></td><td></td><td></td><td></td><td>妫方</td><td>振</td></tr>
+          <tr><td>21</td><td></td><td></td><td></td><td></td><td>振</td><td>维</td></tr>
+          <tr><td>22</td><td></td><td></td><td></td><td></td><td>维</td><td>寿固</td></tr>
+          <tr><td>23</td><td></td><td></td><td></td><td></td><td>寿固</td><td>敖</td></tr>
+          <tr><td>24</td><td></td><td></td><td></td><td></td><td>敖</td><td>胜</td></tr>
+          <tr><td>25</td><td></td><td></td><td></td><td></td><td>胜</td><td>元捷</td></tr>
+          <tr><td>26</td><td></td><td></td><td></td><td></td><td>元捷</td><td>偃</td></tr>
+          <tr><td>27</td><td></td><td></td><td></td><td></td><td>偃</td><td>姑猛</td></tr>
+          <tr><td>28</td><td></td><td></td><td></td><td></td><td>姑猛</td><td>公允</td></tr>
+          <tr><td>29</td><td></td><td></td><td></td><td></td><td>公允</td><td>蔺</td></tr>
+          <tr><td>30</td><td></td><td></td><td></td><td></td><td>蔺</td><td>填叔</td></tr>
+          <tr><td>31</td><td></td><td></td><td></td><td></td><td>填叔</td><td>野</td></tr>
+          <tr><td>32</td><td></td><td></td><td></td><td></td><td>野</td><td>无斁</td></tr>
+          <tr><td>33</td><td></td><td></td><td></td><td></td><td>无斁</td><td>留</td></tr>
+          <tr><td>34</td><td></td><td></td><td></td><td></td><td>留</td><td>叔正</td></tr>
+          <tr><td>35</td><td></td><td></td><td></td><td></td><td>叔正</td><td>献子</td></tr>
+          <tr><td>36</td><td></td><td></td><td></td><td></td><td>献子</td><td>亚寿</td></tr>
+          <tr><td>37</td><td></td><td></td><td></td><td></td><td>亚寿</td><td>原寿</td></tr>
+          <tr><td>38</td><td></td><td></td><td></td><td></td><td>原寿</td><td>梦延</td></tr>
+          <tr><td>39</td><td></td><td></td><td></td><td></td><td>梦延</td><td>阙父</td></tr>
+          <tr><td>40</td><td></td><td></td><td></td><td></td><td>阙父</td><td>—</td></tr>
+          <tr><td>41</td><td>前1150~前1094</td><td>西周</td><td>陈</td><td>胡公</td><td>虞满（妫满）</td><td>犀候、皋羊</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-note">
+      从虞舜至胡公妫满共传34世。<span class="en-sm">From Emperor Shun to Duke Hu Gui Man: 34 generations.</span><br>
+      胡公妫满，亦称陈胡公，为陈国开国君主。因谥号"胡公"，故为胡氏得姓始祖。<br>
+      <span class="en-sm">Duke Hu Gui Man (also Chen Hu Gong) was the founding ruler of the State of Chen. His posthumous title "Hu Gong / Duke Hu" became the origin of the Hu surname.</span>
+    </p>
+  </div>
+
+  <!-- ===== SECTION 3: 陈国君主世系 ===== -->
+  <div class="genealogy-section">
+    <h2 class="section-heading">三、陈国君主世系</h2>
+    <p class="section-desc">
+      <span class="zh">陈国历代君主 — 从胡公（约前1046年立国）至春秋时期。</span>
+      <span class="en">Rulers of the State of Chen — from Duke Hu (founded ca. 1046 BCE) through the Spring and Autumn period.</span>
+    </p>
+
+    <div class="table-scroll">
+      <table class="gen-table">
+        <thead>
+          <tr>
+            <th>朝代<br><span class="en-sm">Dynasty</span></th>
+            <th>国名<br><span class="en-sm">State</span></th>
+            <th>谥号<br><span class="en-sm">Title</span></th>
+            <th>姓<br><span class="en-sm">Clan</span></th>
+            <th>名<br><span class="en-sm">Name</span></th>
+            <th>子嗣<br><span class="en-sm">Offspring</span></th>
+            <th>说明<br><span class="en-sm">Notes</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>西周</td><td>陈</td><td>胡公</td><td>妫</td><td>满</td><td>犀候、皋羊</td><td>胡公妫满或陈胡公为陈国开国君主，因谥号胡公，故为"胡氏得姓始祖"。</td></tr>
+          <tr><td>西周</td><td>陈</td><td>申公</td><td>妫</td><td>犀候</td><td>突、庚（庚封伯）</td><td></td></tr>
+          <tr><td>西周</td><td>陈</td><td>相公</td><td>妫</td><td>皋羊</td><td></td><td></td></tr>
+          <tr><td>西周</td><td>陈</td><td>孝公</td><td>妫</td><td>突</td><td>圉</td><td></td></tr>
+          <tr><td>西周</td><td>陈</td><td>慎公</td><td>妫</td><td>圉</td><td>宁</td><td></td></tr>
+          <tr><td>西周</td><td>陈</td><td>幽公</td><td>妫</td><td>宁</td><td>孝</td><td></td></tr>
+          <tr><td>西周</td><td>陈</td><td>僖公</td><td>妫</td><td>孝</td><td>灵、宣</td><td></td></tr>
+          <tr><td>西周</td><td>陈</td><td>武公</td><td>妫</td><td>灵</td><td>说、燮</td><td></td></tr>
+          <tr><td>西周</td><td>陈</td><td>夷公</td><td>妫</td><td>说</td><td></td><td></td></tr>
+          <tr><td>春秋</td><td>陈</td><td>平公</td><td>妫</td><td>燮</td><td></td><td></td></tr>
+          <tr><td>春秋</td><td>陈</td><td>文公</td><td>妫</td><td>圉</td><td>鲍、佗</td><td></td></tr>
+          <tr><td>春秋</td><td>陈</td><td>桓公</td><td>妫</td><td>鲍</td><td>免、跃、林、杵臼</td><td></td></tr>
+          <tr><td>春秋</td><td>陈</td><td>厉公</td><td>妫</td><td>陀</td><td>跃</td><td></td></tr>
+          <tr><td>春秋</td><td>陈</td><td>利公</td><td>妫</td><td>跃</td><td></td><td></td></tr>
+          <tr><td>春秋</td><td>陈</td><td>庄公</td><td>妫</td><td>林</td><td></td><td></td></tr>
+          <tr><td>春秋</td><td>陈</td><td>宣公</td><td>妫</td><td>杵臼</td><td>御寇、款、子西、子仲、子楚</td><td></td></tr>
+          <tr><td>春秋</td><td>陈</td><td>穆公</td><td>妫</td><td>款</td><td>朔</td><td></td></tr>
+          <tr><td>春秋</td><td>陈</td><td>共公</td><td>妫</td><td>朔</td><td>平国</td><td></td></tr>
+          <tr><td>春秋</td><td>陈</td><td>灵公</td><td>妫</td><td>平国</td><td>午</td><td></td></tr>
+          <tr><td>春秋</td><td>陈</td><td></td><td>妫</td><td>夏征舒</td><td></td><td>夏征舒自立为君。</td></tr>
+          <tr><td>春秋</td><td>陈</td><td>成公</td><td>妫</td><td>午</td><td>强、招、过、黄</td><td></td></tr>
+          <tr><td>春秋</td><td>陈</td><td>哀公</td><td>妫</td><td>强</td><td>偃师、留、胜</td><td></td></tr>
+          <tr><td>春秋</td><td>陈</td><td>悼公</td><td>妫</td><td>太子偃师</td><td>吴</td><td></td></tr>
+          <tr><td>春秋</td><td>陈</td><td>公子</td><td>妫</td><td>留</td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 4: 陈国君主年代表 ===== -->
+  <div class="genealogy-section">
+    <h2 class="section-heading">四、陈国君主年代表</h2>
+    <p class="section-desc">
+      <span class="zh">陈国君主在位年代及世代编号。</span>
+      <span class="en">Chen State ruler chronology with reign dates and generation numbering.</span>
+    </p>
+
+    <div class="table-scroll">
+      <table class="gen-table">
+        <thead>
+          <tr>
+            <th>黄帝世代<br><span class="en-sm">Y.E. Gen.</span></th>
+            <th>胡公世代<br><span class="en-sm">Hu Gen.</span></th>
+            <th>君次<br><span class="en-sm">Ruler #</span></th>
+            <th>西元年份<br><span class="en-sm">Year (BCE)</span></th>
+            <th>在位<br><span class="en-sm">Reign</span></th>
+            <th>朝代<br><span class="en-sm">Dynasty</span></th>
+            <th>国名</th>
+            <th>谥号<br><span class="en-sm">Title</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>42</td><td>1</td><td>1</td><td>前1046~前986</td><td>60年</td><td>西周</td><td>陈</td><td>胡公</td></tr>
+          <tr><td>43</td><td>2</td><td>2</td><td>前985~前960</td><td>25年</td><td>西周</td><td>陈</td><td>申公</td></tr>
+          <tr><td></td><td></td><td>3</td><td>前960~前915</td><td>45年</td><td>西周</td><td>陈</td><td>相公</td></tr>
+          <tr><td>44</td><td>3</td><td>4</td><td>前915~前879</td><td>36年</td><td>西周</td><td>陈</td><td>孝公</td></tr>
+          <tr><td>45</td><td>4</td><td>5</td><td>前879~前856</td><td>23年</td><td>西周</td><td>陈</td><td>慎公</td></tr>
+          <tr><td>46</td><td>5</td><td>6</td><td>前855~前832</td><td>23年</td><td>西周</td><td>陈</td><td>幽公</td></tr>
+          <tr><td>47</td><td>6</td><td>7</td><td>前832~前796</td><td>36年</td><td>西周</td><td>陈</td><td>僖公</td></tr>
+          <tr><td>48</td><td>7</td><td>8</td><td>前796~前781</td><td>15年</td><td>西周</td><td>陈</td><td>武公</td></tr>
+          <tr><td></td><td></td><td>9</td><td>前781~前778</td><td>3年</td><td>西周</td><td>陈</td><td>夷公</td></tr>
+          <tr><td>49</td><td>8</td><td>10</td><td>前778~前755</td><td>23年</td><td>春秋</td><td>陈</td><td>平公</td></tr>
+          <tr><td>50</td><td>9</td><td>11</td><td>前755~前745</td><td>10年</td><td>春秋</td><td>陈</td><td>文公</td></tr>
+          <tr><td>51</td><td>10</td><td>12</td><td>前745~前707</td><td>38年</td><td>春秋</td><td>陈</td><td>桓公</td></tr>
+          <tr><td></td><td></td><td>13</td><td>前707~前700</td><td>7年</td><td>春秋</td><td>陈</td><td>厉公</td></tr>
+          <tr><td></td><td></td><td>14</td><td>前700</td><td>5个月</td><td>春秋</td><td>陈</td><td>利公</td></tr>
+          <tr><td></td><td></td><td>15</td><td>前700~前693</td><td>7年</td><td>春秋</td><td>陈</td><td>庄公</td></tr>
+          <tr><td>52</td><td>11</td><td>16</td><td>前693~前648</td><td>45年</td><td>春秋</td><td>陈</td><td>宣公</td></tr>
+          <tr><td>53</td><td>12</td><td>17</td><td>前648~前632</td><td>16年</td><td>春秋</td><td>陈</td><td>穆公</td></tr>
+          <tr><td>54</td><td>13</td><td>18</td><td>前632~前614</td><td>18年</td><td>春秋</td><td>陈</td><td>共公</td></tr>
+          <tr><td>55</td><td>14</td><td>19</td><td>前614~前599</td><td>15年</td><td>春秋</td><td>陈</td><td>灵公</td></tr>
+          <tr><td></td><td></td><td></td><td>前599~前598</td><td>1年</td><td>春秋</td><td>陈</td><td>夏征舒</td></tr>
+          <tr><td>56</td><td>15</td><td>20</td><td>前598~前568</td><td>30年</td><td>春秋</td><td>陈</td><td>成公</td></tr>
+          <tr><td>57</td><td>16</td><td>21</td><td>前568~前534</td><td>34年</td><td>春秋</td><td>陈</td><td>哀公</td></tr>
+          <tr><td>58</td><td>17</td><td></td><td>前534</td><td></td><td>春秋</td><td>陈</td><td>悼公</td></tr>
+          <tr><td></td><td></td><td>22</td><td>前534</td><td>9个月</td><td>春秋</td><td>陈</td><td>公子</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 5: 安定胡氏世系 ===== -->
+  <div class="genealogy-section">
+    <h2 class="section-heading">五、安定胡氏世系</h2>
+    <p class="section-desc">
+      <span class="zh">安定胡氏为胡姓重要分支，以安定郡（今宁夏固原）为郡望。</span>
+      <span class="en">The Anding Hu branch — the most prestigious Hu lineage, centered in Anding Commandery (present-day Guyuan, Ningxia).</span>
+    </p>
+
+    <table class="gen-table">
+      <thead>
+        <tr>
+          <th>朝代<br><span class="en-sm">Dynasty</span></th>
+          <th>爵位<br><span class="en-sm">Title</span></th>
+          <th>姓</th>
+          <th>名</th>
+          <th>子嗣<br><span class="en-sm">Offspring</span></th>
+          <th>备注<br><span class="en-sm">Notes</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>西汉<br><span class="en-sm">W. Han</span></td><td></td><td>胡</td><td>建</td><td>涵</td><td></td></tr>
+        <tr><td>西汉</td><td></td><td>胡</td><td>涵</td><td>文</td><td></td></tr>
+        <tr><td>西汉</td><td></td><td>胡</td><td>文</td><td>敏</td><td></td></tr>
+        <tr><td>西汉</td><td></td><td>胡</td><td>敏</td><td>崇</td><td></td></tr>
+        <tr><td>西汉</td><td></td><td>胡</td><td>崇</td><td>惠</td><td></td></tr>
+        <tr><td>新莽<br><span class="en-sm">Xin</span></td><td></td><td>胡</td><td>惠</td><td>刚</td><td></td></tr>
+        <tr><td>东汉<br><span class="en-sm">E. Han</span></td><td></td><td>胡</td><td>刚</td><td>玄成</td><td></td></tr>
+        <tr><td>东汉</td><td></td><td>胡</td><td>玄成</td><td>聪</td><td></td></tr>
+        <tr><td>东汉</td><td></td><td>胡</td><td>聪</td><td>崇禧、伯禧</td><td></td></tr>
+        <tr><td>东汉</td><td></td><td>胡</td><td>崇禧</td><td>贤、赞</td><td></td></tr>
+        <tr><td>东汉</td><td></td><td>胡</td><td>贤</td><td>辉、腾</td><td></td></tr>
+        <tr><td>东汉</td><td></td><td>胡</td><td>辉</td><td>广</td><td></td></tr>
+        <tr><td>东汉</td><td>恭侯<br><span class="en-sm">Marquis Gong</span></td><td>胡</td><td>广</td><td>平、华</td><td></td></tr>
+        <tr><td>东汉</td><td></td><td>胡</td><td>平</td><td>珏、班</td><td></td></tr>
+        <tr><td>三国<br><span class="en-sm">Three King.</span></td><td></td><td>胡</td><td>班</td><td>辛</td><td></td></tr>
+        <tr><td>三国</td><td></td><td>胡</td><td>辛</td><td>贞</td><td></td></tr>
+        <tr><td>三国</td><td></td><td>胡</td><td>贞</td><td>质</td><td></td></tr>
+        <tr><td>三国</td><td>贞侯<br><span class="en-sm">Marquis Zhen</span></td><td>胡</td><td>质</td><td>威</td><td>定居安定（今宁夏固原）而成"安定胡氏家族"。<br><span class="en-sm">Settled in Anding (today's Guyuan, Ningxia) — founding of the Anding Hu clan.</span></td></tr>
+        <tr><td>西晋<br><span class="en-sm">W. Jin</span></td><td></td><td>胡</td><td>威</td><td>宪</td><td></td></tr>
+        <tr><td>西晋</td><td></td><td>胡</td><td>宪</td><td>彪、子范</td><td></td></tr>
+        <tr><td>西晋</td><td></td><td>胡</td><td>彪</td><td>奋</td><td></td></tr>
+        <tr><td></td><td></td><td>胡</td><td>奋</td><td>华</td><td></td></tr>
+        <tr><td>东晋<br><span class="en-sm">E. Jin</span></td><td></td><td>胡</td><td>华</td><td>哲</td><td></td></tr>
+        <tr><td>东晋</td><td></td><td>胡</td><td>哲</td><td>明之、儒</td><td></td></tr>
+        <tr><td>东晋</td><td></td><td>胡</td><td>明之</td><td>德基</td><td></td></tr>
+        <tr><td>十六国<br><span class="en-sm">Sixteen King.</span></td><td></td><td>胡</td><td>德基</td><td>怀宁</td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ===== SECTION 6: 世代编号对照表 ===== -->
+  <div class="genealogy-section">
+    <h2 class="section-heading">六、世代编号对照表</h2>
+    <p class="section-desc">
+      <span class="zh">西汉至西晋世代编号（约前80年–275年）。</span>
+      <span class="en">Generation numbering spanning Western Han to Western Jin (ca. 80 BCE – 275 CE).</span>
+    </p>
+
+    <div class="table-scroll">
+      <table class="gen-table">
+        <thead>
+          <tr>
+            <th>总世代<br><span class="en-sm">Total Gen.</span></th>
+            <th>分支世代<br><span class="en-sm">Branch Gen.</span></th>
+            <th>西元年份<br><span class="en-sm">Year</span></th>
+            <th>朝代<br><span class="en-sm">Dynasty</span></th>
+            <th>爵位<br><span class="en-sm">Title</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>74</td><td>33</td><td></td><td>西汉</td><td></td></tr>
+          <tr><td>75</td><td>34</td><td>前80</td><td>西汉</td><td></td></tr>
+          <tr><td>76</td><td>35</td><td></td><td>西汉</td><td></td></tr>
+          <tr><td>77</td><td>36</td><td>前80</td><td>西汉</td><td></td></tr>
+          <tr><td>78</td><td>37</td><td>前73</td><td>西汉</td><td></td></tr>
+          <tr><td>79</td><td>38</td><td></td><td>西汉</td><td></td></tr>
+          <tr><td>80</td><td>39</td><td>前48</td><td>西汉</td><td></td></tr>
+          <tr><td>81</td><td>40</td><td>前32</td><td>西汉</td><td></td></tr>
+          <tr><td>82</td><td>41</td><td>25</td><td>新莽</td><td></td></tr>
+          <tr><td>83</td><td>42</td><td></td><td>东汉</td><td></td></tr>
+          <tr><td>84</td><td>43</td><td></td><td>东汉</td><td></td></tr>
+          <tr><td>85</td><td>44</td><td></td><td>东汉</td><td></td></tr>
+          <tr><td>86</td><td>45</td><td></td><td>东汉</td><td></td></tr>
+          <tr><td>87</td><td>46</td><td>136</td><td>东汉</td><td></td></tr>
+          <tr><td>88</td><td>47</td><td></td><td>东汉</td><td></td></tr>
+          <tr><td>89</td><td>48</td><td></td><td>东汉</td><td>恭侯</td></tr>
+          <tr><td>90</td><td>49</td><td></td><td>东汉</td><td></td></tr>
+          <tr><td>91</td><td>50</td><td></td><td>三国</td><td></td></tr>
+          <tr><td>92</td><td>51</td><td></td><td>三国</td><td></td></tr>
+          <tr><td>93</td><td>52</td><td>220</td><td>三国</td><td></td></tr>
+          <tr><td>94</td><td>53</td><td></td><td>三国</td><td></td></tr>
+          <tr><td>95</td><td>54</td><td>275</td><td>三国</td><td></td></tr>
+          <tr><td>96</td><td>55</td><td></td><td>西晋</td><td></td></tr>
+          <tr><td>97</td><td>56</td><td></td><td>西晋</td><td></td></tr>
+          <tr><td>98</td><td>57</td><td></td><td>西晋</td><td></td></tr>
+          <tr><td>99</td><td>58</td><td></td><td>西晋</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 7: 宋元世代编号 ===== -->
+  <div class="genealogy-section">
+    <h2 class="section-heading">七、宋元世代编号对照表</h2>
+    <p class="section-desc">
+      <span class="zh">宋元时期世代编号。</span>
+      <span class="en">Song / Yuan Dynasty generation numbers.</span>
+    </p>
+
+    <table class="gen-table">
+      <thead>
+        <tr>
+          <th>总世代<br><span class="en-sm">Total</span></th>
+          <th>分支世代<br><span class="en-sm">Branch</span></th>
+          <th>世系</th>
+          <th>次系</th>
+          <th>朝代<br><span class="en-sm">Dynasty</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>131</td><td>90</td><td>4</td><td></td><td>宋<br><span class="en-sm">Song</span></td></tr>
+        <tr><td>132</td><td>91</td><td>5</td><td></td><td>宋</td></tr>
+        <tr><td>133</td><td>92</td><td>6</td><td></td><td>宋</td></tr>
+        <tr><td>134</td><td>93</td><td>7</td><td></td><td>宋</td></tr>
+        <tr><td>135</td><td>94</td><td>8</td><td></td><td>宋</td></tr>
+        <tr><td>136</td><td>95</td><td>9</td><td></td><td>宋</td></tr>
+        <tr><td>137</td><td>96</td><td>10</td><td></td><td>宋</td></tr>
+        <tr><td>138</td><td>97</td><td>11</td><td></td><td>宋</td></tr>
+        <tr><td>139</td><td>98</td><td>12</td><td></td><td>宋</td></tr>
+        <tr><td>140</td><td>99</td><td>13</td><td></td><td>宋</td></tr>
+        <tr><td>141</td><td>100</td><td>14</td><td></td><td>宋</td></tr>
+        <tr><td>142</td><td>101</td><td>15</td><td>1</td><td>宋</td></tr>
+        <tr><td>143</td><td>102</td><td>16</td><td>2</td><td>元<br><span class="en-sm">Yuan</span></td></tr>
+        <tr><td>144</td><td>103</td><td>17</td><td>3</td><td>元</td></tr>
+        <tr><td>145</td><td>104</td><td>18</td><td>4</td><td>元</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ===== SECTION 8: 安定胡氏先祖名录 ===== -->
+  <div class="genealogy-section">
+    <h2 class="section-heading">八、安定胡氏先祖名录</h2>
+
+    <table class="gen-table gen-table-narrow">
+      <thead>
+        <tr>
+          <th>名讳</th>
+          <th>备注</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>赞</td><td></td></tr>
+        <tr><td>腾</td><td></td></tr>
+        <tr><td>华</td><td></td></tr>
+        <tr><td>班</td><td></td></tr>
+        <tr><td>子范</td><td></td></tr>
+        <tr><td>之、儒</td><td></td></tr>
+        <tr><td>基</td><td></td></tr>
+        <tr><td>宁</td><td></td></tr>
+        <tr><td>伯禧</td><td></td></tr>
+      </tbody>
+    </table>
+    <p class="table-note">
+      定居安定（今宁夏固原）而成"安定胡氏家族"。<br>
+      <span class="en-sm">Settled in Anding (today's Guyuan, Ningxia) — the Anding Hu clan.</span>
+    </p>
+  </div>
+
+  <!-- ===== SECTION 9: 莲溪村胡氏世系 ===== -->
+  <div class="genealogy-section">
+    <h2 class="section-heading">九、莲溪村胡氏世系</h2>
+    <p class="section-desc">
+      <span class="zh">以下为江西南昌迁居广东之胡氏一支，自明弘治年间至清乾隆年间。</span>
+      <span class="en">The Lianxi Village branch — migrated from Nanchang, Jiangxi to Guangdong. From the Ming Hongzhi era to Qing Qianlong era.</span>
+    </p>
+
+    <div class="table-scroll">
+      <table class="gen-table">
+        <thead>
+          <tr>
+            <th>世次</th>
+            <th>名讳<br><span class="en-sm">Name</span></th>
+            <th>子嗣<br><span class="en-sm">Sons</span></th>
+            <th>生平记载</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>连溪</td><td>景文、景行</td><td>讳寅，字朝瞻。创立莲溪村。终于弘治十七年甲子（1504年）三月十三，葬于土名大塘坑牛形丙午向。</td></tr>
+          <tr><td>2</td><td>景文</td><td>友直、友诚</td><td>号乐恒。终于六月初十日，葬于象山右边南向。</td></tr>
+          <tr><td>3</td><td>友诚</td><td>孔湛、孔泽、孔泓</td><td>号静江，字以实。厚背二村田坎三十一亩九分六厘一毛一丝五忽外并高村圆岭周围一带田坎一百一十片及荷松岭鱼塘一口，祠前地段果基一既永为祠祭之业。</td></tr>
+          <tr><td>4</td><td>孔泓</td><td>公显、公熙</td><td>号坚白，讳澄。</td></tr>
+          <tr><td>5</td><td>公熙</td><td>明彦、英彦</td><td>讳爌，号觉宇。官名至德，恩平学庠生，新会恩平两县冠带乡宾。翁寿八十一，终于崇祯壬午年（1642年）十月初七，葬于新梓里后山虎形东向。</td></tr>
+          <tr><td>6</td><td>英彦</td><td>奇遇、子达、子琳、子祥、子充</td><td>讳穗秀，官名起凤。翁寿八十六，终于戊午年十二月初巳日。</td></tr>
+          <tr><td>7</td><td>子琳</td><td>勤丽、勤翼</td><td>讳自琳。翁寿八十二岁，终于甲申年八月二十四日。</td></tr>
+          <tr><td>8</td><td>勤翼</td><td>协溥、协湛</td><td>翁寿五十二岁，终于癸巳年十一月十八日寅时。</td></tr>
+          <tr><td>9</td><td>协湛</td><td>奕贺、奕赏、奕贵、奕赛</td><td>翁寿四十二，终于壬戌年二月十三日未时。</td></tr>
+          <tr><td>10</td><td>奕贺</td><td>珥世、衡世、雅世、蔼世</td><td>讳宗圣，号席珍，国子监太学生。翁寿六十一，终于乾隆丁未年（1787年）七月二十一日巳时。</td></tr>
+          <tr><td>11</td><td>珥世</td><td>秉仁、秉义、秉礼、秉智、秉信</td><td>讳石亭。</td></tr>
+          <tr><td>12</td><td>秉智</td><td>乐昌、节昌、义昌</td><td></td></tr>
+          <tr><td>13</td><td>乐昌</td><td>清和</td><td></td></tr>
+          <tr><td>14</td><td>清和</td><td>维富、维有、维源、维豪、维显、维达</td><td></td></tr>
+          <tr><td>15</td><td>维显</td><td>龙赞、龙亿、龙科、龙森、龙弼、龙迪、龙勇</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-note">
+      从连溪公至维显公共传34世，计约1,105年。<span class="en-sm">From Lianxi Gong to Weixian Gong: 34 generations spanning approximately 1,105 years.</span>
+    </p>
+  </div>
+
+  <!-- ===== SECTION 10: 祖源迁徙录 ===== -->
+  <div class="genealogy-section">
+    <h2 class="section-heading">十、祖源迁徙录</h2>
+    <p class="section-desc">
+      <span class="zh">以下为家族迁徙历史及祖墓记录，源自旧谱记载。专有名词及方位保持原文。</span>
+      <span class="en">Ancestral migration records and burial sites — transcribed from the original clan genealogy. Names, directions, and technical terms are preserved in the original Chinese.</span>
+    </p>
+
+    <div class="classical-text">
+      <h3 class="sub-heading">迁粤始祖记 <span class="en-sm">— The founding ancestor's migration to Guangdong</span></h3>
+      <p>居江西南昌府南昌县之麦山村。在宋宝佑二年（1254年），宦游广东知广州事，寄居新会，去城百余里地，在开平的梁都（即现在的开平百合镇）娶妾卢氏，生一子良甫。及暮年，有从弟均寿公至，与之归，而卢太姚之母子独恋故土，不肯行，躲之，遂居焉。厥后竟不知佑祖之殁，所及十余世，历明、迄清。至清康熙己酉年（1669年），朴生翁接江西回书，始知佑祖葬于麦山上名石潭龟形艮寅山坤申向。</p>
+      <p class="en-sm">[Summary: The ancestor served as an official in Guangzhou in 1254 (Song Dynasty). He settled in Xinhui, took a concubine named Lady Lu in Kaiping, and had a son named Liangfu. His younger cousin came to escort him home, but Lady Lu refused to leave. Thus the branch settled in Guangdong. In 1669 (Qing Dynasty), Pusheng Weng received a letter from Jiangxi revealing that the ancestral tomb of Youzu was at Maishan, Shitan.]</p>
+
+      <h3 class="sub-heading">祖墓记录 <span class="en-sm">— Ancestral tomb records</span></h3>
+      <p>祖终葬于旧村青龙嘴古名山猪兜西向。祖坟光绪八年岁次壬午（1882年）重修。</p>
+      <p>祖终葬于石岩岭西向。光绪年间迁葬官潮坡，又名孩儿山。</p>
+      <p>祖终葬于麻慈岭巳丙向。</p>
+
+      <h3 class="sub-heading">彦弘公</h3>
+      <p>字彦弘。祖行年五十大创基业，因工人以富户取硇砂不敷，遂屈于狱，八月十二日，祖寿终焉，葬于官潮坡巳丙向。</p>
+
+      <h3 class="sub-heading">浩公</h3>
+      <p>讳浩，字叔广。祖寿八十六，终于九月初七日，葬于蚬岗大塘头土。</p>
+
+      <h3 class="sub-heading">朝瞻公</h3>
+      <p>讳寅，字朝瞻。创立莲溪村。终于弘治十七年甲子（1504年）三月十三，葬于土名大塘坑牛形丙午向。</p>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 11: 家族源流概述 ===== -->
+  <div class="genealogy-section">
+    <h2 class="section-heading">十一、家族源流概述</h2>
+
+    <div class="classical-text">
+      <p><strong>【繁】</strong> 中华民族胡姓，源出有虞氏。黄帝（轩辕氏）→ 昌意 → 颛顼 → 穷蝉 → 敬康 → 句望 → 桥牛 → 瞽瞍 → 虞舜（重华）。舜帝三十三世孙妫满，于西周初年受封于陈（今河南淮阳），为陈国开国君主。因谥号"胡公"，其后裔遂以谥为姓，奉胡公满为胡氏得姓始祖。</p>
+      <p class="en-sm"><strong>[EN]</strong> The Hu surname of China traces its origin to the Youyu clan. From the Yellow Emperor through Emperor Shun (9 generations), and thirty-three generations later to Gui Man, who was enfeoffed as Duke of Chen (present-day Huaiyang, Henan) in the early Western Zhou. His posthumous title "Duke Hu" became the source of the Hu surname.</p>
+
+      <p><strong>【繁】</strong> 陈国传国二十余世，历西周至春秋。胡氏后裔中重要一支，定居安定（今宁夏固原），形成"安定胡氏家族"，为胡姓重要郡望。西汉至十六国时期，安定胡氏世系绵延不绝。</p>
+      <p class="en-sm"><strong>[EN]</strong> The State of Chen lasted over twenty generations through the Western Zhou and Spring and Autumn periods. A major branch of the Hu descendants settled in Anding (today's Guyuan, Ningxia), forming the prestigious "Anding Hu Clan."</p>
+
+      <p><strong>【繁】</strong> 宋元时期，胡氏世代编号延续。至明代，有胡寅（字朝瞻）自江西南昌府南昌县之麦山村宦游广东，寄居新会，后定居开平，创立莲溪村。其后世繁衍，历明、清两朝，共传34世，计约1,105年。</p>
+      <p class="en-sm"><strong>[EN]</strong> During the Song and Yuan periods, the Hu generation numbering continued. In the Ming dynasty, Hu Yin (courtesy name Chaozhan) travelled from Maishan Village, Nanchang, Jiangxi to serve as an official in Guangdong. He settled in Kaiping and founded Lianxi Village. His descendants flourished through the Ming and Qing dynasties — 34 generations spanning approximately 1,105 years.</p>
+
+      <p><strong>【繁】</strong> 此谱记载了从黄帝至明清时期胡氏家族完整的世系传承，是研究胡氏家族历史的重要文献。</p>
+      <p class="en-sm"><strong>[EN]</strong> This genealogy records the complete lineage of the Hu clan from the Yellow Emperor through the Ming and Qing dynasties — an important document for the study of Hu family history.</p>
+    </div>
+  </div>
+
+</div><!-- /genealogy -->
+
+</section>
+
+      <!-- ===== TREE PAGE ===== -->
+      <section id="page-tree" class="page" role="tabpanel">
+
+        <!-- Tree Toolbar -->
+        <div class="tree-toolbar">
+          <!-- Search -->
+          <div class="tree-search">
+            <span class="search-icon" aria-hidden="true">🔍</span>
+            <input type="text" id="tree-search-input" placeholder="Search names..." aria-label="Search family tree">
+            <button class="clear-btn" id="search-clear-btn" aria-label="Clear search">✕</button>
+          </div>
+
+          <!-- Branch Filter -->
+          <div class="branch-filter">
+            <span class="filter-label">Branch</span>
+            <button class="branch-chip active" data-branch="all">
+              <span class="chip-dot" style="background:#999;"></span>
+              All
+            </button>
+            <button class="branch-chip" data-branch="weixian">
+              <span class="chip-dot branch-weixian"></span>
+              潍县
+            </button>
+            <button class="branch-chip" data-branch="weida">
+              <span class="chip-dot branch-weida"></span>
+              潍达
+            </button>
+            <button class="branch-chip" data-branch="weifu">
+              <span class="chip-dot branch-weifu"></span>
+              潍福
+            </button>
+            <button class="branch-chip" data-branch="weihao">
+              <span class="chip-dot branch-weihao"></span>
+              潍浩
+            </button>
+            <button class="branch-chip" data-branch="weiyuan">
+              <span class="chip-dot branch-weiyuan"></span>
+              潍源
+            </button>
+            <button class="branch-chip" data-branch="weiyou">
+              <span class="chip-dot branch-weiyou"></span>
+              潍有
+            </button>
+            <button class="branch-chip" data-branch="qinghe">
+              <span class="chip-dot branch-qinghe"></span>
+              清河
+            </button>
+            <button class="branch-chip" data-branch="wangzhong">
+              <span class="chip-dot branch-wangzhong"></span>
+              王忠
+            </button>
+            <button class="branch-chip" data-branch="shouhe">
+              <span class="chip-dot branch-shouhe"></span>
+              守和
+            </button>
+          </div>
+
+          <!-- Actions -->
+          <div class="tree-actions">
+            <button class="tree-action-btn" id="collapse-all-btn" aria-label="Collapse all branches">− Collapse All</button>
+          </div>
+        </div>
+
+        <!-- Tree Container -->
+        <div id="tree-container">
+          <div class="empty-state">
+            <div class="empty-icon">🌳</div>
+            <div class="empty-text">Waiting for tree data to load...</div>
+          </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+          <span class="legend-title">Branches</span>
+          <span class="legend-item"><span class="legend-swatch branch-weixian"></span><span class="legend-name">潍县</span></span>
+          <span class="legend-item"><span class="legend-swatch branch-weida"></span><span class="legend-name">潍达</span></span>
+          <span class="legend-item"><span class="legend-swatch branch-weifu"></span><span class="legend-name">潍福</span></span>
+          <span class="legend-item"><span class="legend-swatch branch-weihao"></span><span class="legend-name">潍浩</span></span>
+          <span class="legend-item"><span class="legend-swatch branch-weiyuan"></span><span class="legend-name">潍源</span></span>
+          <span class="legend-item"><span class="legend-swatch branch-weiyou"></span><span class="legend-name">潍有</span></span>
+          <span class="legend-item"><span class="legend-swatch branch-qinghe"></span><span class="legend-name">清河</span></span>
+          <span class="legend-item"><span class="legend-swatch branch-wangzhong"></span><span class="legend-name">王忠</span></span>
+          <span class="legend-item"><span class="legend-swatch branch-shouhe"></span><span class="legend-name">守和</span></span>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="site-footer">
+      <p>胡氏族谱 · Hu Clan Genealogy &mdash; <a href="https://xnddzwkf5s-del.github.io/Hu-clan/" target="_blank" rel="noopener">xnddzwkf5s-del.github.io/Hu-clan</a></p>
+    </footer>
 
   </div>
-  <div class="scroll-bottom"></div>
-</div>
 
-<script>
-// ===== TREE DATA =====
-const BRANCH_COLORS = {
-  shouhe:  { hex:'#3498db', bg:'rgba(52,152,219,0.04)' },
-  wangzhong:{hex:'#27ae60', bg:'rgba(39,174,96,0.04)' },
-  qinghe:  { hex:'#f39c12', bg:'rgba(243,156,18,0.04)' },
-  weixian: { hex:'#9b59b6', bg:'rgba(155,89,182,0.04)' },
-  weida:   { hex:'#e74c3c', bg:'rgba(231,76,60,0.04)' },
-  weifu:   { hex:'#e67e22', bg:'rgba(230,126,34,0.04)' },
-  weihao:  { hex:'#e84393', bg:'rgba(232,67,147,0.04)' },
-  weiyou:  { hex:'#95a5a6', bg:'rgba(149,165,166,0.04)' },
-  weiyuan: { hex:'#1abc9c', bg:'rgba(26,188,156,0.04)' }
-};
-
-function P(name,rel){return{name,rel}}
-function family(persons,children){
-  return{persons:Array.isArray(persons)?persons:[persons], children:children||[]}
-}
-
-const treeData = [
-  // === 维显公 (purple) ===
+  <!-- ===== SCRIPTS ===== -->
+  <script>
+// Hu Clan Family Tree Data
+// 9 branches, hierarchical structure
+window.HU_TREE_DATA = [
   {
-    id:'weixian',code:'WX',label:'维显公',...BRANCH_COLORS.weixian,
-    root:family([P('胡维显','祖'),P('黄金凤','妻'),P('周秀菊','妻')],[
-      family([P('司徒元洪','婿'),P('胡运美','女')],[
-        family([P('司徒振兴','兒'),P('谢运月霞','媳')]),
-        family([P('司徒少霞','女'),P('陈东兴','婿')]),
-        family([P('司徒永全','兒'),P('陈金英','媳')],[
-          family([P('陈国华','兒'),P('胡诗韵','媳')],[
-            family([P('陈俊延','兒')]),
-            family([P('陈子豪','兒')]),
-            family([P('陈雯芊','女')])
-          ])
-        ])
-      ]),
-      family([P('胡龙亿','兒'),P('冯桂霞','媳')],[
-        family([P('刘敬宽','兒'),P('刘佩玲','媳')],[
-          family([P('胡帼洋','兒'),P('林依蓓','媳')],[
-            family([P('胡滕林','兒')]),
-            family([P('胡照岚','女')]),
-            family([P('胡乔淇','女')])
-          ]),
-          family([P('胡帼震','女')])
-        ])
-      ]),
-      family([P('黄家强','婿'),P('胡美花','女')],[
-        family([P('黄维星','兒'),P('林金梅','媳')]),
-        family([P('黎广文','兒')]),
-        family([P('黄锦源','女')]),
-        family([P('黄爱贞','女')]),
-        family([P('黄爱奇','兒')])
-      ]),
-      family([P('李锐欢','婿'),P('胡美多','女')],[
-        family([P('俞小玲','媳')]),
-        family([P('李清坤','兒')]),
-        family([P('李清标','兒')]),
-        family([P('黄芝心','媳')])
-      ]),
-      family([P('胡龙科','兒'),P('吴凤德','媳')],[
-        family([P('郭特维','婿'),P('李惠真','女')]),
-        family([P('胡渐彦','兒'),P('蔡群力','媳')],[
-          family([P('胡翠珊','女')]),
-          family([P('胡翠雯','女')])
-        ]),
-        family([P('胡渐雄','兒'),P('钟玉芬','媳')]),
-        family([P('周碧文','女')]),
-        family([P('胡碧君','女')]),
-        family([P('胡碧勋','兒')]),
-        family([P('胡培郁','兒')])
-      ]),
-      family([P('胡龙森','兒'),P('黄月玉','媳')],[
-        family([P('叶绍强','婿'),P('胡碧琳','女')],[
-          family([P('叶瑾熙','兒')]),
-          family([P('叶瑾毅','兒')])
-        ]),
-        family([P('胡渐植','兒'),P('黎淑菁','媳')],[
-          family([P('胡嘉玮','女')]),
-          family([P('胡轩瑜','女')]),
-          family([P('胡轩厚','兒')])
-        ]),
-        family([P('胡渐彪','兒')])
-      ]),
-      family([P('胡龙弼','兒'),P('吕宝珍','媳')],[
-        family([P('胡渐锋','兒'),P('陈德煊','媳')],[
-          family([P('胡嘉盈','女')]),
-          family([P('胡嘉馨','女')]),
-          family([P('胡嘉厚','兒')])
-        ]),
-        family([P('江钰彬','婿'),P('胡碧欣','女')],[
-          family([P('江钰琦','女')]),
-          family([P('江钰莹','女')])
-        ]),
-        family([P('胡渐镇','兒')])
-      ]),
-      family([P('胡龙勇','兒'),P('陈翠媚','媳')],[
-        family([P('胡渐逸','兒'),P('胡慧慧','媳')],[
-          family([P('胡嘉绚','女')])
-        ]),
-        family([P('胡蕾芝','女')]),
-        family([P('丁纳福','婿'),P('胡蕾莎','女')])
-      ]),
-      family([P('胡龙赞','兒')]),
-      family([P('杨观新','婿'),P('胡美素','女')],[
-        family([P('杨晋飞','兒')]),
-        family([P('杨雪虹','女')]),
-        family([P('杨雪莉','女')]),
-        family([P('胡碧清','女')])
-      ]),
-      family([P('林国汉','婿'),P('胡美缘','女')],[
-        family([P('林爱婷','女')]),
-        family([P('林爱祥','兒')]),
-        family([P('胡碧勋','兒')]),
-        family([P('郭晓旭','儿'),P('谢源涛','婿')]),
-        family([P('胡培旭','兒')])
-      ]),
-        ])
+    "id": "weixian",
+    "code": "WX",
+    "label": "维显公",
+    "color": "#7c3aed",
+    "root": {
+      "persons": [
+        {"name":"胡维显","rel":"祖"},
+        {"name":"黄金凤","rel":"妻"},
+        {"name":"周秀菊","rel":"妻"}
+      ],
+      "children": [
+        {
+          "persons": [{"name":"司徒元洪","rel":"婿"},{"name":"胡运美","rel":"女"}],
+          "children": [
+            {
+              "persons": [{"name":"司徒振兴","rel":"兒"},{"name":"谢运月霞","rel":"媳"}],
+              "children": []
+            },
+            {
+              "persons": [{"name":"司徒少霞","rel":"女"},{"name":"陈东兴","rel":"婿"}],
+              "children": []
+            },
+            {
+              "persons": [{"name":"司徒永全","rel":"兒"},{"name":"陈金英","rel":"媳"}],
+              "children": [
+                {
+                  "persons": [{"name":"陈国华","rel":"兒"},{"name":"胡诗韵","rel":"媳"}],
+                  "children": [
+                    {"persons":[{"name":"陈俊延","rel":"兒"}],"children":[]},
+                    {"persons":[{"name":"陈子豪","rel":"兒"}],"children":[]},
+                    {"persons":[{"name":"陈雯芊","rel":"女"}],"children":[]}
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "persons": [{"name":"胡龙亿","rel":"兒"},{"name":"冯桂霞","rel":"媳"}],
+          "children": [
+            {
+              "persons": [{"name":"刘敬宽","rel":"兒"},{"name":"刘佩玲","rel":"媳"}],
+              "children": [
+                {
+                  "persons": [{"name":"胡帼洋","rel":"兒"},{"name":"林依蓓","rel":"媳"}],
+                  "children": [
+                    {"persons":[{"name":"胡滕林","rel":"兒"}],"children":[]},
+                    {"persons":[{"name":"胡照岚","rel":"女"}],"children":[]},
+                    {"persons":[{"name":"胡乔淇","rel":"女"}],"children":[]}
+                  ]
+                },
+                {
+                  "persons": [{"name":"胡帼震","rel":"女"}],
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "persons": [{"name":"黄家强","rel":"婿"},{"name":"胡美花","rel":"女"}],
+          "children": [
+            {"persons":[{"name":"黄维星","rel":"兒"},{"name":"林金梅","rel":"媳"}],"children":[]},
+            {"persons":[{"name":"黎广文","rel":"兒"}],"children":[]},
+            {"persons":[{"name":"黄锦源","rel":"女"}],"children":[]},
+            {"persons":[{"name":"黄爱贞","rel":"女"}],"children":[]},
+            {"persons":[{"name":"黄爱奇","rel":"兒"}],"children":[]}
+          ]
+        },
+        {
+          "persons": [{"name":"李锐欢","rel":"婿"},{"name":"胡美多","rel":"女"}],
+          "children": [
+            {"persons":[{"name":"俞小玲","rel":"媳"}],"children":[]},
+            {"persons":[{"name":"李清坤","rel":"兒"}],"children":[]},
+            {"persons":[{"name":"李清标","rel":"兒"}],"children":[]},
+            {"persons":[{"name":"黄芝心","rel":"媳"}],"children":[]}
+          ]
+        },
+        {
+          "persons": [{"name":"胡龙科","rel":"兒"},{"name":"吴凤德","rel":"媳"}],
+          "children": [
+            {"persons":[{"name":"郭特维","rel":"婿"},{"name":"李惠真","rel":"女"}],"children":[]},
+            {
+              "persons": [{"name":"胡渐彦","rel":"兒"},{"name":"蔡群力","rel":"媳"}],
+              "children": [
+                {"persons":[{"name":"胡翠珊","rel":"女"}],"children":[]},
+                {"persons":[{"name":"胡翠雯","rel":"女"}],"children":[]}
+              ]
+            },
+            {"persons":[{"name":"胡渐雄","rel":"兒"},{"name":"钟玉芬","rel":"媳"}],"children":[]},
+            {"persons":[{"name":"周碧文","rel":"女"}],"children":[]},
+            {"persons":[{"name":"胡碧君","rel":"女"}],"children":[]},
+            {"persons":[{"name":"胡碧勋","rel":"兒"}],"children":[]},
+            {"persons":[{"name":"胡培郁","rel":"兒"}],"children":[]}
+          ]
+        },
+        {
+          "persons": [{"name":"胡龙森","rel":"兒"},{"name":"黄月玉","rel":"媳"}],
+          "children": [
+            {
+              "persons": [{"name":"叶绍强","rel":"婿"},{"name":"胡碧琳","rel":"女"}],
+              "children": [
+                {"persons":[{"name":"叶瑾熙","rel":"兒"}],"children":[]},
+                {"persons":[{"name":"叶瑾毅","rel":"兒"}],"children":[]}
+              ]
+            },
+            {
+              "persons": [{"name":"胡渐植","rel":"兒"},{"name":"黎淑菁","rel":"媳"}],
+              "children": [
+                {"persons":[{"name":"胡嘉玮","rel":"女"}],"children":[]},
+                {"persons":[{"name":"胡轩瑜","rel":"女"}],"children":[]},
+                {"persons":[{"name":"胡轩厚","rel":"兒"}],"children":[]}
+              ]
+            },
+            {"persons":[{"name":"胡渐彪","rel":"兒"}],"children":[]}
+          ]
+        },
+        {
+          "persons": [{"name":"胡龙弼","rel":"兒"},{"name":"吕宝珍","rel":"媳"}],
+          "children": [
+            {
+              "persons": [{"name":"胡渐锋","rel":"兒"},{"name":"陈德煊","rel":"媳"}],
+              "children": [
+                {"persons":[{"name":"胡嘉盈","rel":"女"}],"children":[]},
+                {"persons":[{"name":"胡嘉馨","rel":"女"}],"children":[]},
+                {"persons":[{"name":"胡嘉厚","rel":"兒"}],"children":[]}
+              ]
+            },
+            {
+              "persons": [{"name":"江钰彬","rel":"婿"},{"name":"胡碧欣","rel":"女"}],
+              "children": [
+                {"persons":[{"name":"江钰琦","rel":"女"}],"children":[]},
+                {"persons":[{"name":"江钰莹","rel":"女"}],"children":[]}
+              ]
+            },
+            {"persons":[{"name":"胡渐镇","rel":"兒"}],"children":[]}
+          ]
+        },
+        {
+          "persons": [{"name":"胡龙勇","rel":"兒"},{"name":"陈翠媚","rel":"媳"}],
+          "children": [
+            {
+              "persons": [{"name":"胡渐逸","rel":"兒"},{"name":"胡慧慧","rel":"媳"}],
+              "children": [
+                {"persons":[{"name":"胡嘉绚","rel":"女"}],"children":[]}
+              ]
+            },
+            {"persons":[{"name":"胡蕾芝","rel":"女"}],"children":[]},
+            {"persons":[{"name":"丁纳福","rel":"婿"},{"name":"胡蕾莎","rel":"女"}],"children":[]}
+          ]
+        },
+        {"persons":[{"name":"胡龙赞","rel":"兒"}],"children":[]},
+        {
+          "persons": [{"name":"杨观新","rel":"婿"},{"name":"胡美素","rel":"女"}],
+          "children": [
+            {"persons":[{"name":"杨晋飞","rel":"兒"}],"children":[]},
+            {"persons":[{"name":"杨雪虹","rel":"女"}],"children":[]},
+            {"persons":[{"name":"杨雪莉","rel":"女"}],"children":[]},
+            {"persons":[{"name":"胡碧清","rel":"女"}],"children":[]}
+          ]
+        },
+        {
+          "persons": [{"name":"林国汉","rel":"婿"},{"name":"胡美缘","rel":"女"}],
+          "children": [
+            {"persons":[{"name":"林爱婷","rel":"女"}],"children":[]},
+            {"persons":[{"name":"林爱祥","rel":"兒"}],"children":[]},
+            {"persons":[{"name":"胡碧勋","rel":"兒"}],"children":[]},
+            {"persons":[{"name":"郭晓旭","rel":"儿"},{"name":"谢源涛","rel":"婿"}],"children":[]},
+            {"persons":[{"name":"胡培旭","rel":"兒"}],"children":[]}
+          ]
+        }
+      ]
+    }
   },
-  // === 维达公 (red) ===
   {
-    id:'weida',code:'WD',label:'维达公',...BRANCH_COLORS.weida,
-    root:family([P('胡维达','祖'),P('周美容','妻')],[
-      family([P('杨观新','婿'),P('胡美素','女')],[
-        family([P('胡碧清','女')]),
-        family([P('杨雪虹','女')]),
-        family([P('杨雪莉','女')]),
-        family([P('李义祥','婿'),P('林爱婷','女')])
-      ]),
-      family([P('林国汉','婿'),P('胡美缘','女')],[
-        family([P('林爱婷','女')]),
-        family([P('林培育','兒')]),
-        family([P('林培志','兒'),P('谢莉志','媳')]),
-        family([P('郭晓薇','媳')])
-      ]),
-      
-      
-      family([P('游秀','婿'),P('胡美霞','女')],[
-        family([P('胡燕铃','女')])
-      ]),
-      family([P('陈亚旺','婿'),P('胡丽丽','女')],[
-        family([P('陈淑蓉','女')]),
-        family([P('陈荣耀','兒')]),
-        family([P('陈淑铃','女')])
-      ]),
-      family([P('龚羽','婿'),P('胡华秀','女')],[
-        family([P('龚百瀚','兒')]),
-        family([P('龚百阳','兒')]),
-        family([P('龚百炜','兒')])
-      ]),
-      
-      family([P('关银欢','婿'),P('胡欢','女')],[
-        family([P('关卓贤','兒')]),
-        family([P('关绮娜','女')]),
-        family([P('关婉梨','女')]),
-        family([P('关卓儒','兒')])
-      ]),
-      family([P('胡国欢','兒'),P('周美月','媳')],[
-        family([P('胡雨浣','女')]),
-        family([P('胡兆东','兒')],[
-          family([P('胡艳芳','女')])
-        ]),
-        family([P('余仲山','婿'),P('余凯茵','女')],[
-          family([P('余海业','兒')])
-        ]),
-        family([P('胡利权','兒')])
-      ]),
-      family([P('胡瑞球','兒'),P('周素心','媳')],[
-        family([P('胡文杰','兒'),P('麦丽丽','媳')],[
-          family([P('胡景桐','兒')]),
-          family([P('胡慧仪','女')])
-        ]),
-        family([P('王家安','婿'),P('黄燕杰','女')],[
-          family([P('王廷深','兒')]),
-          family([P('王廷亦','兒')])
-        ]),
-        family([P('黄江源','兒')],[
-          family([P('黄舒怡','女')])
-        ]),
-        family([P('胡媚杰','女')]),
-        family([P('胡城杰','兒')])
-      ]),
-      family([P('李应玉','婿'),P('胡兰','女')],[
-        family([P('李慧贞','女')]),
-        family([P('李慧颜','女')])
-      ])
-    ])
+    "id": "weida",
+    "code": "WD",
+    "label": "维达公",
+    "color": "#dc2626",
+    "root": {
+      "persons": [
+        {"name":"胡维达","rel":"祖"},
+        {"name":"周美容","rel":"妻"}
+      ],
+      "children": [
+        {
+          "persons": [{"name":"杨观新","rel":"婿"},{"name":"胡美素","rel":"女"}],
+          "children": [
+            {"persons":[{"name":"胡碧清","rel":"女"}],"children":[]},
+            {"persons":[{"name":"杨雪虹","rel":"女"}],"children":[]},
+            {"persons":[{"name":"杨雪莉","rel":"女"}],"children":[]},
+            {"persons":[{"name":"李义祥","rel":"婿"},{"name":"林爱婷","rel":"女"}],"children":[]}
+          ]
+        },
+        {
+          "persons": [{"name":"林国汉","rel":"婿"},{"name":"胡美缘","rel":"女"}],
+          "children": [
+            {"persons":[{"name":"林爱婷","rel":"女"}],"children":[]},
+            {"persons":[{"name":"林培育","rel":"兒"}],"children":[]},
+            {"persons":[{"name":"林培志","rel":"兒"},{"name":"谢莉志","rel":"媳"}],"children":[]},
+            {"persons":[{"name":"郭晓薇","rel":"媳"}],"children":[]}
+          ]
+        },
+        {
+          "persons": [{"name":"游秀","rel":"婿"},{"name":"胡美霞","rel":"女"}],
+          "children": [
+            {"persons":[{"name":"胡燕铃","rel":"女"}],"children":[]}
+          ]
+        },
+        {
+          "persons": [{"name":"陈亚旺","rel":"婿"},{"name":"胡丽丽","rel":"女"}],
+          "children": [
+            {"persons":[{"name":"陈淑蓉","rel":"女"}],"children":[]},
+            {"persons":[{"name":"陈荣耀","rel":"兒"}],"children":[]},
+            {"persons":[{"name":"陈淑铃","rel":"女"}],"children":[]}
+          ]
+        },
+        {
+          "persons": [{"name":"龚羽","rel":"婿"},{"name":"胡华秀","rel":"女"}],
+          "children": [
+            {"persons":[{"name":"龚百瀚","rel":"兒"}],"children":[]},
+            {"persons":[{"name":"龚百阳","rel":"兒"}],"children":[]},
+            {"persons":[{"name":"龚百炜","rel":"兒"}],"children":[]}
+          ]
+        },
+        {
+          "persons": [{"name":"关银欢","rel":"婿"},{"name":"胡欢","rel":"女"}],
+          "children": [
+            {"persons":[{"name":"关卓贤","rel":"兒"}],"children":[]},
+            {"persons":[{"name":"关绮娜","rel":"女"}],"children":[]},
+            {"persons":[{"name":"关婉梨","rel":"女"}],"children":[]},
+            {"persons":[{"name":"关卓儒","rel":"兒"}],"children":[]}
+          ]
+        },
+        {
+          "persons": [{"name":"胡国欢","rel":"兒"},{"name":"周美月","rel":"媳"}],
+          "children": [
+            {"persons":[{"name":"胡雨浣","rel":"女"}],"children":[]},
+            {
+              "persons": [{"name":"胡兆东","rel":"兒"}],
+              "children": [
+                {"persons":[{"name":"胡艳芳","rel":"女"}],"children":[]}
+              ]
+            },
+            {
+              "persons": [{"name":"余仲山","rel":"婿"},{"name":"余凯茵","rel":"女"}],
+              "children": [
+                {"persons":[{"name":"余海业","rel":"兒"}],"children":[]}
+              ]
+            },
+            {"persons":[{"name":"胡利权","rel":"兒"}],"children":[]}
+          ]
+        },
+        {
+          "persons": [{"name":"胡瑞球","rel":"兒"},{"name":"周素心","rel":"媳"}],
+          "children": [
+            {
+              "persons": [{"name":"胡文杰","rel":"兒"},{"name":"麦丽丽","rel":"媳"}],
+              "children": [
+                {"persons":[{"name":"胡景桐","rel":"兒"}],"children":[]},
+                {"persons":[{"name":"胡慧仪","rel":"女"}],"children":[]}
+              ]
+            },
+            {
+              "persons": [{"name":"王家安","rel":"婿"},{"name":"黄燕杰","rel":"女"}],
+              "children": [
+                {"persons":[{"name":"王廷深","rel":"兒"}],"children":[]},
+                {"persons":[{"name":"王廷亦","rel":"兒"}],"children":[]}
+              ]
+            },
+            {
+              "persons": [{"name":"黄江源","rel":"兒"}],
+              "children": [
+                {"persons":[{"name":"黄舒怡","rel":"女"}],"children":[]}
+              ]
+            },
+            {"persons":[{"name":"胡媚杰","rel":"女"}],"children":[]},
+            {"persons":[{"name":"胡城杰","rel":"兒"}],"children":[]}
+          ]
+        },
+        {
+          "persons": [{"name":"李应玉","rel":"婿"},{"name":"胡兰","rel":"女"}],
+          "children": [
+            {"persons":[{"name":"李慧贞","rel":"女"}],"children":[]},
+            {"persons":[{"name":"李慧颜","rel":"女"}],"children":[]}
+          ]
+        }
+      ]
+    }
   },
-  // === 维富公 (orange) ===
   {
-    id:'weifu',code:'WF',label:'维富公',...BRANCH_COLORS.weifu,
-    root:family([P('胡维富','祖'),P('关月眉','妻')],[
-      family([P('胡现龙','兒'),P('李亚明','媳')],[
-        family([P('陈潮生','婿'),P('胡月莲','女')],[
-          family([P('陈素仪','女')])
-        ]),
-        family([P('洪及元','婿'),P('胡元英','女')],[
-          family([P('洪楚彬','兒')]),
-          family([P('洪有瑞','女')])
-        ])
-      ]),
-      family([P('胡业龙','兒')]),
-      family([P('胡均龙','兒'),P('关如娣','媳')],[
-        family([P('胡志雄','兒'),P('陈祖梅','媳')],[
-          family([P('胡宏骏','兒')]),
-          family([P('胡诗敏','女')]),
-          family([P('胡诗雅','女')])
-        ]),
-        family([P('胡齐爱','女')]),
-        family([P('胡西回','兒')])
-      ]),
-      family([P('胡锐龙','兒')],[
-        family([P('胡景群','女')])
-      ]),
-      family([P('胡运女','女')]),
-      family([P('麦志光','婿'),P('胡超仪','女')],[
-        family([P('麦永海','兒')]),
-        family([P('麦永曙','兒')]),
-        family([P('麦永岳','兒')]),
-        family([P('麦永波','兒')]),
-        family([P('麦美英','女')])
-      ])
-    ])
+    "id": "weifu",
+    "code": "WF",
+    "label": "维富公",
+    "color": "#ea580c",
+    "root": {
+      "persons": [
+        {"name":"胡维富","rel":"祖"},
+        {"name":"关月眉","rel":"妻"}
+      ],
+      "children": [
+        {
+          "persons": [{"name":"胡现龙","rel":"兒"},{"name":"李亚明","rel":"媳"}],
+          "children": [
+            {
+              "persons": [{"name":"陈潮生","rel":"婿"},{"name":"胡月莲","rel":"女"}],
+              "children": [
+                {"persons":[{"name":"陈素仪","rel":"女"}],"children":[]}
+              ]
+            },
+            {
+              "persons": [{"name":"洪及元","rel":"婿"},{"name":"胡元英","rel":"女"}],
+              "children": [
+                {"persons":[{"name":"洪楚彬","rel":"兒"}],"children":[]},
+                {"persons":[{"name":"洪有瑞","rel":"女"}],"children":[]}
+              ]
+            }
+          ]
+        },
+        {"persons":[{"name":"胡业龙","rel":"兒"}],"children":[]},
+        {
+          "persons": [{"name":"胡均龙","rel":"兒"},{"name":"关如娣","rel":"媳"}],
+          "children": [
+            {
+              "persons": [{"name":"胡志雄","rel":"兒"},{"name":"陈祖梅","rel":"媳"}],
+              "children": [
+                {"persons":[{"name":"胡宏骏","rel":"兒"}],"children":[]},
+                {"persons":[{"name":"胡诗敏","rel":"女"}],"children":[]},
+                {"persons":[{"name":"胡诗雅","rel":"女"}],"children":[]}
+              ]
+            },
+            {"persons":[{"name":"胡齐爱","rel":"女"}],"children":[]},
+            {"persons":[{"name":"胡西回","rel":"兒"}],"children":[]}
+          ]
+        },
+        {
+          "persons": [{"name":"胡锐龙","rel":"兒"}],
+          "children": [
+            {"persons":[{"name":"胡景群","rel":"女"}],"children":[]}
+          ]
+        },
+        {"persons":[{"name":"胡运女","rel":"女"}],"children":[]},
+        {
+          "persons": [{"name":"麦志光","rel":"婿"},{"name":"胡超仪","rel":"女"}],
+          "children": [
+            {"persons":[{"name":"麦永海","rel":"兒"}],"children":[]},
+            {"persons":[{"name":"麦永曙","rel":"兒"}],"children":[]},
+            {"persons":[{"name":"麦永岳","rel":"兒"}],"children":[]},
+            {"persons":[{"name":"麦永波","rel":"兒"}],"children":[]},
+            {"persons":[{"name":"麦美英","rel":"女"}],"children":[]}
+          ]
+        }
+      ]
+    }
   },
-  // === 维豪公 (orange-brown) ===
   {
-    id:'weihao',code:'WH',label:'维豪公',hex:'#d35400',bg:'rgba(211,84,0,0.04)',
-    root:family([P('胡维豪','祖'),P('关金笑','妻')],[
-      family([P('胡开基','兒'),P('刘桂春','媳'),P('刘开兰','媳')],[
-        family([P('胡健明','兒'),P('陈惠珠','媳')],[
-          family([P('陈翔辉','婿')]),
-          family([P('陈凤芬','女')]),
-          family([P('陈翔伟','兒')])
-        ]),
-        family([P('胡辉强','兒'),P('谢士莲','媳')],[
-          family([P('胡淑娴','女')]),
-          family([P('胡淑蓉','女')])
-        ]),
-        family([P('胡辉光','兒'),P('林细妹','媳')]),
-        family([P('胡辉鸿','兒')]),
-        family([P('李发','婿'),P('胡玉宝','女')])
-      ]),
-      family([P('张伟瑶','婿'),P('胡美娟','女')],[
-        family([P('刘丰登','婿'),P('张玉莲','女')])
-      ]),
-      family([P('张国明','兒'),P('邱郁敏','媳')]),
-      family([P('陈锦适','婿'),P('张玉萍','女')])
-    ])
+    "id": "weihao",
+    "code": "WH",
+    "label": "维豪公",
+    "color": "#db2777",
+    "root": {
+      "persons": [
+        {"name":"胡维豪","rel":"祖"},
+        {"name":"关金笑","rel":"妻"}
+      ],
+      "children": [
+        {
+          "persons": [{"name":"胡开基","rel":"兒"},{"name":"刘桂春","rel":"媳"},{"name":"刘开兰","rel":"媳"}],
+          "children": [
+            {
+              "persons": [{"name":"胡健明","rel":"兒"},{"name":"陈惠珠","rel":"媳"}],
+              "children": [
+                {"persons":[{"name":"陈翔辉","rel":"婿"}],"children":[]},
+                {"persons":[{"name":"陈凤芬","rel":"女"}],"children":[]},
+                {"persons":[{"name":"陈翔伟","rel":"兒"}],"children":[]}
+              ]
+            },
+            {
+              "persons": [{"name":"胡辉强","rel":"兒"},{"name":"谢士莲","rel":"媳"}],
+              "children": [
+                {"persons":[{"name":"胡淑娴","rel":"女"}],"children":[]},
+                {"persons":[{"name":"胡淑蓉","rel":"女"}],"children":[]}
+              ]
+            },
+            {"persons":[{"name":"胡辉光","rel":"兒"},{"name":"林细妹","rel":"媳"}],"children":[]},
+            {"persons":[{"name":"胡辉鸿","rel":"兒"}],"children":[]},
+            {"persons":[{"name":"李发","rel":"婿"},{"name":"胡玉宝","rel":"女"}],"children":[]}
+          ]
+        },
+        {
+          "persons": [{"name":"张伟瑶","rel":"婿"},{"name":"胡美娟","rel":"女"}],
+          "children": [
+            {
+              "persons": [{"name":"刘丰登","rel":"婿"},{"name":"张玉莲","rel":"女"}],
+              "children": []
+            }
+          ]
+        },
+        {"persons":[{"name":"张国明","rel":"兒"},{"name":"邱郁敏","rel":"媳"}],"children":[]},
+        {"persons":[{"name":"陈锦适","rel":"婿"},{"name":"张玉萍","rel":"女"}],"children":[]}
+      ]
+    }
   },
-  // === 维源公 (teal) ===
   {
-    id:'weiyuan',code:'WY',label:'维源公',...BRANCH_COLORS.weiyuan,
-    root:family([P('胡维源','祖'),P('关氏','妻')],[])
+    "id": "weiyuan",
+    "code": "WY",
+    "label": "维源公",
+    "color": "#0891b2",
+    "root": {
+      "persons": [
+        {"name":"胡维源","rel":"祖"},
+        {"name":"关氏","rel":"妻"}
+      ],
+      "children": []
+    }
   },
-  // === 维有公 (gray) ===
   {
-    id:'weiyou',code:'WU',label:'维有公',...BRANCH_COLORS.weiyou,
-    root:family([P('胡维有','?')],[])
+    "id": "weiyou",
+    "code": "WU",
+    "label": "维有公",
+    "color": "#6b7280",
+    "root": {
+      "persons": [
+        {"name":"胡维有","rel":"?"}
+      ],
+      "children": []
+    }
   },
-  // === 清和公 (gold) ===
   {
-    id:'qinghe',code:'QH',label:'清和公',...BRANCH_COLORS.qinghe,
-    root:family([P('胡清和','祖'),P('关亚好','妻')],[])
+    "id": "qinghe",
+    "code": "QH",
+    "label": "清和公",
+    "color": "#d97706",
+    "root": {
+      "persons": [
+        {"name":"胡清和","rel":"祖"},
+        {"name":"关亚好","rel":"妻"}
+      ],
+      "children": []
+    }
   },
-  // === 旺忠公 (green) ===
   {
-    id:'wangzhong',code:'WZ',label:'旺忠公',...BRANCH_COLORS.wangzhong,
-    root:family([P('胡旺忠','?')],[
-      family([P('胡顺兴','兒')]),
-      family([P('胡顺华','兒')]),
-      family([P('胡顺均','兒')]),
-      family([P('胡顺五','兒')]),
-      family([P('胡顺肇','兒')]),
-      family([P('胡金儿','女')])
-    ])
+    "id": "wangzhong",
+    "code": "WZ",
+    "label": "旺忠公",
+    "color": "#059669",
+    "root": {
+      "persons": [
+        {"name":"胡旺忠","rel":"?"}
+      ],
+      "children": [
+        {"persons":[{"name":"胡顺兴","rel":"兒"}],"children":[]},
+        {"persons":[{"name":"胡顺华","rel":"兒"}],"children":[]},
+        {"persons":[{"name":"胡顺均","rel":"兒"}],"children":[]},
+        {"persons":[{"name":"胡顺五","rel":"兒"}],"children":[]},
+        {"persons":[{"name":"胡顺肇","rel":"兒"}],"children":[]},
+        {"persons":[{"name":"胡金儿","rel":"女"}],"children":[]}
+      ]
+    }
   },
-  // === 叟和公 (blue) ===
   {
-    id:'shouhe',code:'SH',label:'叟和公',...BRANCH_COLORS.shouhe,
-    root:family([P('胡叟和','祖')],[])
+    "id": "shouhe",
+    "code": "SH",
+    "label": "叟和公",
+    "color": "#2563eb",
+    "root": {
+      "persons": [
+        {"name":"胡叟和","rel":"祖"}
+      ],
+      "children": []
+    }
   }
 ];
+</script>
+  <script>
+/**
+ * tree-renderer.js — Interactive Family Tree Renderer
+ *
+ * The HEART of the Hu Clan Genealogy website.
+ * Expects window.HU_TREE_DATA (defined in data.js).
+ *
+ * Data format:
+ *   [{
+ *     id: "weixian", code: "WX", label: "维显公", color: "#7c3aed",
+ *     root: {
+ *       persons: [{name: "...", rel: "祖"}, ...],
+ *       children: [{persons: [...], children: [...]}, ...]
+ *     }
+ *   }, ...]
+ *
+ * No external dependencies. No vertical text. SVG for tree lines.
+ */
 
-// ===== TREE ENRICHMENT (IDs + expanded state) =====
-(function(){var _idC=1;function en(n,d,si,c){n._id=_idC++;n._expanded=false;n._code=c;n._path=(n._path||[]).concat(si);(n.persons||[]).forEach(function(p){p._path=n._path.slice();p._code=c;});(n.children||[]).forEach(function(ch,i){ch._path=n._path.slice();en(ch,d+1,i,c)});}treeData.forEach(function(b){en(b.root,0,0,b.code)});})();
+(function () {
+  'use strict';
 
-function countDesc(n){var c=0;function w(x){(x.children||[]).forEach(function(ch){c++;w(ch)});}w(n);return c}
+  // ========================================================================
+  // CONSTANTS
+  // ========================================================================
 
-function findNode(id){function s(n){if(n._id===id)return n;for(var i=0;i<(n.children||[]).length;i++){var r=s(n.children[i]);if(r)return r}return null}for(var i=0;i<treeData.length;i++){var r=s(treeData[i].root);if(r)return r}return null}
+  const REL_STYLES = {
+    '祖': { text: '祖', bg: '#d4a017', cls: 'rel-ancestor' },
+    '兒': { text: '儿', bg: '#2563eb', cls: 'rel-son' },
+    '女': { text: '女', bg: '#ec4899', cls: 'rel-daughter' },
+    '媳': { text: '媳', bg: '#9333ea', cls: 'rel-wife' },
+    '婿': { text: '婿', bg: '#16a34a', cls: 'rel-husband' },
+    '妻': { text: '妻', bg: '#9333ea', cls: 'rel-wife' },
+    '?':  { text: '?',  bg: '#6b7280', cls: 'rel-unknown' },
+  };
 
-function getAncestors(id){var p=[];function s(n){if(n._id===id)return true;if(!n.children)return false;for(var i=0;i<n.children.length;i++){if(s(n.children[i])){p.unshift(n);return true}}return false}treeData.some(function(b){return s(b.root)});return p}
+  const DEFAULT_EXPAND_GENS = 2;  // top N generations expanded by default
 
-var _actBr=null;
+  // ========================================================================
+  // STATE
+  // ========================================================================
 
-function toggleNode(id,st){var n=findNode(id);if(!n||!n.children||!n.children.length)return;n._expanded=st!==undefined?st:!n._expanded;renderAll()}
+  const state = {
+    expanded: new Set(),   // node paths that have children visible
+    focused: null,         // path of focused person (focus mode), null=none
+    searchQuery: '',
+    matchedPaths: [],      // paths matching current search
+    activeBranch: 'all',   // 'all' or branch id string
+    treeData: [],
+    nodeMap: {},           // path → node metadata
+    genGroups: [],         // [{gen: N, branches: {branchId: [nodes]}}]
+    connections: [],       // [{parentPath, childPath}]
+    maxDepth: 0,
+    container: null,
+  };
 
-function expandAllRec(id){var n=findNode(id);if(!n)return;function e(x){x._expanded=true;(x.children||[]).forEach(e)}e(n);renderAll()}
+  // ========================================================================
+  // DATA HELPERS
+  // ========================================================================
 
-function collapseToDef(){treeData.forEach(function(b){function c(n,d){n._expanded=false;(n.children||[]).forEach(function(ch){c(ch,d+1)})}c(b.root,0)});renderAll()}
+  /**
+   * Walk the tree assigning _path, _depth, _branchId to each node.
+   * path format: "WX-0-1-2" where WX=branch code and segments are 0-based child indices.
+   */
+  function assignPaths(node, branchId, branchCode, depth, pathSegs) {
+    const segStr = pathSegs.length === 0 ? '0' : pathSegs.join('-');
+    node._path = branchCode + '-' + segStr;
+    node._depth = depth;
+    node._branchId = branchId;
+    node._branchCode = branchCode;
 
-function collapseAllVis(){treeData.forEach(function(b){function c(n){n._expanded=false;(n.children||[]).forEach(c)}c(b.root)});renderAll()}
+    state.nodeMap[node._path] = node;
 
-// ===== RENDER =====
-function renderPersonCard(p){
-  var relClass = p.rel==='?'||p.rel==='\u4E0D\u8BE6'?'rel-unknown'
-    : p.rel==='\u7956'||p.rel==='\u7737'?'rel-ancestor'
-    : p.rel==='\u5152'||p.rel==='\u513F'?'rel-son'
-    : p.rel==='\u5973'?'rel-daughter'
-    : p.rel==='\u5AB3'?'rel-wife'
-    : p.rel==='\u5A7F'?'rel-husband'
-    : p.rel==='\u59BB'?'rel-spouse'
-    : 'rel-unknown';
-  var relLabel = p.rel;
-  var pathStr = p._path ? p._code + '-' + p._path.map(function(x){return x+1}).join('-') : '';
-  var tip = p.rel==='\u7956'?'\u59CB\u7956 '+p.name
-    : p.rel==='\u59BB'?'\u914D\u5076 '+p.name
-    : p.rel==='\u5152'||p.rel==='\u513F'?'\u5152\u5B50 '+p.name
-    : p.rel==='\u5973'?'\u5973\u5152 '+p.name
-    : p.rel==='\u5AB3'?'\u5AB3\u5987(\u5AC1\u5165) '+p.name
-    : p.rel==='\u5A7F'?'\u5973\u5A7F(\u5A36\u80E1\u5BB6\u5973) '+p.name
-    : p.rel==='?'||p.rel==='\u4E0D\u8BE6'?'\u4E0D\u8BE6 '+p.name
-    : p.rel==='\u7737'?'\u5BB6\u7737 '+p.name
-    : p.name;
-  return '<div class="person-card" data-name="'+p.name+'" data-rel="'+p.rel+'">'
-    + '<span class="name">'+p.name+'</span>'
-    + '<span class="rel-badge '+relClass+'">'+relLabel+'</span>'
-    + '<span class="tooltip">'+tip+(pathStr?'<span style="font-size:8px;opacity:0.7;display:block;margin-top:1px">'+pathStr+'</span>':'')+'</span></div>';
-}
+    if (depth > state.maxDepth) state.maxDepth = depth;
 
-function renderCouple(persons){
-  if(persons.length===1) return renderPersonCard(persons[0]);
-  var h='<div class="couple">';
-  for(var i=0;i<persons.length;i++){
-    h+=renderPersonCard(persons[i]);
-    if(i<persons.length-1) h+='<span class="marriage-dot"></span>';
+    node.children.forEach(function (child, i) {
+      var childSegs = pathSegs.concat([i]);
+      assignPaths(child, branchId, branchCode, depth + 1, childSegs);
+
+      state.connections.push({
+        parentPath: node._path,
+        childPath: child._path,
+        branchId: branchId,
+      });
+    });
   }
-  return h+'</div>';
-}
 
-function renderNode(node){
-  if(!node) return '';
-  var hasKids = node.children && node.children.length>0;
-  var isExp = node._expanded!==false;
-  var singleChild = hasKids && node.children.length===1;
-  var cls = 'tree-node';
-  if(!hasKids) cls+=' leaf';
-  else cls+=isExp?' expanded':' collapsed';
+  /**
+   * Build the generation-grouped structure:
+   *   genGroups[N] = { branchId: [node, ...], ... }
+   * For each generation depth, collect all nodes at that depth grouped by branch.
+   */
+  function buildGenGroups() {
+    state.genGroups = [];
+    var nodePaths = Object.keys(state.nodeMap);
 
-  var h='<div class="'+cls+'" data-node-id="'+node._id+'">';
-  h+='<div class="parent-unit">';
-  h+=renderCouple(node.persons);
-  if(hasKids){
-    h+='<div class="v-line"></div>';
-    var dc=countDesc(node);
-    h+='<div class="toggle-btn'+(dc>99?' expand-all':'')+'" data-toggled-id="'+node._id+'">'
-      +(isExp?'\u2212':'+'+dc)+'</div>';
-  }
-  h+='</div>';
-  if(hasKids){
-    h+='<div class="children-section">';
-    h+='<div class="h-bar'+(singleChild?' single':'')+'"></div>';
-    for(var i=0;i<node.children.length;i++){
-      h+=renderNode(node.children[i]);
+    for (var g = 0; g <= state.maxDepth; g++) {
+      state.genGroups[g] = {};
     }
-    h+='</div>';
-  }
-  return h+'</div>';
-}
 
-function renderBranch(branch){
-  var collapsed = !branch.root._expanded;
-  return '<div class="branch'+(collapsed?' collapsed':'')+'" data-branch="'+branch.id
-    +'" style="border-left-color:'+branch.hex+';background:'+branch.bg+'">'
-    + '<div class="branch-header" style="color:'+branch.hex+'">'
-    + '<span class="toggle-btn">'+(collapsed?'+':'−')+'</span>'
-    + '<span>'+branch.label+'</span></div>'
-    + renderNode(branch.root)
-    + '</div>';
-}
-
-// ===== RENDER ALL (re-render with current state) =====
-var _searchStr='';
-
-function renderAll(){
-  var treeEl=document.getElementById('tree');
-  treeEl.innerHTML='';
-  treeData.forEach(function(b){treeEl.innerHTML+=renderBranch(b);});
-  var q=_searchStr.trim();
-  if(q){
-    var cards=document.querySelectorAll('.person-card'),m=0,first=null;
-    cards.forEach(function(c){c.classList.remove('highlight-match','dimmed');
-      var n=c.getAttribute('data-name')||'';
-      if(n.indexOf(q)!==-1){c.classList.add('highlight-match');m++;if(!first)first=c;}
-      else c.classList.add('dimmed');
+    nodePaths.forEach(function (path) {
+      var node = state.nodeMap[path];
+      var g = node._depth;
+      if (!state.genGroups[g]) state.genGroups[g] = {};
+      if (!state.genGroups[g][node._branchId]) state.genGroups[g][node._branchId] = [];
+      state.genGroups[g][node._branchId].push(node);
     });
-    document.getElementById('searchCount').textContent=m>0?'\u627E\u5230 '+m+' \u4EBA':'\u7121\u7D50\u679C';
-    if(first)first.scrollIntoView({behavior:'smooth',block:'center'});
-  } else {
-    if(_actBr) doBranchHighlight(_actBr);
   }
-}
 
-function doBranchHighlight(branchId){
-  var cards=document.querySelectorAll('.person-card');
-  cards.forEach(function(c){c.classList.remove('active','dimmed');});
-  if(!branchId) return;
-  var br=document.querySelector('.branch[data-branch="'+branchId+'"]');
-  if(!br) return;
-  br.querySelectorAll('.person-card').forEach(function(c){c.classList.add('active');});
-  document.querySelectorAll('.branch').forEach(function(b){
-    if(b!==br) b.querySelectorAll('.person-card').forEach(function(c){c.classList.add('dimmed');});
-  });
-}
-
-// ===== HASH ROUTING =====
-function navigateTo(page){
-  // Update page visibility
-  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
-  var target=document.getElementById('page-'+page);
-  if(target) target.classList.add('active');
-
-  // Update nav buttons
-  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
-  var btn=document.querySelector('.nav-btn[data-page="'+page+'"]');
-  if(btn) btn.classList.add('active');
-}
-
-function onHashChange(){
-  var hash=window.location.hash.replace('#','') || 'tree';
-  var valid=['intro','poem','genealogy','tree'];
-  if(valid.indexOf(hash)===-1) hash='tree';
-  navigateTo(hash);
-}
-
-// ===== INIT =====
-(function(){
-  // Initial route
-  onHashChange();
-  window.addEventListener('hashchange',onHashChange);
-
-  // Nav button clicks
-  document.querySelectorAll('.nav-btn').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      var page=this.getAttribute('data-page');
-      window.location.hash=page;
+  /**
+   * Count total descendants (non-recursive count used for collapse badges).
+   */
+  function countDescendants(node) {
+    var count = 0;
+    node.children.forEach(function (child) {
+      count += 1 + countDescendants(child);
     });
-  });
+    return count;
+  }
 
-  renderAll();
-  var treeEl=document.getElementById('tree');
+  /**
+   * Return all ancestor paths (including self) for a given node path.
+   */
+  function getAncestorPaths(path) {
+    var parts = path.split('-');
+    var ancestors = [];
+    for (var i = 0; i <= parts.length; i++) {
+      ancestors.push(parts.slice(0, i).join('-') || parts[0]);
+    }
+    return ancestors;
+  }
 
-  // Event delegation on tree
-  treeEl.addEventListener('click',function(e){
-    // Branch header toggle
-    var brHeader=e.target.closest('.branch-header');
-    if(brHeader){
-      e.stopPropagation();
-      var branch=brHeader.closest('.branch');
-      if(!branch)return;
-      var brId=branch.getAttribute('data-branch');
-      var collapsed=branch.classList.contains('collapsed');
-      // Find and toggle this branch's root node
-      treeData.forEach(function(b){
-        if(b.id===brId){
-          b.root._expanded=collapsed;
-          // Recursively set children: if expanding, expand Gen 1-2; if collapsing, collapse all
-          function setKids(n,d){n._expanded=collapsed?true:(d<1?true:false);(n.children||[]).forEach(function(ch){setKids(ch,d+1)})}
-          setKids(b.root,0);
+  /**
+   * Check if a node or its descendants contain the search query in any person name.
+   */
+  function nodeMatchesSearch(node, query) {
+    if (!query) return false;
+    var q = query.toLowerCase();
+    var match = false;
+    (node.persons || []).forEach(function (p) {
+      if (p.name.toLowerCase().indexOf(q) !== -1) match = true;
+    });
+    return match;
+  }
+
+  function subtreeHasMatch(node, query) {
+    if (nodeMatchesSearch(node, query)) return true;
+    for (var i = 0; i < node.children.length; i++) {
+      if (subtreeHasMatch(node.children[i], query)) return true;
+    }
+    return false;
+  }
+
+  /**
+   * Find all paths that match the search query, and auto-expand their ancestors.
+   */
+  function searchTree(query) {
+    state.matchedPaths = [];
+    // Collect matching paths and paths to expand
+    var pathsToExpand = new Set();
+    var nodePaths = Object.keys(state.nodeMap);
+
+    if (!query) {
+      // Reset: expand default
+      expandDefaultLevels();
+      return;
+    }
+
+    var q = query.toLowerCase();
+    nodePaths.forEach(function (path) {
+      var node = state.nodeMap[path];
+      var match = false;
+      (node.persons || []).forEach(function (p) {
+        if (p.name.toLowerCase().indexOf(q) !== -1) {
+          match = true;
         }
       });
-      renderAll();
-      return;
-    }
-    // Toggle button
-    var btn=e.target.closest('.toggle-btn');
-    if(btn){
-      e.stopPropagation();
-      var id=parseInt(btn.getAttribute('data-toggled-id'));
-      toggleNode(id);
-      _searchStr='';
-      return;
-    }
-
-    // Person card
-    var card=e.target.closest('.person-card');
-    if(card){
-      e.stopPropagation();
-      var nodeEl=card.closest('.tree-node');
-      if(!nodeEl) return;
-      var nodeId=parseInt(nodeEl.getAttribute('data-node-id'));
-
-      // Determine branch highlight state BEFORE toggle (which re-renders)
-      var brId=null,branch=card.closest('.branch');
-      if(branch) brId=branch.getAttribute('data-branch');
-
-      if(brId && _actBr===brId){
-        // Same branch clicked again — toggle highlight off
-        _actBr=null;
-      } else if(brId){
-        _actBr=brId;
+      if (match) {
+        state.matchedPaths.push(path);
+        // Auto-expand all ancestors of this match
+        var ancestors = getAncestorPaths(path);
+        ancestors.forEach(function (ap) {
+          pathsToExpand.add(ap);
+        });
       }
-
-      // Now do toggle (calls renderAll which applies highlight via _actBr)
-      if(e.shiftKey){
-        expandAllRec(nodeId);
-      } else {
-        var n=findNode(nodeId);
-        if(n&&n.children&&n.children.length){toggleNode(nodeId);}
-        else renderAll(); // still need to apply branch highlight
-      }
-
-      _searchStr='';
-      document.getElementById('searchBox').value='';
-      document.getElementById('searchCount').textContent='';
-    }
-  });
-
-  // Click outside to clear
-  document.addEventListener('dblclick',function(){
-    _actBr=null;_searchStr='';
-    collapseToDef();
-    document.getElementById('searchBox').value='';
-    document.getElementById('searchCount').textContent='';
-  });
-  document.addEventListener('click',function(e){
-    if(!e.target.closest('.person-card')&&!e.target.closest('.toggle-btn')
-      &&!e.target.closest('.search-area')&&!e.target.closest('.header')){
-      _actBr=null;
-      collapseToDef();
-      document.getElementById('searchBox').value='';
-      document.getElementById('searchCount').textContent='';
-      _searchStr='';
-    }
-  });
-
-  // Search
-  var searchBox=document.getElementById('searchBox');
-  var searchCount=document.getElementById('searchCount');
-
-  function doSearch(q){
-    var t=q.trim();_searchStr=t;
-    if(!t){
-      collapseToDef();
-      searchCount.textContent='';
-      return;
-    }
-    // Find matching nodes in data
-    var matches=[];
-    treeData.forEach(function(b){
-      function walk(n){
-        (n.persons||[]).forEach(function(p){if(p.name.indexOf(t)!==-1)matches.push(n);});
-        (n.children||[]).forEach(walk);
-      }
-      walk(b.root);
     });
-    // Expand ancestors of all matches
-    if(matches.length){
-      collapseToDef();  // reset
-      matches.forEach(function(m){
-        var a=getAncestors(m._id);
-        a.forEach(function(x){x._expanded=true;});
-        m._expanded=true;
-      });
-    }
-    // Re-render
-    treeEl.innerHTML='';
-    treeData.forEach(function(b){treeEl.innerHTML+=renderBranch(b);});
-    // Apply search classes
-    var cards=document.querySelectorAll('.person-card'),cnt=0,first=null;
-    cards.forEach(function(c){
-      c.classList.remove('highlight-match','dimmed');
-      var n=c.getAttribute('data-name')||'';
-      if(n.indexOf(t)!==-1){
-        c.classList.add('highlight-match');cnt++;
-        if(!first) first=c;
-      }else c.classList.add('dimmed');
+
+    // Apply expansions
+    pathsToExpand.forEach(function (p) { state.expanded.add(p); });
+
+    // Also expand ancestors of any node that has a matching descendant
+    nodePaths.forEach(function (path) {
+      var node = state.nodeMap[path];
+      if (!nodeMatchesSearch(node, query) && subtreeHasMatch(node, query)) {
+        var ancestors = getAncestorPaths(path);
+        ancestors.forEach(function (ap) { state.expanded.add(ap); });
+      }
     });
-    searchCount.textContent=cnt>0?'\u627E\u5230 '+cnt+' \u4EBA':'\u7121\u7D50\u679C';
-    if(first) first.scrollIntoView({behavior:'smooth',block:'center'});
   }
 
-  searchBox.addEventListener('input',function(){doSearch(this.value);});
-  searchBox.addEventListener('keydown',function(e){
-    if(e.key==='Escape'){this.value='';doSearch('');this.blur();}
-    if(e.key==='Enter'){
-      var m=document.querySelectorAll('.person-card.highlight-match');
-      if(m.length) m[0].scrollIntoView({behavior:'smooth',block:'center'});
+  function expandDefaultLevels() {
+    state.expanded = new Set();
+    var nodePaths = Object.keys(state.nodeMap);
+    nodePaths.forEach(function (path) {
+      var node = state.nodeMap[path];
+      if (node._depth < DEFAULT_EXPAND_GENS) {
+        state.expanded.add(path);
+      }
+    });
+  }
+
+  // ========================================================================
+  // HTML BUILDERS
+  // ========================================================================
+
+  /**
+   * Create a person badge element for a single person in the node.
+   */
+  function createPersonBadge(person, branchColor, nodePath) {
+    var relStyle = REL_STYLES[person.rel] || REL_STYLES['?'];
+    var card = document.createElement('div');
+    card.className = 'person-card';
+    card.setAttribute('data-path', nodePath);
+    card.setAttribute('data-queryable', '1');
+
+    // Left accent strip
+    var accent = document.createElement('div');
+    accent.className = 'card-accent';
+    accent.style.background = branchColor;
+    card.appendChild(accent);
+
+    // Body
+    var body = document.createElement('div');
+    body.className = 'card-body';
+
+    var nameSpan = document.createElement('span');
+    nameSpan.className = 'card-name';
+    nameSpan.textContent = person.name;
+    body.appendChild(nameSpan);
+
+    var relSpan = document.createElement('span');
+    relSpan.className = 'card-rel';
+    var relBadge = document.createElement('span');
+    relBadge.className = 'rel-badge';
+    relBadge.style.background = relStyle.bg;
+    relBadge.textContent = relStyle.text;
+    relSpan.appendChild(relBadge);
+    body.appendChild(relSpan);
+
+    card.appendChild(body);
+
+    // Path ID at bottom
+    var pathEl = document.createElement('div');
+    pathEl.className = 'card-path';
+    pathEl.textContent = nodePath;
+    card.appendChild(pathEl);
+
+    return card;
+  }
+
+  /**
+   * Build the family unit for a node. Shows all persons in the node
+   * (typically a couple/family unit).
+   */
+  function createFamilyUnit(node, branchColor, allExpanded) {
+    var unit = document.createElement('div');
+    unit.className = 'family-unit';
+
+    var personsContainer = document.createElement('div');
+    personsContainer.className = 'family-persons';
+
+    node.persons.forEach(function (person, idx) {
+      var badge = createPersonBadge(person, branchColor, node._path);
+      // If this is a couple (2+ persons), add a spouse connector between them
+      if (idx > 0) {
+        var connector = document.createElement('span');
+        connector.className = 'spouse-connector';
+        connector.textContent = '◆';
+        personsContainer.appendChild(connector);
+      }
+      personsContainer.appendChild(badge);
+    });
+
+    unit.appendChild(personsContainer);
+
+    // Collapse/expand toggle
+    var descCount = countDescendants(node);
+    if (descCount > 0) {
+      var toggle = document.createElement('button');
+      toggle.className = 'tree-toggle';
+      toggle.setAttribute('data-toggle-path', node._path);
+      toggle.setAttribute('data-expanded', allExpanded ? 'true' : 'false');
+      if (allExpanded) {
+        toggle.classList.add('expanded');
+      } else {
+        toggle.classList.add('collapsed');
+      }
+      toggle.innerHTML = (allExpanded ? '−' : '+') + ' <span class="toggle-count">' + descCount + '</span>';
+      unit.appendChild(toggle);
     }
-  });
+
+    return unit;
+  }
+
+  /**
+   * Render the entire tree into the provided container element.
+   */
+  function renderTree() {
+    var container = state.container;
+    if (!container) return;
+
+    // Clear
+    container.innerHTML = '';
+
+    // Build branch index
+    var branches = {};
+    state.treeData.forEach(function (b) { branches[b.id] = b; });
+
+    // Determine which branches to show
+    var visibleBranches = state.activeBranch === 'all'
+      ? state.treeData
+      : state.treeData.filter(function (b) { return b.id === state.activeBranch; });
+
+    if (visibleBranches.length === 0) return;
+
+    // Build the generation grid
+    // genGrid[genIdx] = { branchId: [nodes], ... }
+    var genGrid = [];
+    for (var g = 0; g <= state.maxDepth; g++) {
+      genGrid[g] = {};
+      visibleBranches.forEach(function (branch) {
+        genGrid[g][branch.id] = state.genGroups[g] && state.genGroups[g][branch.id]
+          ? state.genGroups[g][branch.id]
+          : [];
+      });
+    }
+
+    // Determine which nodes are visible (not collapsed)
+    // A node is visible if all its ancestors are expanded, or it's within default expand depth
+    var visibleSet = new Set();
+    function setVisible(node, parentVisible) {
+      var isExpanded = state.expanded.has(node._path);
+      var visible = parentVisible || node._depth < DEFAULT_EXPAND_GENS;
+      if (visible) visibleSet.add(node._path);
+      node.children.forEach(function (child) {
+        setVisible(child, visible && isExpanded);
+      });
+    }
+    visibleBranches.forEach(function (branch) {
+      setVisible(branch.root, true);
+    });
+
+    // —— BUILD THE GRID (using document fragments for performance) ——
+    var grid = document.createElement('div');
+    grid.className = 'tree-grid';
+    var gridFrag = document.createDocumentFragment();
+
+    // Header row: branch labels
+    var headerRow = document.createElement('div');
+    headerRow.className = 'gen-row gen-header-row';
+    headerRow.style.position = 'sticky';
+    headerRow.style.top = '0';
+    headerRow.style.zIndex = '10';
+    headerRow.style.background = '#f5efe4';
+
+    // Generation band colors (subtle 2% alternation)
+    function genBg(genIdx) {
+      return genIdx % 2 === 0 ? 'transparent' : 'rgba(0,0,0,0.02)';
+    }
+
+    visibleBranches.forEach(function (branch, bi) {
+      var col = document.createElement('div');
+      col.className = 'branch-col branch-header-cell';
+      col.style.borderLeft = bi > 0 ? '1px solid #ddd' : 'none';
+
+      var hdr = document.createElement('div');
+      hdr.className = 'col-branch-header';
+      hdr.style.color = branch.color;
+      hdr.style.borderBottom = '3px solid ' + branch.color;
+      hdr.textContent = branch.label;
+      col.appendChild(hdr);
+
+      // Sub-header with relationship count
+      var sub = document.createElement('div');
+      sub.className = 'col-branch-sub';
+      sub.textContent = branch.code + ' · ' + Object.keys(state.nodeMap).filter(function (p) {
+        return state.nodeMap[p]._branchId === branch.id;
+      }).length + ' members';
+      sub.style.fontSize = '11px';
+      sub.style.color = '#999';
+      sub.style.padding = '2px 4px';
+      col.appendChild(sub);
+
+      headerRow.appendChild(col);
+    });
+    gridFrag.appendChild(headerRow);
+
+    // Generation rows
+    for (var g = 0; g <= state.maxDepth; g++) {
+      var genRow = document.createElement('div');
+      genRow.className = 'gen-row';
+      genRow.setAttribute('data-gen', g);
+      genRow.style.background = genBg(g);
+
+      // Generation label (leftmost column - just shows the generation number)
+      var genLabel = document.createElement('div');
+      genLabel.className = 'gen-label';
+      genLabel.textContent = 'Gen ' + g;
+      genLabel.style.cssText = 'width:40px;flex-shrink:0;font-size:10px;color:#ccc;display:flex;align-items:center;justify-content:center;padding:4px;letter-spacing:1px;';
+      genRow.appendChild(genLabel);
+
+      visibleBranches.forEach(function (branch, bi) {
+        var col = document.createElement('div');
+        col.className = 'branch-col';
+        col.style.borderLeft = bi > 0 ? '1px solid #eee' : 'none';
+
+        var nodes = genGrid[g][branch.id] || [];
+
+        if (nodes.length > 0) {
+          var nodesContainer = document.createElement('div');
+          nodesContainer.className = 'gen-nodes';
+
+          nodes.forEach(function (node) {
+            if (!visibleSet.has(node._path)) return;
+
+            var nodeEl = document.createElement('div');
+            nodeEl.className = 'tree-node';
+            nodeEl.setAttribute('data-path', node._path);
+            nodeEl.setAttribute('data-branch', node._branchId);
+            nodeEl.setAttribute('data-depth', node._depth);
+
+            var isExpanded = state.expanded.has(node._path);
+
+            var unit = createFamilyUnit(node, branch.color, isExpanded);
+            nodeEl.appendChild(unit);
+
+            nodesContainer.appendChild(nodeEl);
+          });
+
+          col.appendChild(nodesContainer);
+        }
+
+        genRow.appendChild(col);
+      });
+
+      gridFrag.appendChild(genRow);
+    }
+
+    grid.appendChild(gridFrag);
+    container.appendChild(grid);
+
+    // —— LEGEND ——
+    var legend = document.createElement('div');
+    legend.className = 'tree-legend';
+
+    // Relationship badges
+    var relLegendItems = [
+      { text: '儿', bg: '#2563eb', label: 'Son' },
+      { text: '女', bg: '#ec4899', label: 'Daughter' },
+      { text: '媳', bg: '#9333ea', label: 'Wife/Daughter-in-law' },
+      { text: '婿', bg: '#16a34a', label: 'Husband/Son-in-law' },
+      { text: '祖', bg: '#d4a017', label: 'Founder' },
+      { text: '?', bg: '#6b7280', label: 'Unknown' },
+    ];
+    relLegendItems.forEach(function (item) {
+      var span = document.createElement('span');
+      span.className = 'legend-item';
+      var badge = document.createElement('span');
+      badge.className = 'legend-badge';
+      badge.style.background = item.bg;
+      badge.textContent = item.text;
+      span.appendChild(badge);
+      var label = document.createTextNode(item.label);
+      span.appendChild(label);
+      legend.appendChild(span);
+    });
+
+    // Branch color dots
+    state.treeData.forEach(function (branch) {
+      var span = document.createElement('span');
+      span.className = 'legend-item';
+      var dot = document.createElement('span');
+      dot.className = 'legend-dot';
+      dot.style.background = branch.color;
+      span.appendChild(dot);
+      var label = document.createTextNode(branch.label);
+      span.appendChild(label);
+      legend.appendChild(span);
+    });
+
+    // Note about lines
+    var noteSpan = document.createElement('span');
+    noteSpan.className = 'legend-item';
+    noteSpan.style.marginLeft = 'auto';
+    noteSpan.style.fontSize = '11px';
+    noteSpan.style.color = '#8a7a6a';
+    noteSpan.textContent = 'Colored lines = Parent-child connections';
+    legend.appendChild(noteSpan);
+
+    container.appendChild(legend);
+
+    // —— DRAW SVG LINES ——
+    drawLines();
+
+    // —— APPLY FOCUS MODE ——
+    applyFocus();
+
+    // —— APPLY SEARCH ——
+    applySearch();
+
+    // —— SHOW/HIDE BACK BUTTON ——
+    updateBackButton();
+
+    // —— SET UP EVENT LISTENERS ——
+    wireEvents(container);
+  }
+
+  // ========================================================================
+  // SVG LINES
+  // ========================================================================
+
+  /**
+   * Draw parent-child connection lines using an SVG overlay.
+   * Lines connect center-bottom of parent card to center-top of child card.
+   */
+  function drawLines() {
+    var container = state.container;
+    if (!container) return;
+
+    // Remove old SVG
+    var oldSvg = container.querySelector('.tree-lines-svg');
+    if (oldSvg) oldSvg.remove();
+
+    // Compute positions
+    var connections = state.connections;
+    var paths = [];
+    var containerRect = container.getBoundingClientRect();
+
+    connections.forEach(function (conn) {
+      var parentEl = container.querySelector('[data-path="' + escapeCSS(conn.parentPath) + '"]');
+      var childEl = container.querySelector('[data-path="' + escapeCSS(conn.childPath) + '"]');
+      if (!parentEl || !childEl) return;
+
+      var parentRect = parentEl.getBoundingClientRect();
+      var childRect = childEl.getBoundingClientRect();
+
+      var x1 = parentRect.left + parentRect.width / 2 - containerRect.left;
+      var y1 = parentRect.bottom - containerRect.top;
+      var x2 = childRect.left + childRect.width / 2 - containerRect.left;
+      var y2 = childRect.top - containerRect.top;
+
+      var branch = state.nodeMap[conn.parentPath];
+      var color = 'rgba(0,0,0,0.25)';
+      if (branch) {
+        // Find branch color
+        state.treeData.forEach(function (b) {
+          if (b.id === conn.branchId) color = hexToRgba(b.color, 0.35);
+        });
+      }
+
+      paths.push({
+        x1: x1, y1: y1, x2: x2, y2: y2,
+        color: color,
+      });
+    });
+
+    if (paths.length === 0) return;
+
+    // Calculate SVG bounds: match container
+    var treeGrid = container.querySelector('.tree-grid');
+    if (!treeGrid) return;
+    var gridRect = treeGrid.getBoundingClientRect();
+    var svgW = gridRect.width;
+    var svgH = container.querySelector('.tree-grid').scrollHeight || gridRect.height;
+
+    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('class', 'tree-lines-svg');
+    svg.setAttribute('width', svgW);
+    svg.setAttribute('height', svgH);
+    svg.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none;z-index:5;overflow:visible;';
+
+    paths.forEach(function (p) {
+      // Vertical line from parent center-bottom
+      var midY = (p.y1 + p.y2) / 2;
+      var line1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line1.setAttribute('x1', p.x1);
+      line1.setAttribute('y1', p.y1);
+      line1.setAttribute('x2', p.x1);
+      line1.setAttribute('y2', midY);
+      line1.setAttribute('stroke', p.color);
+      line1.setAttribute('stroke-width', '3');
+      line1.setAttribute('stroke-linecap', 'round');
+      svg.appendChild(line1);
+
+      // Vertical line to child
+      var line2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line2.setAttribute('x1', p.x2);
+      line2.setAttribute('y1', midY);
+      line2.setAttribute('x2', p.x2);
+      line2.setAttribute('y2', p.y2);
+      line2.setAttribute('stroke', p.color);
+      line2.setAttribute('stroke-width', '3');
+      line2.setAttribute('stroke-linecap', 'round');
+      svg.appendChild(line2);
+
+      // Horizontal connector
+      var hLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      hLine.setAttribute('x1', p.x1);
+      hLine.setAttribute('y1', midY);
+      hLine.setAttribute('x2', p.x2);
+      hLine.setAttribute('y2', midY);
+      hLine.setAttribute('stroke', p.color);
+      hLine.setAttribute('stroke-width', '3');
+      hLine.setAttribute('stroke-linecap', 'round');
+      svg.appendChild(hLine);
+    });
+
+    container.style.position = 'relative';
+    container.appendChild(svg);
+  }
+
+  // ========================================================================
+  // FOCUS MODE
+  // ========================================================================
+
+  function applyFocus() {
+    if (!state.focused) {
+      state.container.querySelectorAll('.person-card.dimmed, .person-card.sibling-dim, .tree-node.focused-node').forEach(function (el) {
+        el.classList.remove('dimmed', 'sibling-dim', 'focused', 'focused-node');
+        el.style.outline = '';
+        el.style.boxShadow = '';
+        el.style.opacity = '';
+      });
+      return;
+    }
+
+    // Collect all person cards
+    var allCards = state.container.querySelectorAll('.person-card');
+    var focusedPath = state.focused;
+
+    // Determine the focused node's depth, branch, and sibling node paths
+    var focusedNode = state.nodeMap[focusedPath];
+    if (!focusedNode) return;
+
+    // Find parent path (to get siblings)
+    var pathParts = focusedPath.split('-');
+    var parentPath = pathParts.length > 1 ? pathParts.slice(0, -1).join('-') : null;
+
+    // Build sets
+    var ancestorsSet = new Set();
+    if (parentPath) {
+      var ancestors = getAncestorPaths(parentPath);
+      ancestors.forEach(function (ap) { ancestorsSet.add(ap); });
+    }
+
+    var directDescendantsSet = new Set();
+    function collectDescendants(node) {
+      directDescendantsSet.add(node._path);
+      node.children.forEach(function (c) { collectDescendants(c); });
+    }
+    collectDescendants(focusedNode);
+
+    // Siblings: nodes that share the same parent
+    var siblingSet = new Set();
+    if (parentPath && state.nodeMap[parentPath]) {
+      state.nodeMap[parentPath].children.forEach(function (child) {
+        siblingSet.add(child._path);
+      });
+    }
+
+    // Apply dimming
+    allCards.forEach(function (card) {
+      var path = card.getAttribute('data-path');
+      if (!path) return;
+      if (path === focusedPath) {
+        card.classList.add('focused');
+        card.style.outline = '3px solid #d4a017';
+        card.style.boxShadow = '0 0 12px rgba(212,160,23,0.4)';
+        card.style.opacity = '1';
+      } else if (ancestorsSet.has(path)) {
+        card.style.opacity = '1';
+        card.classList.remove('dimmed');
+      } else if (directDescendantsSet.has(path)) {
+        card.style.opacity = '1';
+        card.classList.remove('dimmed');
+      } else if (siblingSet.has(path)) {
+        card.style.opacity = '0.6';
+        card.classList.add('sibling-dim');
+      } else {
+        card.style.opacity = '0.2';
+        card.classList.add('dimmed');
+      }
+    });
+
+    // Also style the tree-node wrapper for the focused node
+    state.container.querySelectorAll('.tree-node.focused-node').forEach(function (el) {
+      el.classList.remove('focused-node');
+    });
+    var focusedTreeNode = state.container.querySelector('.tree-node[data-path="' + escapeCSS(focusedPath) + '"]');
+    if (focusedTreeNode) focusedTreeNode.classList.add('focused-node');
+
+    updateBackButton();
+  }
+
+  // ========================================================================
+  // SEARCH HIGHLIGHT
+  // ========================================================================
+
+  function applySearch() {
+    var q = state.searchQuery;
+    var count = state.matchedPaths.length;
+    var countEl = document.getElementById('treeSearchCount');
+    if (countEl) {
+      countEl.textContent = q ? 'Found ' + count + ' people' : '';
+      countEl.style.display = q ? '' : 'none';
+    }
+
+    // Clear previous highlights
+    state.container.querySelectorAll('.person-card.search-match').forEach(function (el) {
+      el.classList.remove('search-match');
+      el.style.outline = '';
+      el.style.boxShadow = '';
+    });
+
+    if (!q || count === 0) return;
+
+    // Highlight matching cards
+    var firstMatch = null;
+    var scrollTarget = null;
+    state.matchedPaths.forEach(function (path, idx) {
+      var card = state.container.querySelector('.person-card[data-path="' + escapeCSS(path) + '"]');
+      if (card) {
+        card.classList.add('search-match');
+        card.style.outline = '2px solid #e74c3c';
+        card.style.boxShadow = '0 0 8px rgba(231,76,60,0.3)';
+        if (idx === 0) {
+          firstMatch = card;
+          scrollTarget = card.closest('.tree-node') || card;
+        }
+      }
+    });
+
+    // Auto-scroll to first match
+    if (scrollTarget) {
+      setTimeout(function () {
+        scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+    }
+  }
+
+  // ========================================================================
+  // EVENT HANDLING
+  // ========================================================================
+
+  function wireEvents(container) {
+    // Remove old listeners by cloning — actually, use event delegation on container
+    // We only attach once; the handler checks current state.
+    if (container._wired) return;
+    container._wired = true;
+
+    // Toggle click handler
+    container.addEventListener('click', function (e) {
+      // Find the closest clickable element
+      var toggle = e.target.closest('.tree-toggle');
+      var card = e.target.closest('.person-card');
+      var backBtn = e.target.closest('#treeBackBtn');
+
+      // Back button
+      if (backBtn) {
+        e.preventDefault();
+        exitFocus();
+        return;
+      }
+
+      // Toggle expand/collapse
+      if (toggle) {
+        e.preventDefault();
+        e.stopPropagation();
+        var path = toggle.getAttribute('data-toggle-path');
+        if (!path) return;
+        var isShift = e.shiftKey;
+
+        if (isShift) {
+          // Shift+click: expand ALL descendants
+          expandAllDescendants(path);
+        } else {
+          toggleNode(path);
+        }
+        return;
+      }
+
+      // Person card click (focus mode)
+      if (card) {
+        var path = card.getAttribute('data-path');
+        if (!path) return;
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (state.focused === path) {
+          exitFocus();
+        } else {
+          enterFocus(path);
+        }
+        return;
+      }
+
+      // Click on background / empty area — exit focus
+      if (state.focused && e.target.closest('.tree-grid')) {
+        // Only if clicking on the grid background, not on a card or toggle
+        if (!e.target.closest('.person-card') && !e.target.closest('.tree-toggle')) {
+          exitFocus();
+        }
+      }
+    });
+
+    // Search input (delegated to document to handle dynamic creation)
+    document.addEventListener('input', function (e) {
+      if (e.target.id === 'treeSearchBox') {
+        var val = e.target.value.trim();
+        state.searchQuery = val;
+        searchTree(val);
+        reRender();
+      }
+    });
+
+    // Branch filter
+    document.addEventListener('change', function (e) {
+      if (e.target.id === 'treeBranchFilter') {
+        state.activeBranch = e.target.value;
+        reRender();
+      }
+    });
+  }
+
+  function toggleNode(path) {
+    if (state.expanded.has(path)) {
+      state.expanded.delete(path);
+    } else {
+      state.expanded.add(path);
+    }
+    reRender();
+  }
+
+  function expandAllDescendants(path) {
+    var node = state.nodeMap[path];
+    if (!node) return;
+    function expandRecursive(n) {
+      state.expanded.add(n._path);
+      n.children.forEach(function (c) { expandRecursive(c); });
+    }
+    expandRecursive(node);
+    reRender();
+  }
+
+  function enterFocus(path) {
+    state.focused = path;
+    reRender();
+  }
+
+  function exitFocus() {
+    state.focused = null;
+    reRender();
+  }
+
+  function updateBackButton() {
+    var btn = document.getElementById('treeBackBtn');
+    if (btn) {
+      btn.style.display = state.focused ? 'inline-block' : 'none';
+    }
+  }
+
+  // ========================================================================
+  // RE-RENDER
+  // ========================================================================
+
+  function reRender() {
+    renderTree();
+  }
+
+  // ========================================================================
+  // UTILITY
+  // ========================================================================
+
+  function escapeCSS(str) {
+    if (!str) return '';
+    // CSS selector escape: wrap in quotes or use a safe approach
+    return str.replace(/"/g, '\\"').replace(/'/g, "\\'");
+  }
+
+  function hexToRgba(hex, alpha) {
+    var r = parseInt(hex.slice(1, 3), 16);
+    var g = parseInt(hex.slice(3, 5), 16);
+    var b = parseInt(hex.slice(5, 7), 16);
+    return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+  }
+
+  // ========================================================================
+  // PUBLIC API
+  // ========================================================================
+
+  /**
+   * Initialize the tree renderer.
+   * @param {HTMLElement|string} containerEl - Container element or its ID
+   * @param {Array} data - Optional tree data (overrides window.HU_TREE_DATA)
+   */
+  window.HUTree = {
+    init: function (containerEl, data) {
+      state.treeData = data || window.HU_TREE_DATA || [];
+      if (!state.treeData.length) {
+        console.error('HUTree: No tree data provided. Set window.HU_TREE_DATA or pass data to init().');
+        return;
+      }
+
+      if (typeof containerEl === 'string') {
+        containerEl = document.getElementById(containerEl);
+      }
+      state.container = containerEl;
+      if (!state.container) {
+        console.error('HUTree: Container element not found.');
+        return;
+      }
+
+      // Add CSS
+      injectStyles();
+
+      // Process data: assign paths, build groups
+      state.nodeMap = {};
+      state.connections = [];
+      state.maxDepth = 0;
+
+      state.treeData.forEach(function (branch) {
+        assignPaths(branch.root, branch.id, branch.code, 0, []);
+      });
+
+      buildGenGroups();
+
+      // Set expanded: default top N generations
+      expandDefaultLevels();
+
+      // Create control bar
+      buildControls();
+
+      // Render
+      renderTree();
+    },
+
+    /**
+     * Update the tree data and re-render.
+     */
+    updateData: function (data) {
+      state.treeData = data || window.HU_TREE_DATA || [];
+      state.nodeMap = {};
+      state.connections = [];
+      state.maxDepth = 0;
+
+      state.treeData.forEach(function (branch) {
+        assignPaths(branch.root, branch.id, branch.code, 0, []);
+      });
+
+      buildGenGroups();
+      expandDefaultLevels();
+      reRender();
+    },
+
+    /**
+     * Set the search query externally.
+     */
+    search: function (query) {
+      state.searchQuery = query;
+      searchTree(query);
+      reRender();
+    },
+
+    /**
+     * Set the active branch filter.
+     */
+    filterBranch: function (branchId) {
+      state.activeBranch = branchId || 'all';
+      reRender();
+    },
+
+    /**
+     * Focus on a specific person by path.
+     */
+    focus: function (path) {
+      if (path) {
+        enterFocus(path);
+      } else {
+        exitFocus();
+      }
+    },
+
+    /**
+     * Exit focus mode.
+     */
+    unfocus: function () {
+      exitFocus();
+    },
+
+    /**
+     * Get current state.
+     */
+    getState: function () {
+      return {
+        expanded: Array.from(state.expanded),
+        focused: state.focused,
+        searchQuery: state.searchQuery,
+        matchedCount: state.matchedPaths.length,
+        activeBranch: state.activeBranch,
+        maxDepth: state.maxDepth,
+        branchCount: state.treeData.length,
+        totalNodes: Object.keys(state.nodeMap).length,
+      };
+    },
+  };
+
+  // ========================================================================
+  // CONTROLS
+  // ========================================================================
+
+  function buildControls() {
+    var container = state.container;
+
+    // Create controls bar if it doesn't exist
+    var existing = container.querySelector('.tree-controls');
+    if (existing) return;
+
+    var controls = document.createElement('div');
+    controls.className = 'tree-controls';
+
+    // Search box
+    var searchWrapper = document.createElement('div');
+    searchWrapper.className = 'tree-search-wrapper';
+
+    var searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.id = 'treeSearchBox';
+    searchInput.className = 'tree-search-input';
+    searchInput.placeholder = 'Search by name...';
+    searchInput.autocomplete = 'off';
+    searchWrapper.appendChild(searchInput);
+
+    var searchCount = document.createElement('span');
+    searchCount.id = 'treeSearchCount';
+    searchCount.className = 'tree-search-count';
+    searchWrapper.appendChild(searchCount);
+
+    controls.appendChild(searchWrapper);
+
+    // Branch filter
+    var filterSelect = document.createElement('select');
+    filterSelect.id = 'treeBranchFilter';
+    filterSelect.className = 'tree-branch-filter';
+
+    var allOption = document.createElement('option');
+    allOption.value = 'all';
+    allOption.textContent = 'All Branches';
+    filterSelect.appendChild(allOption);
+
+    state.treeData.forEach(function (branch) {
+      var opt = document.createElement('option');
+      opt.value = branch.id;
+      opt.textContent = branch.label;
+      filterSelect.appendChild(opt);
+    });
+
+    controls.appendChild(filterSelect);
+
+    // Back button (focus mode exit)
+    var backBtn = document.createElement('button');
+    backBtn.id = 'treeBackBtn';
+    backBtn.className = 'tree-back-btn';
+    backBtn.textContent = '← Unfocus';
+    backBtn.style.display = 'none';
+    controls.appendChild(backBtn);
+
+    container.insertBefore(controls, container.firstChild);
+  }
+
+  // ========================================================================
+  // STYLES
+  // ========================================================================
+
+  function injectStyles() {
+    var id = 'hu-tree-renderer-styles';
+    if (document.getElementById(id)) return;
+
+    var style = document.createElement('style');
+    style.id = id;
+    style.textContent = `
+/* === TREE RENDERER === */
+.tree-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: #faf6ed;
+  border-bottom: 1px solid #d8c8b8;
+  flex-wrap: wrap;
+}
+.tree-search-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 200px;
+}
+.tree-search-input {
+  padding: 7px 14px;
+  border: 1px solid #b8a888;
+  border-radius: 4px;
+  font-size: 15px;
+  width: 280px;
+  background: #fff;
+  color: #2a1a0a;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.tree-search-input:focus {
+  border-color: #c89b3c;
+  box-shadow: 0 0 0 2px rgba(200,155,60,0.15);
+}
+.tree-search-input::placeholder { color: #a09080; }
+.tree-search-count {
+  font-size: 12px;
+  color: #8a7a6a;
+  min-width: 80px;
+}
+.tree-branch-filter {
+  padding: 6px 12px;
+  border: 1px solid #b8a888;
+  border-radius: 4px;
+  font-size: 14px;
+  background: #fff;
+  color: #2a1a0a;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+}
+.tree-branch-filter:focus {
+  border-color: #c89b3c;
+}
+.tree-back-btn {
+  padding: 6px 14px;
+  border: 1px solid #d4a017;
+  border-radius: 4px;
+  background: #d4a017;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.tree-back-btn:hover {
+  background: #b8910f;
+}
+
+/* Tree Grid */
+.tree-grid {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.gen-header-row {
+  background: #f5efe4;
+  min-height: auto;
+}
+.gen-label {
+  width: 40px;
+  flex-shrink: 0;
+  font-size: 10px;
+  color: #bbb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid #eee;
+}
+.branch-col {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+}
+.branch-header-cell {
+  padding: 8px 4px 4px;
+}
+.col-branch-header {
+  font-size: 15px;
+  font-weight: 700;
+  padding: 4px 8px;
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+/* Generation nodes area */
+.gen-nodes {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+  padding: 16px 12px;
+  min-height: 100%;
+  align-items: flex-start;
+}
+.gen-row {
+  display: flex;
+  border-bottom: 24px solid transparent;
+  min-height: 100px;
+  transition: background 0.3s;
+}
+.gen-row:last-child {
+  border-bottom: none;
+}
+
+/* Tree Node (wrapper for family unit + children area) */
+.tree-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  transition: opacity 0.3s ease;
+}
+
+/* Family Unit (person card(s) + toggle) */
+.family-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+.family-persons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0;
+}
+
+/* Person Card */
+.person-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0;
+  border-radius: 6px;
+  position: relative;
+  cursor: pointer;
+  transition: opacity 0.3s ease, box-shadow 0.2s ease;
+  min-width: 80px;
+  max-width: 120px;
+  background: #fff;
+  border: 1px solid #e0d5c5;
+  overflow: hidden;
+}
+.person-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-color: #c8b898;
+}
+.person-card:active {
+  transform: scale(0.97);
+}
+
+/* Accent strip */
+.card-accent {
+  width: 100%;
+  height: 4px;
+  flex-shrink: 0;
+}
+
+/* Card body */
+.card-body {
+  padding: 8px 10px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.card-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2a1a0a;
+  line-height: 1.3;
+  text-align: center;
+  word-break: keep-all;
+}
+.card-rel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 3px;
+}
+.rel-badge {
+  display: inline-block;
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.4;
+}
+
+/* Card path */
+.card-path {
+  font-size: 9px;
+  color: #bbb;
+  padding: 0 8px 3px;
+  text-align: center;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Spouse connector */
+.spouse-connector {
+  font-size: 8px;
+  color: #c8b898;
+  margin: 0 2px;
+  user-select: none;
+}
+
+/* Collapse/Expand toggle */
+.tree-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 8px;
+  padding: 2px 10px 2px 8px;
+  border: 2px solid #d5c8b8;
+  border-radius: 12px;
+  background: #faf6ed;
+  color: #5a4a3a;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+  line-height: 1.5;
+  user-select: none;
+}
+.tree-toggle:hover {
+  background: #e8dcc8;
+  border-color: #b8a888;
+}
+.tree-toggle.expanded {
+  background: #e0f0e0;
+  border-color: #4a9;
+  color: #2a6;
+}
+.tree-toggle.collapsed {
+  background: #fff0f0;
+  border-color: #c88;
+  color: #a44;
+}
+.toggle-count {
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+/* Focus mode */
+.person-card.focused {
+  z-index: 10;
+  transform: translateY(-2px);
+}
+.person-card.dimmed {
+  transition: opacity 0.4s ease;
+  cursor: default;
+}
+.person-card.sibling-dim {
+  transition: opacity 0.4s ease;
+}
+.tree-node.focused-node {
+  z-index: 5;
+}
+
+/* Search highlight */
+.person-card.search-match {
+  animation: searchPulse 1.5s ease-in-out infinite;
+  z-index: 5;
+}
+@keyframes searchPulse {
+  0%, 100% { box-shadow: 0 0 4px rgba(231,76,60,0.2); }
+  50% { box-shadow: 0 0 12px rgba(231,76,60,0.5); }
+}
+
+/* Legend */
+.tree-legend {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 12px 24px;
+  background: #efe8da;
+  border-top: 1px solid #d8c8b8;
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #5a4a3a;
+}
+.legend-badge {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+}
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tree-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 10px;
+  }
+  .tree-search-wrapper {
+    flex-wrap: wrap;
+  }
+  .tree-search-input {
+    width: 100%;
+  }
+  .gen-label {
+    width: 24px;
+    font-size: 8px;
+  }
+  .gen-nodes {
+    gap: 10px;
+    padding: 12px 4px;
+  }
+  .person-card {
+    min-width: 60px;
+    max-width: 90px;
+  }
+  .card-name {
+    font-size: 12px;
+  }
+  .card-path {
+    font-size: 8px;
+  }
+  .branch-col {
+    min-width: 0;
+  }
+}
+
+/* SVG lines container */
+.tree-lines-svg {
+  opacity: 0.7;
+  z-index: 5;
+  pointer-events: none;
+}
+    `;
+    document.head.appendChild(style);
+  }
+
 })();
 </script>
+  <script>
+    // ===== APP.JS — Hash Routing, Search, Events =====
+    (function(){
+      'use strict';
+
+      /* ---------- DOM refs ---------- */
+      var pages = document.querySelectorAll('.page');
+      var navBtns = document.querySelectorAll('.nav-btn');
+      var treeContainer = document.getElementById('tree-container');
+      var searchInput = document.getElementById('tree-search-input');
+      var clearBtn = document.getElementById('search-clear-btn');
+      var branchChips = document.querySelectorAll('.branch-chip');
+      var collapseBtn = document.getElementById('collapse-all-btn');
+      var treeFirstShown = false;
+
+      /* ---------- Hash-based routing ---------- */
+      function getPageFromHash() {
+        var hash = window.location.hash.replace(/^#/, '') || 'tree';
+        return hash;
+      }
+
+      function navigateTo(pageId) {
+        // Hide all pages
+        for (var i = 0; i < pages.length; i++) {
+          pages[i].classList.remove('active');
+        }
+        // Deactivate all nav buttons
+        for (var j = 0; j < navBtns.length; j++) {
+          navBtns[j].classList.remove('active');
+        }
+
+        // Show target page
+        var targetPage = document.getElementById('page-' + pageId);
+        if (targetPage) {
+          targetPage.classList.add('active');
+        }
+
+        // Activate matching nav button
+        var targetBtn = document.querySelector('.nav-btn[data-page="' + pageId + '"]');
+        if (targetBtn) {
+          targetBtn.classList.add('active');
+        }
+
+        // Trigger tree render on first visit
+        if (pageId === 'tree' && !treeFirstShown) {
+          treeFirstShown = true;
+          renderTree();
+        }
+      }
+
+      function onHashChange() {
+        var page = getPageFromHash();
+        navigateTo(page);
+      }
+
+      /* ---------- Tree rendering via HUTree ---------- */
+      function renderTree() {
+        if (typeof window.HUTree !== 'undefined' && typeof window.HU_TREE_DATA !== 'undefined') {
+          treeContainer.innerHTML = '';
+          window.HUTree.init(treeContainer, window.HU_TREE_DATA);
+        } else {
+          treeContainer.innerHTML =
+            '<div class="empty-state">' +
+            '<div class="empty-icon">🌳</div>' +
+            '<div class="empty-text">Tree data not yet loaded. Ensure data and renderer scripts are included.</div>' +
+            '</div>';
+        }
+      }
+
+      /* ---------- Search (wire toolbar input to HUTree) ---------- */
+      searchInput.addEventListener('input', function() {
+        var query = this.value.trim().toLowerCase();
+        clearBtn.classList.toggle('visible', query.length > 0);
+        if (typeof window.HUTree !== 'undefined' && window.HUTree.search) {
+          window.HUTree.search(query);
+        }
+      });
+
+      clearBtn.addEventListener('click', function() {
+        searchInput.value = '';
+        clearBtn.classList.remove('visible');
+        if (typeof window.HUTree !== 'undefined' && window.HUTree.search) {
+          window.HUTree.search('');
+        }
+        searchInput.focus();
+      });
+
+      /* ---------- Branch filter (wire toolbar chips to HUTree) ---------- */
+      for (var b = 0; b < branchChips.length; b++) {
+        branchChips[b].addEventListener('click', function() {
+          var isActive = this.classList.contains('active');
+
+          // Toggle behavior for "All" chip
+          if (this.dataset.branch === 'all') {
+            // Deactivate all other chips, activate All
+            for (var k = 0; k < branchChips.length; k++) {
+              branchChips[k].classList.remove('active');
+            }
+            this.classList.add('active');
+          } else {
+            // Deactivate "All" chip
+            document.querySelector('.branch-chip[data-branch="all"]').classList.remove('active');
+            // Toggle this chip
+            this.classList.toggle('active');
+
+            // If no branch chips active, reactivate "All"
+            var anyActive = false;
+            for (var m = 0; m < branchChips.length; m++) {
+              if (branchChips[m].dataset.branch !== 'all' && branchChips[m].classList.contains('active')) {
+                anyActive = true;
+                break;
+              }
+            }
+            if (!anyActive) {
+              document.querySelector('.branch-chip[data-branch="all"]').classList.add('active');
+            }
+          }
+
+          // Collect active branches
+          var activeBranches = [];
+          var allActive = document.querySelector('.branch-chip[data-branch="all"]').classList.contains('active');
+          if (allActive) {
+            activeBranches = null; // show all
+          } else {
+            for (var n = 0; n < branchChips.length; n++) {
+              if (branchChips[n].dataset.branch !== 'all' && branchChips[n].classList.contains('active')) {
+                activeBranches.push(branchChips[n].dataset.branch);
+              }
+            }
+          }
+
+          // Apply filter via HUTree
+          if (typeof window.HUTree !== 'undefined' && window.HUTree.filterBranch) {
+            // HUTree.filterBranch takes a single branch id or 'all'
+            // If multiple branches selected, just use first one for now (HUTree limitation)
+            if (activeBranches && activeBranches.length === 1) {
+              window.HUTree.filterBranch(activeBranches[0]);
+            } else {
+              window.HUTree.filterBranch('all');
+            }
+          }
+        });
+      }
+
+      /* ---------- Collapse all ---------- */
+      collapseBtn.addEventListener('click', function() {
+        if (typeof window.HUTree !== 'undefined') {
+          // Reset to default expand levels
+          window.HUTree.init(treeContainer, window.HU_TREE_DATA);
+        }
+      });
+
+      /* ---------- Nav button clicks ---------- */
+      for (var n = 0; n < navBtns.length; n++) {
+        navBtns[n].addEventListener('click', function() {
+          window.location.hash = this.dataset.page;
+        });
+      }
+
+      /* ---------- Init ---------- */
+      onHashChange();
+      window.addEventListener('hashchange', onHashChange);
+
+      /* ---------- Expose for external use ---------- */
+      window.navigateTo = navigateTo;
+      window.reloadTree = renderTree;
+
+    })();
+  </script>
 </body>
 </html>
