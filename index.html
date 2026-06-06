@@ -793,7 +793,7 @@ function family(persons,children){
 const treeData = [
   // === 维显公 (purple) ===
   {
-    id:'weixian',label:'维显公',...BRANCH_COLORS.weixian,
+    id:'weixian',code:'WX',label:'维显公',...BRANCH_COLORS.weixian,
     root:family([P('胡维显','祖'),P('黄金凤','妻'),P('周秀菊','妻')],[
       family([P('司徒元洪','婿'),P('胡运美','女')],[
         family([P('司徒振兴','兒'),P('谢运月霞','媳')]),
@@ -858,7 +858,7 @@ const treeData = [
   },
   // === 维达公 (red) ===
   {
-    id:'weida',label:'维达公',...BRANCH_COLORS.weida,
+    id:'weida',code:'WD',label:'维达公',...BRANCH_COLORS.weida,
     root:family([P('胡维达','祖'),P('周美容','妻')],[
       family([P('杨观新','婿'),P('胡美素','女')],[
         family([P('胡碧清','女')]),
@@ -955,7 +955,7 @@ const treeData = [
   },
   // === 维富公 (orange) ===
   {
-    id:'weifu',label:'维富公',...BRANCH_COLORS.weifu,
+    id:'weifu',code:'WF',label:'维富公',...BRANCH_COLORS.weifu,
     root:family([P('胡维富','祖'),P('关月眉','妻')],[
       family([P('胡现龙','兒'),P('李亚明','媳')],[
         family([P('陈潮生','婿'),P('胡月莲','女')],[
@@ -991,7 +991,7 @@ const treeData = [
   },
   // === 维豪公 (orange-brown) ===
   {
-    id:'weihao',label:'维豪公',hex:'#d35400',bg:'rgba(211,84,0,0.04)',
+    id:'weihao',code:'WH',label:'维豪公',hex:'#d35400',bg:'rgba(211,84,0,0.04)',
     root:family([P('胡维豪','祖'),P('关金笑','妻')],[
       family([P('胡开基','兒'),P('刘桂春','媳'),P('刘开兰','媳')],[
         family([P('胡健明','兒'),P('陈惠珠','媳')],[
@@ -1016,7 +1016,7 @@ const treeData = [
   },
   // === 维源公 (teal) ===
   {
-    id:'weiyuan',label:'维源公',...BRANCH_COLORS.weiyuan,
+    id:'weiyuan',code:'WY',label:'维源公',...BRANCH_COLORS.weiyuan,
     root:family([P('胡维源','祖'),P('关氏','妻')],[
       family([P('胡龙亿','兒'),P('胡桂霞','媳')]),
       family([P('胡龙赞','兒')])
@@ -1024,17 +1024,17 @@ const treeData = [
   },
   // === 维有公 (gray) ===
   {
-    id:'weiyou',label:'维有公',...BRANCH_COLORS.weiyou,
+    id:'weiyou',code:'WU',label:'维有公',...BRANCH_COLORS.weiyou,
     root:family([P('胡维有','?')],[])
   },
   // === 清和公 (gold) ===
   {
-    id:'qinghe',label:'清和公',...BRANCH_COLORS.qinghe,
+    id:'qinghe',code:'QH',label:'清和公',...BRANCH_COLORS.qinghe,
     root:family([P('胡清和','祖'),P('关亚好','妻')],[])
   },
   // === 旺忠公 (green) ===
   {
-    id:'wangzhong',label:'旺忠公',...BRANCH_COLORS.wangzhong,
+    id:'wangzhong',code:'WZ',label:'旺忠公',...BRANCH_COLORS.wangzhong,
     root:family([P('胡旺忠','?')],[
       family([P('胡顺兴','兒')]),
       family([P('胡顺华','兒')]),
@@ -1046,13 +1046,13 @@ const treeData = [
   },
   // === 叟和公 (blue) ===
   {
-    id:'shouhe',label:'叟和公',...BRANCH_COLORS.shouhe,
+    id:'shouhe',code:'SH',label:'叟和公',...BRANCH_COLORS.shouhe,
     root:family([P('胡叟和','祖')],[])
   }
 ];
 
 // ===== TREE ENRICHMENT (IDs + expanded state) =====
-(function(){var _idC=1;function en(n,d){n._id=_idC++;n._expanded=false;(n.children||[]).forEach(function(c){en(c,d+1)});}treeData.forEach(function(b){en(b.root,0)});})();
+(function(){var _idC=1;function en(n,d,si,c){n._id=_idC++;n._expanded=false;n._code=c;n._path=(n._path||[]).concat(si);(n.children||[]).forEach(function(ch,i){ch._path=n._path.slice();en(ch,d+1,i,c)});}treeData.forEach(function(b){en(b.root,0,0,b.code)});})();
 
 function countDesc(n){var c=0;function w(x){(x.children||[]).forEach(function(ch){c++;w(ch)});}w(n);return c}
 
@@ -1081,6 +1081,7 @@ function renderPersonCard(p){
     : p.rel==='\u59BB'?'rel-spouse'
     : 'rel-unknown';
   var relLabel = p.rel;
+  var pathStr = p._path ? p._code + '-' + p._path.map(function(x){return x+1}).join('-') : '';
   var tip = p.rel==='\u7956'?'\u59CB\u7956 '+p.name
     : p.rel==='\u59BB'?'\u914D\u5076 '+p.name
     : p.rel==='\u5152'||p.rel==='\u513F'?'\u5152\u5B50 '+p.name
