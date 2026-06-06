@@ -3063,12 +3063,9 @@ window.HU_TREE_DATA = [
   // PUBLIC API
   // ========================================================================
 
-  /**
-   * Initialize the tree renderer.
-   * @param {HTMLElement|string} containerEl - Container element or its ID
-   * @param {Array} data - Optional tree data (overrides window.HU_TREE_DATA)
-   */
-  /**
+  })();
+
+/**
  * tree-scroll.js — Simplified Horizontal Scroll Family Tree
  *
  * Expects window.HU_TREE_DATA (defined in data.js).
@@ -3434,10 +3431,10 @@ window.HU_TREE_DATA = [
         var pRect = parentEl.getBoundingClientRect();
         var cRect = childEl.getBoundingClientRect();
 
-        // Coordinates relative to scrollArea
-        var x1 = pRect.left + pRect.width / 2 - bandRect.left;
+        // Coordinates relative to scrollArea (accounting for horizontal scroll)
+        var x1 = pRect.left + pRect.width / 2 - bandRect.left + scrollArea.scrollLeft;
         var y1 = pRect.bottom - bandRect.top;
-        var x2 = cRect.left + cRect.width / 2 - bandRect.left;
+        var x2 = cRect.left + cRect.width / 2 - bandRect.left + scrollArea.scrollLeft;
         var y2 = cRect.top - bandRect.top;
 
         var branchColor = '#c8b0a0';
@@ -3987,6 +3984,27 @@ window.HU_TREE_DATA = [
       buildLegend();
     },
 
+    search: function (query) {
+      state.searchQuery = (query || '').trim().toLowerCase();
+      state.expanded = new Set();
+      expandDefaults();
+      render();
+    },
+
+    filterBranch: function (branchId) {
+      state.activeBranch = branchId || 'all';
+      render();
+    },
+
+    reinit: function () {
+      processData();
+      expandDefaults();
+      state.searchQuery = '';
+      state.activeBranch = 'all';
+      state.matchedPaths = [];
+      render();
+    },
+
     getState: function () {
       return {
         expanded: Array.from(state.expanded),
@@ -4147,8 +4165,9 @@ window.HU_TREE_DATA = [
 
       /* ---------- Collapse all ---------- */
       collapseBtn.addEventListener('click', function() {
-        if (typeof window.HUTreeScroll !== 'undefined') {
-          // Reset to default expand levels
+        if (typeof window.HUTreeScroll !== 'undefined' && window.HUTreeScroll.reinit) {
+          window.HUTreeScroll.reinit();
+        } else if (typeof window.HUTreeScroll !== 'undefined') {
           window.HUTreeScroll.init(treeContainer, window.HU_TREE_DATA);
         }
       });
