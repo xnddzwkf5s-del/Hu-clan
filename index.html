@@ -91,18 +91,25 @@ body{
 /* ===== TREE ===== */
 .tree{
   padding:20px 20px 30px;position:relative;z-index:1;
-  display:flex;gap:2px;align-items:flex-start;min-height:400px
+  display:flex;flex-direction:column;gap:6px;min-height:auto
 }
 /* ===== BRANCH ===== */
 .branch{
-  flex:0 0 auto;position:relative;padding:12px 10px 20px;
-  border-left:4px solid;border-radius:4px;margin:0 3px;
-  min-width:100px;max-width:440px
+  flex:none;width:100%;position:relative;padding:8px 14px 14px;
+  border-left:4px solid;border-radius:4px;margin:2px 0;
+  min-width:auto;max-width:none
 }
 .branch-header{
-  text-align:center;font-size:12px;font-weight:700;letter-spacing:2px;
-  color:#5a4a3a;padding:2px 8px 10px;border-bottom:1px solid #c8b898;margin-bottom:6px
+  font-size:14px;font-weight:700;letter-spacing:2px;
+  color:#5a4a3a;padding:8px 14px;cursor:pointer;border-radius:4px;
+  margin-bottom:0;display:flex;align-items:center;gap:8px;user-select:none;
+  border-bottom:none;transition:background 0.15s
 }
+.branch-header:hover{background:rgba(0,0,0,0.06)}
+.branch-header .toggle-btn{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;font-size:16px;font-weight:700;color:#fff;flex-shrink:0}
+.branch.collapsed .branch-header .toggle-btn{background:#c0392b}
+.branch:not(.collapsed) .branch-header .toggle-btn{background:#27ae60}
+.branch.collapsed>.tree-node{display:none}
 /* ===== PERSON CARD ===== */
 .person-card{
   display:flex;flex-direction:column;align-items:center;padding:4px 3px;
@@ -245,8 +252,8 @@ body{
   .nav-btn{padding:6px 12px;font-size:12px}
   .search-area{flex-wrap:wrap;padding:10px 12px;top:44px}
   #searchBox{width:100%}
-  .tree{padding:12px 8px;flex-wrap:wrap;gap:8px;min-height:auto}
-  .branch{max-width:100%;margin:0;min-width:130px}
+  .tree{padding:12px 8px;flex-wrap:wrap;gap:8px;min-height:auto;flex-direction:column}
+  .branch{max-width:100%;margin:2px 0;min-width:auto}
   .branch-header{font-size:11px}
   .person-card .name{font-size:12px}
   .scroll-top,.scroll-bottom{height:18px}
@@ -1038,7 +1045,7 @@ const treeData = [
 ];
 
 // ===== TREE ENRICHMENT (IDs + expanded state) =====
-(function(){var _idC=1;function en(n,d){n._id=_idC++;n._expanded=d<2;(n.children||[]).forEach(function(c){en(c,d+1)});}treeData.forEach(function(b){en(b.root,0)});})();
+(function(){var _idC=1;function en(n,d){n._id=_idC++;n._expanded=false;(n.children||[]).forEach(function(c){en(c,d+1)});}treeData.forEach(function(b){en(b.root,0)});})();
 
 function countDesc(n){var c=0;function w(x){(x.children||[]).forEach(function(ch){c++;w(ch)});}w(n);return c}
 
@@ -1052,7 +1059,7 @@ function toggleNode(id,st){var n=findNode(id);if(!n||!n.children||!n.children.le
 
 function expandAllRec(id){var n=findNode(id);if(!n)return;function e(x){x._expanded=true;(x.children||[]).forEach(e)}e(n);renderAll()}
 
-function collapseToDef(){treeData.forEach(function(b){function c(n,d){n._expanded=d<2;(n.children||[]).forEach(function(ch){c(ch,d+1)})}c(b.root,0)});renderAll()}
+function collapseToDef(){treeData.forEach(function(b){function c(n,d){n._expanded=false;(n.children||[]).forEach(function(ch){c(ch,d+1)})}c(b.root,0)});renderAll()}
 
 function collapseAllVis(){treeData.forEach(function(b){function c(n){n._expanded=false;(n.children||[]).forEach(c)}c(b.root)});renderAll()}
 
@@ -1123,9 +1130,12 @@ function renderNode(node){
 }
 
 function renderBranch(branch){
-  return '<div class="branch" data-branch="'+branch.id
+  var collapsed = !branch.root._expanded;
+  return '<div class="branch'+(collapsed?' collapsed':'')+'" data-branch="'+branch.id
     +'" style="border-left-color:'+branch.hex+';background:'+branch.bg+'">'
-    + '<div class="branch-header" style="color:'+branch.hex+'">'+branch.label+'</div>'
+    + '<div class="branch-header" style="color:'+branch.hex+'">'
+    + '<span class="toggle-btn">'+(collapsed?'+':'−')+'</span>'
+    + '<span>'+branch.label+'</span></div>'
     + renderNode(branch.root)
     + '</div>';
 }
@@ -1203,6 +1213,26 @@ function onHashChange(){
 
   // Event delegation on tree
   treeEl.addEventListener('click',function(e){
+    // Branch header toggle
+    var brHeader=e.target.closest('.branch-header');
+    if(brHeader){
+      e.stopPropagation();
+      var branch=brHeader.closest('.branch');
+      if(!branch)return;
+      var brId=branch.getAttribute('data-branch');
+      var collapsed=branch.classList.contains('collapsed');
+      // Find and toggle this branch's root node
+      treeData.forEach(function(b){
+        if(b.id===brId){
+          b.root._expanded=collapsed;
+          // Recursively set children: if expanding, expand Gen 1-2; if collapsing, collapse all
+          function setKids(n,d){n._expanded=collapsed?true:(d<1?true:false);(n.children||[]).forEach(function(ch){setKids(ch,d+1)})}
+          setKids(b.root,0);
+        }
+      });
+      renderAll();
+      return;
+    }
     // Toggle button
     var btn=e.target.closest('.toggle-btn');
     if(btn){
