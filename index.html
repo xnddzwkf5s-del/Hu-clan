@@ -283,6 +283,22 @@ body{
 .expanded .toggle-btn{background:#27ae60;border-color:#f5efe4}
 /* Hide toggle btn on leaf nodes (no children) */
 .tree-node.leaf .toggle-btn{display:none}
+/* ===== GENEALOGY PAGE ===== */
+.content-page{max-width:1200px;margin:0 auto;padding:30px;color:#2a1a0a}
+.content-page h2{font-size:22px;text-align:center;margin-bottom:4px;letter-spacing:3px}
+.content-page h3{font-size:17px;margin:28px 0 10px;border-bottom:1px solid #c8b898;padding-bottom:4px;color:#4a3a2a}
+.content-page .subtitle{text-align:center;color:#8a7a6a;font-size:13px;margin-bottom:20px}
+.content-page .en{font-size:11px;color:#8a7a6a;font-style:italic;margin-bottom:8px}
+.content-page .note{font-size:10px;color:#7a6a5a;margin-top:6px}
+.gen-table{width:100%;border-collapse:collapse;margin:8px 0 14px;font-size:12px;font-family:inherit}
+.gen-table th,.gen-table td{border:1px solid #c8b898;padding:3px 6px;text-align:center}
+.gen-table th{background:#e8ddd0;font-weight:700;color:#3a2a1a}
+.gen-table td{background:#faf6ed;color:#2a1a0a}
+.gen-table tr:hover td{background:#f0e8d8}
+.migration-text{font-family:"KaiTi SC","STKaiti","Noto Serif CJK SC",serif;font-size:13px;line-height:1.8;margin:8px 0 16px;padding:12px 16px;background:rgba(250,246,237,0.5);border-left:3px solid #c8b898;border-radius:2px}
+.migration-text p{margin:6px 0}
+.migration-text strong{color:#4a3a2a}
+
 </style>
 </head>
 <body>
@@ -421,66 +437,304 @@ body{
 
     <!-- ===== GENEALOGY PAGE ===== -->
     <div class="page" id="page-genealogy">
-      <div class="content-page">
+      <div class="content-page genealogy-full">
         <h2>胡氏族譜文獻 — Hu Clan Genealogy Record</h2>
+        <p class="subtitle">完整世系記錄，從黃帝至明清時期</p>
 
+        <!-- ===== SECTION 1 ===== -->
         <h3>一、黃帝至虞舜世系</h3>
-        <p>From Yellow Emperor to Emperor Shun — 9 generations.</p>
-        <div class="gen-text">
-          <div>1 黃帝軒轅氏 <span class="gen-arrow">→</span> 2 昌意 <span class="gen-arrow">→</span> 3 顓頊 <span class="gen-arrow">→</span> 4 窮蟬 <span class="gen-arrow">→</span> 5 敬康 <span class="gen-arrow">→</span> 6 句望 <span class="gen-arrow">→</span> 7 橋牛 <span class="gen-arrow">→</span> 8 瞽瞍 <span class="gen-arrow">→</span> 9 虞舜</div>
-        </div>
-
-        <h3>二、虞舜至胡公滿世系</h3>
-        <p>From Emperor Shun to Duke Hu — 34 generations.</p>
-        <div class="gen-text">
-          <div>舜 <span class="gen-arrow">→</span> 商均 <span class="gen-arrow">→</span> 箕伯 <span class="gen-arrow">→</span> 強餘 <span class="gen-arrow">→</span> 虞頡 <span class="gen-arrow">→</span> 虞思 <span class="gen-arrow">→</span> 有龍 <span class="gen-arrow">→</span> 壽肸 <span class="gen-arrow">→</span> 叔儀 <span class="gen-arrow">→</span> 康仲 <span class="gen-arrow">→</span> 祖媯 <span class="gen-arrow">→</span> 期/發 <span class="gen-arrow">→</span> 發 <span class="gen-arrow">→</span> 媯方 <span class="gen-arrow">→</span> 振 <span class="gen-arrow">→</span> 維 <span class="gen-arrow">→</span> 壽固 <span class="gen-arrow">→</span> 敖 <span class="gen-arrow">→</span> 勝 <span class="gen-arrow">→</span> 元捷 <span class="gen-arrow">→</span> 偃 <span class="gen-arrow">→</span> 姑猛 <span class="gen-arrow">→</span> 公允 <span class="gen-arrow">→</span> 藺 <span class="gen-arrow">→</span> 填叔 <span class="gen-arrow">→</span> 野 <span class="gen-arrow">→</span> 無斁 <span class="gen-arrow">→</span> 留 <span class="gen-arrow">→</span> 叔正 <span class="gen-arrow">→</span> 獻子 <span class="gen-arrow">→</span> 亞壽 <span class="gen-arrow">→</span> 原壽 <span class="gen-arrow">→</span> 夢延 <span class="gen-arrow">→</span> 闕父 <span class="gen-arrow">→</span> 胡公滿（虞滿）</div>
-        </div>
-
-        <h3>三、陳國君主世系</h3>
-        <p>Rulers of Chen State — 25 generations.</p>
-        <div class="gen-text">
-          <div>胡公滿 <span class="gen-arrow">→</span> 申公犀候 <span class="gen-arrow">→</span> 相公皋羊 <span class="gen-arrow">→</span> 孝公突 <span class="gen-arrow">→</span> 慎公圉 <span class="gen-arrow">→</span> 幽公寧 <span class="gen-arrow">→</span> 僖公孝 <span class="gen-arrow">→</span> 武公靈 <span class="gen-arrow">→</span> 夷公說 <span class="gen-arrow">→</span> 平公燮 <span class="gen-arrow">→</span> 文公圉 <span class="gen-arrow">→</span> 桓公鮑 <span class="gen-arrow">→</span> 厲公陀 <span class="gen-arrow">→</span> 利公躍 <span class="gen-arrow">→</span> 莊公林 <span class="gen-arrow">→</span> 宣公杵臼 <span class="gen-arrow">→</span> 穆公款 <span class="gen-arrow">→</span> 共公朔 <span class="gen-arrow">→</span> 靈公平國 <span class="gen-arrow">→</span> 成公午 <span class="gen-arrow">→</span> 哀公彊 <span class="gen-arrow">→</span> 悼公偃師 <span class="gen-arrow">→</span> 公子留/勝</div>
-        </div>
-
-        <h3>四、陳國君主年代表</h3>
-        <p>Chronology: 1046–534 BCE.</p>
+        <p class="en">From the Yellow Emperor (Xuanyuan) to Emperor Shun of Yu — 9 generations.</p>
         <table class="gen-table">
-          <thead>
-            <tr><th>諡號</th><th>在位期間</th><th>備註</th></tr>
-          </thead>
+          <thead><tr><th>黃帝世代</th><th>西元年份</th><th>朝代</th><th>繼承人</th><th>子嗣</th></tr></thead>
           <tbody>
-            <tr><td>胡公滿</td><td>ca. 1046 BCE</td><td>陳國開國君主</td></tr>
-            <tr><td>申公犀候</td><td>?</td><td>胡公之子</td></tr>
-            <tr><td>相公皋羊</td><td>?</td><td>申公之弟</td></tr>
-            <tr><td>孝公突</td><td>?</td><td>—</td></tr>
-            <tr><td>慎公圉</td><td>?</td><td>—</td></tr>
-            <tr><td>幽公寧</td><td>?–832 BCE</td><td>—</td></tr>
-            <tr><td>僖公孝</td><td>832–796 BCE</td><td>—</td></tr>
-            <tr><td>武公靈</td><td>796–781 BCE</td><td>—</td></tr>
-            <tr><td>夷公說</td><td>781–778 BCE</td><td>—</td></tr>
-            <tr><td>平公燮</td><td>778–755 BCE</td><td>—</td></tr>
-            <tr><td>文公圉</td><td>755–745 BCE</td><td>—</td></tr>
-            <tr><td>桓公鮑</td><td>745–707 BCE</td><td>—</td></tr>
-            <tr><td>厲公陀</td><td>707–700 BCE</td><td>—</td></tr>
-            <tr><td>利公躍</td><td>700–699 BCE</td><td>—</td></tr>
-            <tr><td>莊公林</td><td>699–693 BCE</td><td>—</td></tr>
-            <tr><td>宣公杵臼</td><td>693–648 BCE</td><td>—</td></tr>
-            <tr><td>穆公款</td><td>648–632 BCE</td><td>—</td></tr>
-            <tr><td>共公朔</td><td>632–614 BCE</td><td>—</td></tr>
-            <tr><td>靈公平國</td><td>614–599 BCE</td><td>—</td></tr>
-            <tr><td>成公午</td><td>599–569 BCE</td><td>—</td></tr>
-            <tr><td>哀公彊</td><td>569–534 BCE</td><td>—</td></tr>
-            <tr><td>悼公偃師</td><td>534 BCE</td><td>在位數月</td></tr>
-            <tr><td>公子留 / 勝</td><td>534 BCE</td><td>內亂，陳滅於楚</td></tr>
+            <tr><td>1</td><td>前2698~前2597</td><td>黃帝</td><td>軒轅氏</td><td>玄囂、昌意、子安</td></tr>
+            <tr><td>2</td><td>前2598~前2515</td><td></td><td>昌意</td><td>顓頊</td></tr>
+            <tr><td>3</td><td>前2514~前2437</td><td></td><td>顓頊</td><td>窮蟬</td></tr>
+            <tr><td>4</td><td></td><td></td><td>窮蟬</td><td>敬康</td></tr>
+            <tr><td>5</td><td></td><td></td><td>敬康</td><td>句望</td></tr>
+            <tr><td>6</td><td></td><td></td><td>句望</td><td>橋牛</td></tr>
+            <tr><td>7</td><td></td><td></td><td>橋牛</td><td>瞽瞍</td></tr>
+            <tr><td>8</td><td></td><td></td><td>瞽瞍</td><td>重華（舜帝）</td></tr>
+            <tr><td>9</td><td>前2257~前2208</td><td>虞</td><td>帝舜</td><td></td></tr>
+          </tbody>
+        </table>
+        <p class="note">從黃帝至虞舜共傳9世。</p>
+
+        <!-- ===== SECTION 2 ===== -->
+        <h3>二、虞舜至胡公滿世系</h3>
+        <p class="en">From Emperor Shun to Duke Hu Gui Man, founding ancestor of the Hu surname — 34 generations.</p>
+        <table class="gen-table">
+          <thead><tr><th>世代</th><th>西元年份</th><th>朝代</th><th>繼承人</th><th>子嗣</th></tr></thead>
+          <tbody>
+            <tr><td>9</td><td>前2257~前2208</td><td>虞舜</td><td>虞舜</td><td>商均</td></tr>
+            <tr><td>10</td><td>前2207~</td><td>商</td><td>商均</td><td>箕伯</td></tr>
+            <tr><td>11</td><td></td><td></td><td>箕伯</td><td>強餘</td></tr>
+            <tr><td>12</td><td></td><td></td><td>強餘</td><td>虞頡</td></tr>
+            <tr><td>13</td><td>約~前1766</td><td></td><td>虞思</td><td>有龍</td></tr>
+            <tr><td>14</td><td></td><td></td><td>有龍</td><td>壽肸</td></tr>
+            <tr><td>15</td><td></td><td></td><td>壽肸</td><td>叔儀</td></tr>
+            <tr><td>16</td><td></td><td></td><td>叔儀</td><td>康仲</td></tr>
+            <tr><td>17</td><td></td><td></td><td>康仲</td><td>祖媯</td></tr>
+            <tr><td>18</td><td></td><td></td><td>祖媯</td><td>期、發</td></tr>
+            <tr><td>19</td><td></td><td></td><td>發</td><td>媯方</td></tr>
+            <tr><td>20</td><td></td><td></td><td>媯方</td><td>振</td></tr>
+            <tr><td>21</td><td></td><td></td><td>振</td><td>維</td></tr>
+            <tr><td>22</td><td></td><td></td><td>維</td><td>壽固</td></tr>
+            <tr><td>23</td><td></td><td></td><td>壽固</td><td>敖</td></tr>
+            <tr><td>24</td><td></td><td></td><td>敖</td><td>勝</td></tr>
+            <tr><td>25</td><td></td><td></td><td>勝</td><td>元捷</td></tr>
+            <tr><td>26</td><td></td><td></td><td>元捷</td><td>偃</td></tr>
+            <tr><td>27</td><td></td><td></td><td>偃</td><td>姑猛</td></tr>
+            <tr><td>28</td><td></td><td></td><td>姑猛</td><td>公允</td></tr>
+            <tr><td>29</td><td></td><td></td><td>公允</td><td>藺</td></tr>
+            <tr><td>30</td><td></td><td></td><td>藺</td><td>填叔</td></tr>
+            <tr><td>31</td><td></td><td></td><td>填叔</td><td>野</td></tr>
+            <tr><td>32</td><td></td><td></td><td>野</td><td>無斁</td></tr>
+            <tr><td>33</td><td></td><td></td><td>無斁</td><td>留</td></tr>
+            <tr><td>34</td><td></td><td></td><td>留</td><td>叔正</td></tr>
+            <tr><td>35</td><td></td><td></td><td>叔正</td><td>獻子</td></tr>
+            <tr><td>36</td><td></td><td></td><td>獻子</td><td>亞壽</td></tr>
+            <tr><td>37</td><td></td><td></td><td>亞壽</td><td>原壽</td></tr>
+            <tr><td>38</td><td></td><td></td><td>原壽</td><td>夢延</td></tr>
+            <tr><td>39</td><td></td><td></td><td>夢延</td><td>闕父</td></tr>
+            <tr><td>40</td><td>前1150~前1094</td><td>西周</td><td>胡公滿（媯滿）</td><td>犀候、皋羊</td></tr>
+          </tbody>
+        </table>
+        <p class="note">從虞舜至胡公媯滿共傳34世。因諡號「胡公」，故為胡氏得姓始祖。</p>
+
+        <!-- ===== SECTION 3 ===== -->
+        <h3>三、陳國君主世系</h3>
+        <p class="en">Rulers of the State of Chen — from Duke Hu (ca. 1046 BCE) through the Spring and Autumn period.</p>
+        <table class="gen-table">
+          <thead><tr><th>朝代</th><th>諡號</th><th>姓</th><th>名</th><th>子嗣</th><th>說明</th></tr></thead>
+          <tbody>
+            <tr><td>西周</td><td>胡公</td><td>媯</td><td>滿</td><td>犀候、皋羊</td><td>陳國開國君主，胡氏得姓始祖</td></tr>
+            <tr><td>西周</td><td>申公</td><td>媯</td><td>犀候</td><td>突、庚</td><td></td></tr>
+            <tr><td>西周</td><td>相公</td><td>媯</td><td>皋羊</td><td></td><td></td></tr>
+            <tr><td>西周</td><td>孝公</td><td>媯</td><td>突</td><td>圉</td><td></td></tr>
+            <tr><td>西周</td><td>慎公</td><td>媯</td><td>圉</td><td>寧</td><td></td></tr>
+            <tr><td>西周</td><td>幽公</td><td>媯</td><td>寧</td><td>孝</td><td></td></tr>
+            <tr><td>西周</td><td>僖公</td><td>媯</td><td>孝</td><td>靈、宣</td><td></td></tr>
+            <tr><td>西周</td><td>武公</td><td>媯</td><td>靈</td><td>說、燮</td><td></td></tr>
+            <tr><td>西周</td><td>夷公</td><td>媯</td><td>說</td><td></td><td></td></tr>
+            <tr><td>春秋</td><td>平公</td><td>媯</td><td>燮</td><td></td><td></td></tr>
+            <tr><td>春秋</td><td>文公</td><td>媯</td><td>圉</td><td>鮑、佗</td><td></td></tr>
+            <tr><td>春秋</td><td>桓公</td><td>媯</td><td>鮑</td><td>免、躍、林、杵臼</td><td></td></tr>
+            <tr><td>春秋</td><td>厲公</td><td>媯</td><td>陀</td><td>躍</td><td></td></tr>
+            <tr><td>春秋</td><td>利公</td><td>媯</td><td>躍</td><td></td><td></td></tr>
+            <tr><td>春秋</td><td>莊公</td><td>媯</td><td>林</td><td></td><td></td></tr>
+            <tr><td>春秋</td><td>宣公</td><td>媯</td><td>杵臼</td><td>御寇、款、子西、子仲、子楚</td><td></td></tr>
+            <tr><td>春秋</td><td>穆公</td><td>媯</td><td>款</td><td>朔</td><td></td></tr>
+            <tr><td>春秋</td><td>共公</td><td>媯</td><td>朔</td><td>平國</td><td></td></tr>
+            <tr><td>春秋</td><td>靈公</td><td>媯</td><td>平國</td><td>午</td><td></td></tr>
+            <tr><td>春秋</td><td>—</td><td>媯</td><td>夏徵舒</td><td></td><td>自立為君</td></tr>
+            <tr><td>春秋</td><td>成公</td><td>媯</td><td>午</td><td>彊、招、過、黃</td><td></td></tr>
+            <tr><td>春秋</td><td>哀公</td><td>媯</td><td>彊</td><td>偃師、留、勝</td><td></td></tr>
+            <tr><td>春秋</td><td>悼公</td><td>媯</td><td>偃師</td><td>吳</td><td></td></tr>
+            <tr><td>春秋</td><td>公子</td><td>媯</td><td>留</td><td></td><td>陳滅於楚</td></tr>
           </tbody>
         </table>
 
+        <!-- ===== SECTION 4 ===== -->
+        <h3>四、陳國君主年代表</h3>
+        <p class="en">Chen State ruler chronology with reign dates.</p>
+        <table class="gen-table">
+          <thead><tr><th>君次</th><th>諡號</th><th>西元年份</th><th>在位年</th><th>朝代</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>胡公</td><td>前1046~前986</td><td>60</td><td>西周</td></tr>
+            <tr><td>2</td><td>申公</td><td>前985~前960</td><td>25</td><td>西周</td></tr>
+            <tr><td>3</td><td>相公</td><td>前960~前915</td><td>45</td><td>西周</td></tr>
+            <tr><td>4</td><td>孝公</td><td>前915~前879</td><td>36</td><td>西周</td></tr>
+            <tr><td>5</td><td>慎公</td><td>前879~前856</td><td>23</td><td>西周</td></tr>
+            <tr><td>6</td><td>幽公</td><td>前855~前832</td><td>23</td><td>西周</td></tr>
+            <tr><td>7</td><td>僖公</td><td>前832~前796</td><td>36</td><td>西周</td></tr>
+            <tr><td>8</td><td>武公</td><td>前796~前781</td><td>15</td><td>西周</td></tr>
+            <tr><td>9</td><td>夷公</td><td>前781~前778</td><td>3</td><td>西周</td></tr>
+            <tr><td>10</td><td>平公</td><td>前778~前755</td><td>23</td><td>春秋</td></tr>
+            <tr><td>11</td><td>文公</td><td>前755~前745</td><td>10</td><td>春秋</td></tr>
+            <tr><td>12</td><td>桓公</td><td>前745~前707</td><td>38</td><td>春秋</td></tr>
+            <tr><td>13</td><td>厲公</td><td>前707~前700</td><td>7</td><td>春秋</td></tr>
+            <tr><td>14</td><td>利公</td><td>前700</td><td>5月</td><td>春秋</td></tr>
+            <tr><td>15</td><td>莊公</td><td>前700~前693</td><td>7</td><td>春秋</td></tr>
+            <tr><td>16</td><td>宣公</td><td>前693~前648</td><td>45</td><td>春秋</td></tr>
+            <tr><td>17</td><td>穆公</td><td>前648~前632</td><td>16</td><td>春秋</td></tr>
+            <tr><td>18</td><td>共公</td><td>前632~前614</td><td>18</td><td>春秋</td></tr>
+            <tr><td>19</td><td>靈公</td><td>前614~前599</td><td>15</td><td>春秋</td></tr>
+            <tr><td>—</td><td>夏徵舒</td><td>前599~前598</td><td>1</td><td>春秋</td></tr>
+            <tr><td>20</td><td>成公</td><td>前598~前568</td><td>30</td><td>春秋</td></tr>
+            <tr><td>21</td><td>哀公</td><td>前568~前534</td><td>34</td><td>春秋</td></tr>
+            <tr><td>22</td><td>悼公</td><td>前534</td><td>數月</td><td>春秋</td></tr>
+          </tbody>
+        </table>
+
+        <!-- ===== SECTION 5 ===== -->
         <h3>五、安定胡氏世系</h3>
-        <p>Anding Hu lineage — Western Han to Sixteen Kingdoms.</p>
-        <div class="gen-text">
-          <div>胡建 <span class="gen-arrow">→</span> 胡涵 <span class="gen-arrow">→</span> 胡文 <span class="gen-arrow">→</span> 胡敏 <span class="gen-arrow">→</span> 胡崇 <span class="gen-arrow">→</span> 胡惠 <span class="gen-arrow">→</span> 胡剛 <span class="gen-arrow">→</span> 胡玄成 <span class="gen-arrow">→</span> 胡聰 <span class="gen-arrow">→</span> 胡崇禧/伯禧 <span class="gen-arrow">→</span> 胡崇禧 <span class="gen-arrow">→</span> 胡賢/贊 <span class="gen-arrow">→</span> 胡賢 <span class="gen-arrow">→</span> 胡輝/騰 <span class="gen-arrow">→</span> 胡輝</div>
-          <div>胡輝 <span class="gen-arrow">→</span> 胡廣（恭侯）<span class="gen-arrow">→</span> 胡平/華 <span class="gen-arrow">→</span> 胡平 <span class="gen-arrow">→</span> 胡珏/班 <span class="gen-arrow">→</span> 胡班 <span class="gen-arrow">→</span> 胡辛 <span class="gen-arrow">→</span> 胡貞 <span class="gen-arrow">→</span> 胡質（貞侯）<span class="gen-arrow">→</span> 胡威 <span class="gen-arrow">→</span> 胡憲 <span class="gen-arrow">→</span> 胡彪/子範 <span class="gen-arrow">→</span> 胡彪 <span class="gen-arrow">→</span> 胡奮 <span class="gen-arrow">→</span> 胡華 <span class="gen-arrow">→</span> 胡哲 <span class="gen-arrow">→</span> 胡明之/儒 <span class="gen-arrow">→</span> 胡明之 <span class="gen-arrow">→</span> 胡德基 <span class="gen-arrow">→</span> 胡懷寧</div>
+        <p class="en">Anding Hu lineage — the most prestigious Hu branch, centered in Anding (present-day Guyuan, Ningxia).</p>
+        <table class="gen-table">
+          <thead><tr><th>朝代</th><th>爵位</th><th>名諱</th><th>子嗣</th></tr></thead>
+          <tbody>
+            <tr><td>西漢</td><td></td><td>胡建</td><td>涵</td></tr>
+            <tr><td>西漢</td><td></td><td>胡涵</td><td>文</td></tr>
+            <tr><td>西漢</td><td></td><td>胡文</td><td>敏</td></tr>
+            <tr><td>西漢</td><td></td><td>胡敏</td><td>崇</td></tr>
+            <tr><td>西漢</td><td></td><td>胡崇</td><td>惠</td></tr>
+            <tr><td>新莽</td><td></td><td>胡惠</td><td>剛</td></tr>
+            <tr><td>東漢</td><td></td><td>胡剛</td><td>玄成</td></tr>
+            <tr><td>東漢</td><td></td><td>胡玄成</td><td>聰</td></tr>
+            <tr><td>東漢</td><td></td><td>胡聰</td><td>崇禧、伯禧</td></tr>
+            <tr><td>東漢</td><td></td><td>胡崇禧</td><td>賢、贊</td></tr>
+            <tr><td>東漢</td><td></td><td>胡賢</td><td>輝、騰</td></tr>
+            <tr><td>東漢</td><td></td><td>胡輝</td><td>廣</td></tr>
+            <tr><td>東漢</td><td>恭侯</td><td>胡廣</td><td>平、華</td></tr>
+            <tr><td>東漢</td><td></td><td>胡平</td><td>珏、班</td></tr>
+            <tr><td>三國</td><td></td><td>胡班</td><td>辛</td></tr>
+            <tr><td>三國</td><td></td><td>胡辛</td><td>貞</td></tr>
+            <tr><td>三國</td><td></td><td>胡貞</td><td>質</td></tr>
+            <tr><td>三國</td><td>貞侯</td><td>胡質</td><td>威</td></tr>
+            <tr><td>西晉</td><td></td><td>胡威</td><td>憲</td></tr>
+            <tr><td>西晉</td><td></td><td>胡憲</td><td>彪、子範</td></tr>
+            <tr><td>西晉</td><td></td><td>胡彪</td><td>奮</td></tr>
+            <tr><td></td><td></td><td>胡奮</td><td>華</td></tr>
+            <tr><td>東晉</td><td></td><td>胡華</td><td>哲</td></tr>
+            <tr><td>東晉</td><td></td><td>胡哲</td><td>明之、儒</td></tr>
+            <tr><td>東晉</td><td></td><td>胡明之</td><td>德基</td></tr>
+            <tr><td>十六國</td><td></td><td>胡德基</td><td>懷寧</td></tr>
+          </tbody>
+        </table>
+        <p class="note">胡質定居安定（今寧夏固原），形成「安定胡氏家族」。</p>
+
+        <!-- ===== SECTION 6 ===== -->
+        <h3>六、世代編號對照表（西漢至西晉）</h3>
+        <p class="en">Generation numbering spanning Western Han to Western Jin (ca. 80 BCE – 275 CE).</p>
+        <table class="gen-table">
+          <thead><tr><th>總世代</th><th>分支世代</th><th>西元年份</th><th>朝代</th><th>爵位</th></tr></thead>
+          <tbody>
+            <tr><td>74</td><td>33</td><td></td><td>西漢</td><td></td></tr>
+            <tr><td>75</td><td>34</td><td>前80</td><td>西漢</td><td></td></tr>
+            <tr><td>76</td><td>35</td><td></td><td>西漢</td><td></td></tr>
+            <tr><td>77</td><td>36</td><td>前80</td><td>西漢</td><td></td></tr>
+            <tr><td>78</td><td>37</td><td>前73</td><td>西漢</td><td></td></tr>
+            <tr><td>79</td><td>38</td><td></td><td>西漢</td><td></td></tr>
+            <tr><td>80</td><td>39</td><td>前48</td><td>西漢</td><td></td></tr>
+            <tr><td>81</td><td>40</td><td>前32</td><td>西漢</td><td></td></tr>
+            <tr><td>82</td><td>41</td><td>25</td><td>新莽</td><td></td></tr>
+            <tr><td>83</td><td>42</td><td></td><td>東漢</td><td></td></tr>
+            <tr><td>84</td><td>43</td><td></td><td>東漢</td><td></td></tr>
+            <tr><td>85</td><td>44</td><td></td><td>東漢</td><td></td></tr>
+            <tr><td>86</td><td>45</td><td></td><td>東漢</td><td></td></tr>
+            <tr><td>87</td><td>46</td><td>136</td><td>東漢</td><td></td></tr>
+            <tr><td>88</td><td>47</td><td></td><td>東漢</td><td></td></tr>
+            <tr><td>89</td><td>48</td><td></td><td>東漢</td><td>恭侯</td></tr>
+            <tr><td>90</td><td>49</td><td></td><td>東漢</td><td></td></tr>
+            <tr><td>91</td><td>50</td><td></td><td>三國</td><td></td></tr>
+            <tr><td>92</td><td>51</td><td></td><td>三國</td><td></td></tr>
+            <tr><td>93</td><td>52</td><td>220</td><td>三國</td><td></td></tr>
+            <tr><td>94</td><td>53</td><td></td><td>三國</td><td></td></tr>
+            <tr><td>95</td><td>54</td><td>275</td><td>三國</td><td>貞侯</td></tr>
+            <tr><td>96</td><td>55</td><td></td><td>西晉</td><td></td></tr>
+            <tr><td>97</td><td>56</td><td></td><td>西晉</td><td></td></tr>
+            <tr><td>98</td><td>57</td><td></td><td>西晉</td><td></td></tr>
+            <tr><td>99</td><td>58</td><td></td><td>西晉</td><td></td></tr>
+          </tbody>
+        </table>
+
+        <h3>宋元世代編號對照表</h3>
+        <p class="en">Song / Yuan dynasty generation numbers.</p>
+        <table class="gen-table">
+          <thead><tr><th>總世代</th><th>分支世</th><th>世系</th><th>次系</th><th>朝代</th></tr></thead>
+          <tbody>
+            <tr><td>131</td><td>90</td><td>4</td><td></td><td>宋</td></tr>
+            <tr><td>132</td><td>91</td><td>5</td><td></td><td>宋</td></tr>
+            <tr><td>133</td><td>92</td><td>6</td><td></td><td>宋</td></tr>
+            <tr><td>134</td><td>93</td><td>7</td><td></td><td>宋</td></tr>
+            <tr><td>135</td><td>94</td><td>8</td><td></td><td>宋</td></tr>
+            <tr><td>136</td><td>95</td><td>9</td><td></td><td>宋</td></tr>
+            <tr><td>137</td><td>96</td><td>10</td><td></td><td>宋</td></tr>
+            <tr><td>138</td><td>97</td><td>11</td><td></td><td>宋</td></tr>
+            <tr><td>139</td><td>98</td><td>12</td><td></td><td>宋</td></tr>
+            <tr><td>140</td><td>99</td><td>13</td><td></td><td>宋</td></tr>
+            <tr><td>141</td><td>100</td><td>14</td><td></td><td>宋</td></tr>
+            <tr><td>142</td><td>101</td><td>15</td><td>1</td><td>宋</td></tr>
+            <tr><td>143</td><td>102</td><td>16</td><td>2</td><td>元</td></tr>
+            <tr><td>144</td><td>103</td><td>17</td><td>3</td><td>元</td></tr>
+            <tr><td>145</td><td>104</td><td>18</td><td>4</td><td>元</td></tr>
+          </tbody>
+        </table>
+
+        <!-- ===== SECTION 7 ===== -->
+        <h3>七、安定胡氏先祖名錄</h3>
+        <table class="gen-table">
+          <thead><tr><th>名諱</th><th>備註</th></tr></thead>
+          <tbody>
+            <tr><td>贊</td><td></td></tr>
+            <tr><td>騰</td><td></td></tr>
+            <tr><td>華</td><td></td></tr>
+            <tr><td>班</td><td></td></tr>
+            <tr><td>子範</td><td></td></tr>
+            <tr><td>之、儒</td><td></td></tr>
+            <tr><td>基</td><td></td></tr>
+            <tr><td>寧</td><td></td></tr>
+            <tr><td>伯禧</td><td></td></tr>
+          </tbody>
+        </table>
+
+        <!-- ===== SECTION 8 ===== -->
+        <h3>八、蓮溪村胡氏世系</h3>
+        <p class="en">The Lianxi Village branch — migrated from Nanchang, Jiangxi to Guangdong (Ming to Qing dynasties, ca. 1504–1787).</p>
+        <table class="gen-table">
+          <thead><tr><th>世次</th><th>名諱</th><th>子嗣</th><th>生平</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>連溪</td><td>景文、景行</td><td>諱寅，字朝瞻。創立蓮溪村。終於弘治十七年甲子（1504）三月十三</td></tr>
+            <tr><td>2</td><td>景文</td><td>友直、友誠</td><td>號樂恒</td></tr>
+            <tr><td>3</td><td>友誠</td><td>孔湛、孔澤、孔泓</td><td>號靜江，字以實。置田産為祠祭之業</td></tr>
+            <tr><td>4</td><td>孔泓</td><td>公顯、公熙</td><td>號堅白</td></tr>
+            <tr><td>5</td><td>公熙</td><td>明彥、英彥</td><td>諱爌，號覺宇。恩平學庠生。壽八十一</td></tr>
+            <tr><td>6</td><td>英彥</td><td>奇遇、子達、子琳、子祥、子充</td><td>諱穗秀，官名起鳳。壽八十六</td></tr>
+            <tr><td>7</td><td>子琳</td><td>勤麗、勤翼</td><td>諱自琳。壽八十二</td></tr>
+            <tr><td>8</td><td>勤翼</td><td>協溥、協湛</td><td>壽五十二</td></tr>
+            <tr><td>9</td><td>協湛</td><td>奕賀、奕賞、奕貴、奕賽</td><td>壽四十二</td></tr>
+            <tr><td>10</td><td>奕賀</td><td>珥世、衡世、雅世、靄世</td><td>諱宗聖，國子監太學生。壽六十一</td></tr>
+            <tr><td>11</td><td>珥世</td><td>秉仁、秉義、秉禮、秉智、秉信</td><td>諱石亭</td></tr>
+            <tr><td>12</td><td>秉智</td><td>樂昌、節昌、義昌</td><td></td></tr>
+            <tr><td>13</td><td>樂昌</td><td>清和</td><td></td></tr>
+            <tr><td>14</td><td>清和</td><td>維富、維有、維源、維豪、維顯、維達</td><td></td></tr>
+            <tr><td>15</td><td>維顯</td><td>龍贊、龍億、龍科、龍森、龍弼、龍迪、龍勇</td><td></td></tr>
+          </tbody>
+        </table>
+        <p class="note">從連溪公至維顯公共傳34世，計約1,105年。</p>
+
+        <!-- ===== SECTION 9 ===== -->
+        <h3>九、祖源遷徙錄</h3>
+        <p class="en">Ancestral migration records and burial sites — transcribed from the original clan genealogy.</p>
+        <div class="migration-text">
+          <p><strong>遷粵始祖記</strong></p>
+          <p>居江西南昌府南昌縣之麥山村。在宋寶佑二年（1254年），宦遊廣東知廣州事，寄居新會，去城百餘里地，在開平的梁都（即現在的開平百合鎮）娶妾盧氏，生一子良甫。及暮年，有從弟均壽公至，與之歸，而盧太姚之母子獨戀故土，不肯行，躲之，遂居焉。厥後竟不知佑祖之歿，所及十餘世，歷明、迄清。至清康熙己酉年（1669年），樸生翁接江西回書，始知佑祖葬於麥山上名石潭龜形艮寅山坤申向。</p>
+          <p><span class="en">[Summary: The ancestor served as an official in Guangzhou in 1254 (Song Dynasty). He settled in Xinhui, married Lady Lu in Kaiping, and his descendants have remained in Guangdong ever since.]</span></p>
+
+          <p><strong>祖墓記錄</strong></p>
+          <p>祖終葬於舊村青龍嘴古名山豬兜西向。祖墳光緒八年歲次壬午（1882年）重修。</p>
+          <p>祖終葬於石岩嶺西向。光緒年間遷葬官潮坡，又名孩兒山。</p>
+          <p>祖終葬於麻慈嶺巳丙向。</p>
+
+          <p><strong>彥弘公</strong></p>
+          <p>字彥弘。祖行年五十大創基業，因工人以富戶取硇砂不敷，遂屈於獄，八月十二日，祖壽終焉，葬於官潮坡巳丙向。</p>
+
+          <p><strong>浩公</strong></p>
+          <p>諱浩，字叔廣。祖壽八十六，終於九月初七日，葬於蜆崗大塘頭土。</p>
+
+          <p><strong>朝瞻公</strong></p>
+          <p>諱寅，字朝瞻。創立蓮溪村。終於弘治十七年甲子（1504年）三月十三，葬於土名大塘坑牛形丙午向。</p>
         </div>
+
+        <!-- ===== SUMMARY ===== -->
+        <h3>附：家族源流概述</h3>
+        <div class="migration-text">
+          <p>中華民族胡姓，源出有虞氏。黃帝（軒轅氏）→ 昌意 → 顓頊 → 窮蟬 → 敬康 → 句望 → 橋牛 → 瞽瞍 → 虞舜（重華）。舜帝三十三世孫媯滿，於西周初年受封於陳（今河南淮陽），為陳國開國君主。因諡號「胡公」，其後裔遂以諡為姓，奉胡公滿為胡氏得姓始祖。</p>
+          <p>陳國傳國二十餘世，歷西周至春秋。胡氏後裔中重要一支，定居安定（今寧夏固原），形成「安定胡氏家族」，為胡姓重要郡望。西漢至十六國時期，安定胡氏世系綿延不絕。</p>
+          <p>宋元時期，胡氏世代編號延續。至明代，有胡寅（字朝瞻）自江西南昌府南昌縣之麥山村宦遊廣東，寄居新會，後定居開平，創立蓮溪村。其後世繁衍，歷明、清兩朝，共傳34世，計約1,105年。</p>
+          <p>此譜記載了從黃帝至明清時期胡氏家族完整的世系傳承，是研究胡氏家族歷史的重要文獻。</p>
+        </div>
+
       </div>
     </div>
 
