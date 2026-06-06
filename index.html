@@ -3068,116 +3068,492 @@ window.HU_TREE_DATA = [
    * @param {HTMLElement|string} containerEl - Container element or its ID
    * @param {Array} data - Optional tree data (overrides window.HU_TREE_DATA)
    */
-  window.HUTree = {
-    init: function (containerEl, data) {
-      state.treeData = data || window.HU_TREE_DATA || [];
-      if (!state.treeData.length) {
-        console.error('HUTree: No tree data provided. Set window.HU_TREE_DATA or pass data to init().');
-        return;
-      }
+  /**
+ * tree-scroll.js — Simplified Horizontal Scroll Family Tree
+ *
+ * Expects window.HU_TREE_DATA (defined in data.js).
+ * Each generation is a vertical column. Scroll horizontally to see later gens.
+ * Branches stack vertically. SVG lines connect parents to children.
+ *
+ * Data format:
+ *   [{
+ *     id: "weixian", code: "WX", label: "维显公", color: "#7c3aed",
+ *     root: {
+ *       persons: [{name: "...", rel: "祖"}, ...],
+ *       children: [{persons: [...], children: [...]}, ...]
+ *     }
+ *   }, ...]
+ */
 
-      if (typeof containerEl === 'string') {
-        containerEl = document.getElementById(containerEl);
-      }
-      state.container = containerEl;
-      if (!state.container) {
-        console.error('HUTree: Container element not found.');
-        return;
-      }
+(function () {
+  'use strict';
 
-      // Add CSS
-      injectStyles();
+  // ========================================================================
+  // CONSTANTS
+  // ========================================================================
 
-      // Process data: assign paths, build groups
-      state.nodeMap = {};
-      state.connections = [];
-      state.maxDepth = 0;
-
-      state.treeData.forEach(function (branch) {
-        assignPaths(branch.root, branch.id, branch.code, 0, []);
-      });
-
-      buildGenGroups();
-
-      // Set expanded: default top N generations
-      expandDefaultLevels();
-
-      // Create control bar
-      buildControls();
-
-      // Render
-      renderTree();
-    },
-
-    /**
-     * Update the tree data and re-render.
-     */
-    updateData: function (data) {
-      state.treeData = data || window.HU_TREE_DATA || [];
-      state.nodeMap = {};
-      state.connections = [];
-      state.maxDepth = 0;
-
-      state.treeData.forEach(function (branch) {
-        assignPaths(branch.root, branch.id, branch.code, 0, []);
-      });
-
-      buildGenGroups();
-      expandDefaultLevels();
-      reRender();
-    },
-
-    /**
-     * Set the search query externally.
-     */
-    search: function (query) {
-      state.searchQuery = query;
-      searchTree(query);
-      reRender();
-    },
-
-    /**
-     * Set the active branch filter.
-     */
-    filterBranch: function (branchId) {
-      state.activeBranch = branchId || 'all';
-      reRender();
-    },
-
-    /**
-     * Focus on a specific person by path.
-     */
-    focus: function (path) {
-      if (path) {
-        enterFocus(path);
-      } else {
-        exitFocus();
-      }
-    },
-
-    /**
-     * Exit focus mode.
-     */
-    unfocus: function () {
-      exitFocus();
-    },
-
-    /**
-     * Get current state.
-     */
-    getState: function () {
-      return {
-        expanded: Array.from(state.expanded),
-        focused: state.focused,
-        searchQuery: state.searchQuery,
-        matchedCount: state.matchedPaths.length,
-        activeBranch: state.activeBranch,
-        maxDepth: state.maxDepth,
-        branchCount: state.treeData.length,
-        totalNodes: Object.keys(state.nodeMap).length,
-      };
-    },
+  const REL_COLORS = {
+    '祖': '#d4a017',
+    '儿': '#2563eb',
+    '兒': '#2563eb',
+    '女': '#ec4899',
+    '媳': '#9333ea',
+    '婿': '#16a34a',
+    '妻': '#9333ea',
+    '?': '#6b7280',
   };
+  const REL_LABELS = {
+    '祖': '祖',
+    '儿': '儿',
+    '兒': '儿',
+    '女': '女',
+    '媳': '媳',
+    '婿': '婿',
+    '妻': '妻',
+    '?': '?',
+  };
+
+  const DEFAULT_EXPAND_GENS = 2;
+
+  // ========================================================================
+  // STATE
+  // ========================================================================
+
+  const state = {
+    expanded: new Set(),  // node paths that show children
+    searchQuery: '',
+    matchedPaths: [],
+    activeBranch: 'all',
+    treeData: [],
+    nodeMap: {},          // path -> {node, branchId, branchCode, branchColor, depth}
+    connections: [],      // [{parentPath, childPath, branchId}]
+    maxDepth: 0,
+    container: null,
+  };
+
+  // ========================================================================
+  // DATA PROCESSING
+  // ========================================================================
+
+  function processData() {
+    state.nodeMap = {};
+    state.connections = [];
+    state.maxDepth = 0;
+
+    state.treeData.forEach(function (branch) {
+      walkTree(branch.root, branch.id, branch.code, branch.color, 0, []);
+    });
+  }
+
+  function walkTree(node, branchId, branchCode, branchColor, depth, segs) {
+    var path = branchCode + '-' + (segs.length === 0 ? '0' : segs.join('-'));
+    node._path = path;
+    node._depth = depth;
+    node._branchId = branchId;
+    node._branchCode = branchCode;
+    node._branchColor = branchColor;
+
+    state.nodeMap[path] = node;
+
+    if (depth > state.maxDepth) state.maxDepth = depth;
+
+    node.children.forEach(function (child, i) {
+      var childSegs = segs.concat([i]);
+      walkTree(child, branchId, branchCode, branchColor, depth + 1, childSegs);
+      state.connections.push({ parentPath: path, childPath: child._path, branchId: branchId });
+    });
+  }
+
+  function countDescendants(node) {
+    var c = 0;
+    node.children.forEach(function (child) {
+      c += 1 + countDescendants(child);
+    });
+    return c;
+  }
+
+  function getAncestorPaths(path) {
+    var parts = path.split('-');
+    var ancestors = [];
+    for (var i = 0; i <= parts.length; i++) {
+      ancestors.push(parts.slice(0, i).join('-') || parts[0]);
+    }
+    return ancestors;
+  }
+
+  function nodeMatchesSearch(node, q) {
+    if (!q) return false;
+    var lq = q.toLowerCase();
+    return (node.persons || []).some(function (p) {
+      return p.name.toLowerCase().indexOf(lq) !== -1;
+    });
+  }
+
+  function subtreeHasMatch(node, q) {
+    if (nodeMatchesSearch(node, q)) return true;
+    return node.children.some(function (c) { return subtreeHasMatch(c, q); });
+  }
+
+  function expandDefaults() {
+    state.expanded = new Set();
+    Object.keys(state.nodeMap).forEach(function (path) {
+      if (state.nodeMap[path]._depth < DEFAULT_EXPAND_GENS) {
+        state.expanded.add(path);
+      }
+    });
+  }
+
+  // ========================================================================
+  // RENDER
+  // ========================================================================
+
+  function render() {
+    var container = state.container;
+    if (!container) return;
+    container.innerHTML = '';
+
+    // Determine visible branches
+    var visible = state.activeBranch === 'all'
+      ? state.treeData
+      : state.treeData.filter(function (b) { return b.id === state.activeBranch; });
+
+    if (visible.length === 0) return;
+
+    // Determine which nodes are visible (ancestors expanded or within default depth)
+    var visibleSet = new Set();
+    visible.forEach(function (branch) {
+      walkVisible(branch.root, true);
+    });
+
+    function walkVisible(node, parentVisible) {
+      var expanded = state.expanded.has(node._path);
+      var show = parentVisible || node._depth < DEFAULT_EXPAND_GENS;
+      if (show) visibleSet.add(node._path);
+      node.children.forEach(function (child) {
+        walkVisible(child, show && expanded);
+      });
+    }
+
+    // Search handling: auto-expand ancestors of matches
+    if (state.searchQuery) {
+      var q = state.searchQuery.toLowerCase();
+      var pathsToExpand = new Set();
+      Object.keys(state.nodeMap).forEach(function (path) {
+        var node = state.nodeMap[path];
+        if (nodeMatchesSearch(node, q) || subtreeHasMatch(node, q)) {
+          getAncestorPaths(path).forEach(function (ap) { pathsToExpand.add(ap); });
+        }
+      });
+      pathsToExpand.forEach(function (p) { state.expanded.add(p); });
+      state.matchedPaths = [];
+      Object.keys(state.nodeMap).forEach(function (path) {
+        if (nodeMatchesSearch(state.nodeMap[path], q)) {
+          state.matchedPaths.push(path);
+          // Also ensure this node itself is visible
+          visibleSet.add(path);
+        }
+      });
+    }
+
+    // ===== WRAPPER =====
+    var wrapper = document.createElement('div');
+    wrapper.className = 'ts-wrapper';
+
+    visible.forEach(function (branch) {
+      var band = document.createElement('div');
+      band.className = 'ts-band';
+      band.setAttribute('data-branch', branch.id);
+
+      // ----- Branch Header -----
+      var header = document.createElement('div');
+      header.className = 'ts-band-header';
+      var dot = document.createElement('span');
+      dot.className = 'ts-band-dot';
+      dot.style.background = branch.color;
+      header.appendChild(dot);
+      var label = document.createElement('span');
+      label.className = 'ts-band-label';
+      label.textContent = branch.label + ' (' + branch.code + ')';
+      header.appendChild(label);
+      band.appendChild(header);
+
+      // ----- Scroll Area -----
+      var scrollArea = document.createElement('div');
+      scrollArea.className = 'ts-scroll';
+
+      var inner = document.createElement('div');
+      inner.className = 'ts-inner';
+
+      // Build columns (generations) for this branch
+      var genNodes = {}; // depth -> [node, ...]
+      for (var d = 0; d <= state.maxDepth; d++) {
+        genNodes[d] = [];
+      }
+      Object.keys(state.nodeMap).forEach(function (path) {
+        var node = state.nodeMap[path];
+        if (node._branchId === branch.id && visibleSet.has(path)) {
+          genNodes[node._depth].push(node);
+        }
+      });
+
+      for (var g = 0; g <= state.maxDepth; g++) {
+        var nodes = genNodes[g];
+        if (nodes.length === 0 && g > 0) continue; // skip empty tail generations
+
+        var col = document.createElement('div');
+        col.className = 'ts-col';
+        col.setAttribute('data-gen', g);
+
+        // Generation label header
+        var genLabel = document.createElement('div');
+        genLabel.className = 'ts-gen-label';
+        genLabel.textContent = 'G' + g;
+        col.appendChild(genLabel);
+
+        // Place nodes in column, centered
+        var cardsContainer = document.createElement('div');
+        cardsContainer.className = 'ts-cards';
+
+        nodes.forEach(function (node) {
+          var card = buildCard(node);
+          cardsContainer.appendChild(card);
+        });
+
+        col.appendChild(cardsContainer);
+        inner.appendChild(col);
+      }
+
+      scrollArea.appendChild(inner);
+      band.appendChild(scrollArea);
+      wrapper.appendChild(band);
+    });
+
+    container.appendChild(wrapper);
+
+    // ----- SVG Lines -----
+    drawLines();
+
+    // ----- Search highlights -----
+    applySearchHighlights();
+  }
+
+  // ========================================================================
+  // CARD BUILDER
+  // ========================================================================
+
+  function buildCard(node) {
+    var card = document.createElement('div');
+    card.className = 'fp-card';
+    card.setAttribute('data-path', node._path);
+    card.style.borderLeftColor = node._branchColor;
+
+    // Branch left accent (3px)
+    card.style.borderLeft = '3px solid ' + node._branchColor;
+
+    // Name (vertical writing)
+    var persons = node.persons || [];
+    var primaryName = persons.length > 0 ? persons[0].name : '?';
+
+    var nameEl = document.createElement('div');
+    nameEl.className = 'fp-name';
+    nameEl.textContent = primaryName;
+    card.appendChild(nameEl);
+
+    // Rel badge (first person's rel, or aggregate)
+    if (persons.length > 0) {
+      var relBadge = document.createElement('div');
+      relBadge.className = 'fp-rel';
+
+      // If multiple people, show count
+      if (persons.length === 1) {
+        var relText = persons[0].rel || '?';
+        var displayRel = REL_LABELS[relText] || relText;
+        relBadge.setAttribute('data-rel', displayRel);
+        relBadge.style.background = REL_COLORS[relText] || '#6b7280';
+        relBadge.textContent = displayRel;
+      } else {
+        // Multiple persons in this node (couple) — show a combined indicator
+        relBadge.setAttribute('data-rel', 'couple');
+        relBadge.style.background = '#6b7280';
+        relBadge.textContent = persons.length + '人';
+      }
+      card.appendChild(relBadge);
+    }
+
+    // Collapse indicator
+    var descCount = countDescendants(node);
+    if (descCount > 0) {
+      var isExpanded = state.expanded.has(node._path);
+      var toggle = document.createElement('div');
+      toggle.className = 'fp-toggle';
+      toggle.textContent = isExpanded ? '−' : '+' + descCount;
+      if (isExpanded) toggle.classList.add('expanded');
+      card.appendChild(toggle);
+    }
+
+    // Click to toggle children
+    card.addEventListener('click', function (e) {
+      e.stopPropagation();
+      toggleNode(node._path);
+    });
+
+    return card;
+  }
+
+  // ========================================================================
+  // SVG LINES
+  // ========================================================================
+
+  function drawLines() {
+    var container = state.container;
+    if (!container) return;
+
+    var oldSvg = container.querySelector('.ts-lines-svg');
+    if (oldSvg) oldSvg.remove();
+
+    // We need to draw connections within each branch band separately
+    var bands = container.querySelectorAll('.ts-band');
+    bands.forEach(function (band) {
+      var branchId = band.getAttribute('data-branch');
+      var scrollArea = band.querySelector('.ts-scroll');
+      var inner = band.querySelector('.ts-inner');
+      if (!inner) return;
+
+      // Find connections for this branch
+      var branchConns = state.connections.filter(function (c) { return c.branchId === branchId; });
+      if (branchConns.length === 0) return;
+
+      var bandRect = scrollArea.getBoundingClientRect();
+      var paths = [];
+
+      branchConns.forEach(function (conn) {
+        var parentEl = inner.querySelector('.fp-card[data-path="' + cssEscape(conn.parentPath) + '"]');
+        var childEl = inner.querySelector('.fp-card[data-path="' + cssEscape(conn.childPath) + '"]');
+        if (!parentEl || !childEl) return;
+
+        var pRect = parentEl.getBoundingClientRect();
+        var cRect = childEl.getBoundingClientRect();
+
+        // Coordinates relative to scrollArea
+        var x1 = pRect.left + pRect.width / 2 - bandRect.left;
+        var y1 = pRect.bottom - bandRect.top;
+        var x2 = cRect.left + cRect.width / 2 - bandRect.left;
+        var y2 = cRect.top - bandRect.top;
+
+        var branchColor = '#c8b0a0';
+        var node = state.nodeMap[conn.parentPath];
+        if (node && node._branchColor) {
+          branchColor = hexToRgba(node._branchColor, 0.4);
+        }
+
+        paths.push({ x1: x1, y1: y1, x2: x2, y2: y2, color: branchColor });
+      });
+
+      if (paths.length === 0) return;
+
+      var svgW = inner.scrollWidth;
+      var svgH = scrollArea.scrollHeight || inner.scrollHeight;
+
+      var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('class', 'ts-lines-svg');
+      svg.setAttribute('width', svgW);
+      svg.setAttribute('height', svgH);
+      svg.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none;z-index:1;overflow:visible;';
+
+      function makeLine(x1, y1, x2, y2, color) {
+        var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', x1);
+        line.setAttribute('y1', y1);
+        line.setAttribute('x2', x2);
+        line.setAttribute('y2', y2);
+        line.setAttribute('stroke', color);
+        line.setAttribute('stroke-width', '2');
+        line.setAttribute('stroke-linecap', 'round');
+        return line;
+      }
+
+      // Group by parent path for horizontal bars
+      var parentGroups = {};
+      paths.forEach(function (p) {
+        var key = p.x1 + ',' + p.y1;
+        if (!parentGroups[key]) parentGroups[key] = [];
+        parentGroups[key].push(p);
+      });
+
+      Object.keys(parentGroups).forEach(function (key) {
+        var group = parentGroups[key];
+        var first = group[0];
+
+        // Vertical line from parent bottom to horizontal bar
+        var minX = group[0].x2;
+        var maxX = group[0].x2;
+        group.forEach(function (p) {
+          if (p.x2 < minX) minX = p.x2;
+          if (p.x2 > maxX) maxX = p.x2;
+        });
+
+        var barY = first.y1 + (first.y2 - first.y1) * 0.35;
+        if (group.length === 1) {
+          // Single child: straight vertical line
+          svg.appendChild(makeLine(first.x1, first.y1, first.x2, first.y2, first.color));
+        } else {
+          // Multiple children: T-shape
+          svg.appendChild(makeLine(first.x1, first.y1, first.x1, barY, first.color));
+          svg.appendChild(makeLine(minX, barY, maxX, barY, first.color));
+          group.forEach(function (p) {
+            svg.appendChild(makeLine(p.x2, barY, p.x2, p.y2, p.color));
+          });
+        }
+      });
+
+      scrollArea.style.position = 'relative';
+      scrollArea.appendChild(svg);
+    });
+  }
+
+  // ========================================================================
+  // SEARCH HIGHLIGHTS
+  // ========================================================================
+
+  function applySearchHighlights() {
+    var container = state.container;
+    if (!container) return;
+
+    // Clear previous highlights
+    container.querySelectorAll('.fp-card.search-match').forEach(function (el) {
+      el.classList.remove('search-match');
+    });
+
+    if (!state.searchQuery) {
+      var countEl = document.getElementById('tsSearchCount');
+      if (countEl) countEl.textContent = '';
+      return;
+    }
+
+    var count = state.matchedPaths.length;
+    var countEl = document.getElementById('tsSearchCount');
+    if (countEl) countEl.textContent = 'Found ' + count;
+
+    state.matchedPaths.forEach(function (path) {
+      var card = container.querySelector('.fp-card[data-path="' + cssEscape(path) + '"]');
+      if (card) {
+        card.classList.add('search-match');
+      }
+    });
+  }
+
+  // ========================================================================
+  // TOGGLE
+  // ========================================================================
+
+  function toggleNode(path) {
+    if (state.expanded.has(path)) {
+      state.expanded.delete(path);
+    } else {
+      state.expanded.add(path);
+    }
+    render();
+  }
 
   // ========================================================================
   // CONTROLS
@@ -3186,60 +3562,66 @@ window.HU_TREE_DATA = [
   function buildControls() {
     var container = state.container;
 
-    // Create controls bar if it doesn't exist
-    var existing = container.querySelector('.tree-controls');
-    if (existing) return;
+    // Remove old controls area
+    var oldControls = container.querySelector('.ts-controls');
+    if (oldControls) oldControls.remove();
 
     var controls = document.createElement('div');
-    controls.className = 'tree-controls';
+    controls.className = 'ts-controls';
 
-    // Search box
-    var searchWrapper = document.createElement('div');
-    searchWrapper.className = 'tree-search-wrapper';
+    // Search
+    var searchWrap = document.createElement('div');
+    searchWrap.className = 'ts-search-wrap';
 
     var searchInput = document.createElement('input');
     searchInput.type = 'text';
-    searchInput.id = 'treeSearchBox';
-    searchInput.className = 'tree-search-input';
-    searchInput.placeholder = 'Search by name...';
+    searchInput.id = 'tsSearchBox';
+    searchInput.className = 'ts-search-input';
+    searchInput.placeholder = 'Search name...';
     searchInput.autocomplete = 'off';
-    searchWrapper.appendChild(searchInput);
+    searchInput.value = state.searchQuery;
+    searchWrap.appendChild(searchInput);
 
     var searchCount = document.createElement('span');
-    searchCount.id = 'treeSearchCount';
-    searchCount.className = 'tree-search-count';
-    searchWrapper.appendChild(searchCount);
+    searchCount.id = 'tsSearchCount';
+    searchCount.className = 'ts-search-count';
+    searchWrap.appendChild(searchCount);
 
-    controls.appendChild(searchWrapper);
+    controls.appendChild(searchWrap);
 
-    // Branch filter
-    var filterSelect = document.createElement('select');
-    filterSelect.id = 'treeBranchFilter';
-    filterSelect.className = 'tree-branch-filter';
+    // Branch chips
+    var chipWrap = document.createElement('div');
+    chipWrap.className = 'ts-chips';
 
-    var allOption = document.createElement('option');
-    allOption.value = 'all';
-    allOption.textContent = 'All Branches';
-    filterSelect.appendChild(allOption);
+    var allChip = document.createElement('button');
+    allChip.className = 'ts-chip' + (state.activeBranch === 'all' ? ' active' : '');
+    allChip.textContent = 'All';
+    allChip.addEventListener('click', function () { state.activeBranch = 'all'; render(); });
+    chipWrap.appendChild(allChip);
 
     state.treeData.forEach(function (branch) {
-      var opt = document.createElement('option');
-      opt.value = branch.id;
-      opt.textContent = branch.label;
-      filterSelect.appendChild(opt);
+      var chip = document.createElement('button');
+      chip.className = 'ts-chip' + (state.activeBranch === branch.id ? ' active' : '');
+      var chipDot = document.createElement('span');
+      chipDot.className = 'ts-chip-dot';
+      chipDot.style.background = branch.color;
+      chip.appendChild(chipDot);
+      chip.appendChild(document.createTextNode(branch.label));
+      chip.addEventListener('click', function () { state.activeBranch = branch.id; render(); });
+      chipWrap.appendChild(chip);
     });
 
-    controls.appendChild(filterSelect);
-
-    // Back button (focus mode exit)
-    var backBtn = document.createElement('button');
-    backBtn.id = 'treeBackBtn';
-    backBtn.className = 'tree-back-btn';
-    backBtn.textContent = '← Unfocus';
-    backBtn.style.display = 'none';
-    controls.appendChild(backBtn);
+    controls.appendChild(chipWrap);
 
     container.insertBefore(controls, container.firstChild);
+
+    // Search listener
+    searchInput.addEventListener('input', function () {
+      state.searchQuery = searchInput.value.trim();
+      state.expanded = new Set();
+      expandDefaults();
+      render();
+    });
   }
 
   // ========================================================================
@@ -3247,388 +3629,377 @@ window.HU_TREE_DATA = [
   // ========================================================================
 
   function injectStyles() {
-    var id = 'hu-tree-renderer-styles';
+    var id = 'ts-tree-scroll-styles';
     if (document.getElementById(id)) return;
 
     var style = document.createElement('style');
     style.id = id;
     style.textContent = `
-/* === TREE RENDERER === */
-.tree-controls {
+/* ===== TREE SCROLL CONTROLS ===== */
+.ts-controls {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 20px;
+  padding: 10px 16px;
   background: #faf6ed;
   border-bottom: 1px solid #d8c8b8;
   flex-wrap: wrap;
 }
-.tree-search-wrapper {
+.ts-search-wrap {
   display: flex;
   align-items: center;
   gap: 6px;
   flex: 1;
-  min-width: 200px;
+  min-width: 160px;
 }
-.tree-search-input {
-  padding: 7px 14px;
-  border: 1px solid #b8a888;
-  border-radius: 4px;
-  font-size: 15px;
-  width: 280px;
-  background: #fff;
-  color: #2a1a0a;
-  font-family: inherit;
-  outline: none;
-  transition: border-color 0.2s;
-}
-.tree-search-input:focus {
-  border-color: #c89b3c;
-  box-shadow: 0 0 0 2px rgba(200,155,60,0.15);
-}
-.tree-search-input::placeholder { color: #a09080; }
-.tree-search-count {
-  font-size: 12px;
-  color: #8a7a6a;
-  min-width: 80px;
-}
-.tree-branch-filter {
+.ts-search-input {
   padding: 6px 12px;
   border: 1px solid #b8a888;
   border-radius: 4px;
   font-size: 14px;
+  width: 220px;
   background: #fff;
-  color: #2a1a0a;
   font-family: inherit;
-  cursor: pointer;
   outline: none;
 }
-.tree-branch-filter:focus {
+.ts-search-input:focus {
   border-color: #c89b3c;
+  box-shadow: 0 0 0 2px rgba(200,155,60,0.15);
 }
-.tree-back-btn {
-  padding: 6px 14px;
-  border: 1px solid #d4a017;
-  border-radius: 4px;
-  background: #d4a017;
-  color: #fff;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: inherit;
-  transition: background 0.15s;
-}
-.tree-back-btn:hover {
-  background: #b8910f;
-}
-
-/* Tree Grid */
-.tree-grid {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-.gen-header-row {
-  background: #f5efe4;
-  min-height: auto;
-}
-.gen-label {
-  width: 40px;
-  flex-shrink: 0;
-  font-size: 10px;
-  color: #bbb;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-right: 1px solid #eee;
-}
-.branch-col {
-  flex: 1;
-  min-width: 0;
-  padding: 0;
-}
-.branch-header-cell {
-  padding: 8px 4px 4px;
-}
-.col-branch-header {
-  font-size: 15px;
-  font-weight: 700;
-  padding: 4px 8px;
-  letter-spacing: 2px;
-  text-align: center;
-}
-
-/* Generation nodes area */
-.gen-nodes {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 24px;
-  padding: 16px 12px;
-  min-height: 100%;
-  align-items: flex-start;
-}
-.gen-row {
-  display: flex;
-  border-bottom: 24px solid transparent;
-  min-height: 100px;
-  transition: background 0.3s;
-}
-.gen-row:last-child {
-  border-bottom: none;
-}
-
-/* Tree Node (wrapper for family unit + children area) */
-.tree-node {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  transition: opacity 0.3s ease;
-}
-
-/* Family Unit (person card(s) + toggle) */
-.family-unit {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-}
-.family-persons {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 0;
-}
-
-/* Person Card */
-.person-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0;
-  border-radius: 6px;
-  position: relative;
-  cursor: pointer;
-  transition: opacity 0.3s ease, box-shadow 0.2s ease;
-  min-width: 80px;
-  max-width: 120px;
-  background: #fff;
-  border: 1px solid #e0d5c5;
-  overflow: hidden;
-}
-.person-card:hover {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  border-color: #c8b898;
-}
-.person-card:active {
-  transform: scale(0.97);
-}
-
-/* Accent strip */
-.card-accent {
-  width: 100%;
-  height: 4px;
-  flex-shrink: 0;
-}
-
-/* Card body */
-.card-body {
-  padding: 8px 10px 4px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-.card-name {
-  font-size: 14px;
-  font-weight: 600;
-  color: #2a1a0a;
-  line-height: 1.3;
-  text-align: center;
-  word-break: keep-all;
-}
-.card-rel {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 3px;
-}
-.rel-badge {
-  display: inline-block;
-  font-size: 10px;
-  padding: 1px 6px;
-  border-radius: 8px;
-  font-weight: 700;
-  color: #fff;
-  line-height: 1.4;
-}
-
-/* Card path */
-.card-path {
-  font-size: 9px;
-  color: #bbb;
-  padding: 0 8px 3px;
-  text-align: center;
-  width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.ts-search-count {
+  font-size: 12px;
+  color: #8a7a6a;
   white-space: nowrap;
 }
-
-/* Spouse connector */
-.spouse-connector {
-  font-size: 8px;
-  color: #c8b898;
-  margin: 0 2px;
-  user-select: none;
+.ts-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
 }
-
-/* Collapse/Expand toggle */
-.tree-toggle {
+.ts-chip {
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  margin-top: 8px;
-  padding: 2px 10px 2px 8px;
-  border: 2px solid #d5c8b8;
-  border-radius: 12px;
-  background: #faf6ed;
-  color: #5a4a3a;
-  font-size: 11px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.15s;
-  font-family: inherit;
-  line-height: 1.5;
-  user-select: none;
-}
-.tree-toggle:hover {
-  background: #e8dcc8;
-  border-color: #b8a888;
-}
-.tree-toggle.expanded {
-  background: #e0f0e0;
-  border-color: #4a9;
-  color: #2a6;
-}
-.tree-toggle.collapsed {
-  background: #fff0f0;
-  border-color: #c88;
-  color: #a44;
-}
-.toggle-count {
-  font-weight: 400;
-  opacity: 0.8;
-}
-
-/* Focus mode */
-.person-card.focused {
-  z-index: 10;
-  transform: translateY(-2px);
-}
-.person-card.dimmed {
-  transition: opacity 0.4s ease;
-  cursor: default;
-}
-.person-card.sibling-dim {
-  transition: opacity 0.4s ease;
-}
-.tree-node.focused-node {
-  z-index: 5;
-}
-
-/* Search highlight */
-.person-card.search-match {
-  animation: searchPulse 1.5s ease-in-out infinite;
-  z-index: 5;
-}
-@keyframes searchPulse {
-  0%, 100% { box-shadow: 0 0 4px rgba(231,76,60,0.2); }
-  50% { box-shadow: 0 0 12px rgba(231,76,60,0.5); }
-}
-
-/* Legend */
-.tree-legend {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-  padding: 12px 24px;
-  background: #efe8da;
-  border-top: 1px solid #d8c8b8;
+  padding: 3px 10px;
+  border-radius: 14px;
   font-size: 12px;
-  flex-wrap: wrap;
+  border: 1.5px solid transparent;
+  background: rgba(0,0,0,0.04);
+  color: #333;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  white-space: nowrap;
 }
-.legend-item {
+.ts-chip:hover { background: rgba(0,0,0,0.08); }
+.ts-chip.active {
+  background: rgba(200,155,60,0.12);
+  border-color: #c89b3c;
+  font-weight: 600;
+}
+.ts-chip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* ===== BAND (one per branch) ===== */
+.ts-band {
+  margin-bottom: 16px;
+  background: #fff;
+  border-radius: 6px;
+  border: 1px solid #e0d8c8;
+  overflow: hidden;
+}
+.ts-band-header {
+  position: sticky;
+  left: 0;
   display: flex;
   align-items: center;
-  gap: 5px;
-  color: #5a4a3a;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #f5efe4;
+  border-bottom: 1px solid #e0d8c8;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 2;
 }
-.legend-badge {
-  display: inline-block;
-  padding: 1px 6px;
-  border-radius: 8px;
-  font-size: 10px;
-  font-weight: 700;
-  color: #fff;
-}
-.legend-dot {
+.ts-band-dot {
   width: 10px;
   height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
 }
-
-/* Responsive */
-@media (max-width: 768px) {
-  .tree-controls {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-    padding: 10px;
-  }
-  .tree-search-wrapper {
-    flex-wrap: wrap;
-  }
-  .tree-search-input {
-    width: 100%;
-  }
-  .gen-label {
-    width: 24px;
-    font-size: 8px;
-  }
-  .gen-nodes {
-    gap: 10px;
-    padding: 12px 4px;
-  }
-  .person-card {
-    min-width: 60px;
-    max-width: 90px;
-  }
-  .card-name {
-    font-size: 12px;
-  }
-  .card-path {
-    font-size: 8px;
-  }
-  .branch-col {
-    min-width: 0;
-  }
+.ts-band-label {
+  color: #333;
 }
 
-/* SVG lines container */
-.tree-lines-svg {
-  opacity: 0.7;
-  z-index: 5;
+/* ===== SCROLL AREA ===== */
+.ts-scroll {
+  overflow-x: auto;
+  overflow-y: visible;
+  width: 100%;
+}
+.ts-inner {
+  display: inline-flex;
+  min-width: max-content;
+  padding: 24px 40px 40px;
+  gap: 0;
+  position: relative;
+}
+
+/* ===== COLUMN (one generation) ===== */
+.ts-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 90px;
+  /* 80px gap between generations */
+}
+.ts-col + .ts-col {
+  margin-left: 80px;
+}
+.ts-gen-label {
+  font-size: 11px;
+  color: #999;
+  margin-bottom: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ===== CARDS CONTAINER ===== */
+.ts-cards {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+/* ===== CARD ===== */
+.fp-card {
+  width: 70px;
+  min-height: 140px;
+  background: #fff;
+  border: 1px solid #e0d8c8;
+  border-radius: 6px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: border-color 0.15s;
+  user-select: none;
+}
+.fp-card:hover {
+  border-color: #c8b8a0;
+}
+.fp-card.search-match {
+  box-shadow: 0 0 0 2px #e74c3c;
+  border-color: #e74c3c;
+}
+.fp-name {
+  writing-mode: vertical-rl;
+  font-size: 14px;
+  text-align: center;
+  color: #2a1a0a;
+  font-weight: 500;
+  letter-spacing: 1px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fp-rel {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+.fp-toggle {
+  font-size: 10px;
+  color: #666;
+  margin-top: 2px;
+}
+.fp-toggle.expanded {
+  color: #2a6;
+}
+
+/* ===== SVG lines ===== */
+.ts-lines-svg {
+  opacity: 0.6;
+  z-index: 1;
   pointer-events: none;
 }
-    `;
+
+/* ===== Legend ===== */
+.ts-legend {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 10px 16px;
+  background: #efe8da;
+  border-top: 1px solid #d8c8b8;
+  font-size: 12px;
+  margin-top: 16px;
+}
+.ts-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #5a4a3a;
+}
+.ts-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.ts-legend-badge {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ===== Empty State ===== */
+.ts-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  color: #999;
+  font-size: 14px;
+}
+`;
     document.head.appendChild(style);
   }
 
+  // ========================================================================
+  // LEGEND
+  // ========================================================================
+
+  function buildLegend() {
+    var container = state.container;
+    var oldLegend = container.querySelector('.ts-legend');
+    if (oldLegend) oldLegend.remove();
+
+    var legend = document.createElement('div');
+    legend.className = 'ts-legend';
+
+    // Rel badges
+    [
+      { text: '儿', bg: '#2563eb', label: 'Son' },
+      { text: '女', bg: '#ec4899', label: 'Daughter' },
+      { text: '媳', bg: '#9333ea', label: 'Wife/DIL' },
+      { text: '婿', bg: '#16a34a', label: 'Husband/SIL' },
+      { text: '祖', bg: '#d4a017', label: 'Founder' },
+      { text: '?', bg: '#6b7280', label: 'Unknown' },
+    ].forEach(function (item) {
+      var el = document.createElement('span');
+      el.className = 'ts-legend-item';
+      var badge = document.createElement('span');
+      badge.className = 'ts-legend-badge';
+      badge.style.background = item.bg;
+      badge.textContent = item.text;
+      el.appendChild(badge);
+      el.appendChild(document.createTextNode(item.label));
+      legend.appendChild(el);
+    });
+
+    // Branch colors
+    state.treeData.forEach(function (branch) {
+      var el = document.createElement('span');
+      el.className = 'ts-legend-item';
+      var dot = document.createElement('span');
+      dot.className = 'ts-legend-dot';
+      dot.style.background = branch.color;
+      el.appendChild(dot);
+      el.appendChild(document.createTextNode(branch.label));
+      legend.appendChild(el);
+    });
+
+    container.appendChild(legend);
+  }
+
+  // ========================================================================
+  // UTILITY
+  // ========================================================================
+
+  function cssEscape(str) {
+    if (!str) return '';
+    return str.replace(/"/g, '\\"').replace(/'/g, "\\'");
+  }
+
+  function hexToRgba(hex, alpha) {
+    var r = parseInt(hex.slice(1, 3), 16);
+    var g = parseInt(hex.slice(3, 5), 16);
+    var b = parseInt(hex.slice(5, 7), 16);
+    return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+  }
+
+  // ========================================================================
+  // PUBLIC API
+  // ========================================================================
+
+  window.HUTreeScroll = {
+    init: function (containerEl, data) {
+      state.treeData = data || window.HU_TREE_DATA || [];
+      if (!state.treeData.length) {
+        console.error('HUTreeScroll: No data');
+        return;
+      }
+
+      if (typeof containerEl === 'string') {
+        containerEl = document.getElementById(containerEl);
+      }
+      state.container = containerEl;
+      if (!state.container) {
+        console.error('HUTreeScroll: Container not found');
+        return;
+      }
+
+      injectStyles();
+
+      processData();
+      expandDefaults();
+
+      buildControls();
+      render();
+      buildLegend();
+    },
+
+    getState: function () {
+      return {
+        expanded: Array.from(state.expanded),
+        searchQuery: state.searchQuery,
+        matchedCount: state.matchedPaths.length,
+        activeBranch: state.activeBranch,
+        totalNodes: Object.keys(state.nodeMap).length,
+      };
+    },
+  };
+
 })();
+
 </script>
   <script>
     // ===== APP.JS — Hash Routing, Search, Events =====
@@ -3687,9 +4058,9 @@ window.HU_TREE_DATA = [
 
       /* ---------- Tree rendering via HUTree ---------- */
       function renderTree() {
-        if (typeof window.HUTree !== 'undefined' && typeof window.HU_TREE_DATA !== 'undefined') {
+        if (typeof window.HUTreeScroll !== 'undefined' && typeof window.HU_TREE_DATA !== 'undefined') {
           treeContainer.innerHTML = '';
-          window.HUTree.init(treeContainer, window.HU_TREE_DATA);
+          window.HUTreeScroll.init(treeContainer, window.HU_TREE_DATA);
         } else {
           treeContainer.innerHTML =
             '<div class="empty-state">' +
@@ -3703,16 +4074,16 @@ window.HU_TREE_DATA = [
       searchInput.addEventListener('input', function() {
         var query = this.value.trim().toLowerCase();
         clearBtn.classList.toggle('visible', query.length > 0);
-        if (typeof window.HUTree !== 'undefined' && window.HUTree.search) {
-          window.HUTree.search(query);
+        if (typeof window.HUTreeScroll !== 'undefined' && window.HUTreeScroll.search) {
+          window.HUTreeScroll.search(query);
         }
       });
 
       clearBtn.addEventListener('click', function() {
         searchInput.value = '';
         clearBtn.classList.remove('visible');
-        if (typeof window.HUTree !== 'undefined' && window.HUTree.search) {
-          window.HUTree.search('');
+        if (typeof window.HUTreeScroll !== 'undefined' && window.HUTreeScroll.search) {
+          window.HUTreeScroll.search('');
         }
         searchInput.focus();
       });
@@ -3762,13 +4133,13 @@ window.HU_TREE_DATA = [
           }
 
           // Apply filter via HUTree
-          if (typeof window.HUTree !== 'undefined' && window.HUTree.filterBranch) {
+          if (typeof window.HUTreeScroll !== 'undefined' && window.HUTreeScroll.filterBranch) {
             // HUTree.filterBranch takes a single branch id or 'all'
             // If multiple branches selected, just use first one for now (HUTree limitation)
             if (activeBranches && activeBranches.length === 1) {
-              window.HUTree.filterBranch(activeBranches[0]);
+              window.HUTreeScroll.filterBranch(activeBranches[0]);
             } else {
-              window.HUTree.filterBranch('all');
+              window.HUTreeScroll.filterBranch('all');
             }
           }
         });
@@ -3776,9 +4147,9 @@ window.HU_TREE_DATA = [
 
       /* ---------- Collapse all ---------- */
       collapseBtn.addEventListener('click', function() {
-        if (typeof window.HUTree !== 'undefined') {
+        if (typeof window.HUTreeScroll !== 'undefined') {
           // Reset to default expand levels
-          window.HUTree.init(treeContainer, window.HU_TREE_DATA);
+          window.HUTreeScroll.init(treeContainer, window.HU_TREE_DATA);
         }
       });
 
