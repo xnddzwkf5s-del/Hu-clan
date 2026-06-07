@@ -58,8 +58,8 @@
             "death": null,
             "notes": null,
             "father_id": "WX_001",
-            "mother_id": null,
-            "unknown_mother": true
+            "mother_id": "WX_002",
+            "unknown_mother": false
           }
         ],
         "children": [
@@ -222,8 +222,8 @@
             "death": null,
             "notes": null,
             "father_id": "WX_001",
-            "mother_id": null,
-            "unknown_mother": true
+            "mother_id": "WX_002",
+            "unknown_mother": false
           },
           {
             "name": "冯桂霞",
@@ -373,8 +373,8 @@
             "death": null,
             "notes": null,
             "father_id": "WX_001",
-            "mother_id": null,
-            "unknown_mother": true
+            "mother_id": "WX_002",
+            "unknown_mother": false
           }
         ],
         "children": [
@@ -486,8 +486,8 @@
             "death": null,
             "notes": null,
             "father_id": "WX_001",
-            "mother_id": null,
-            "unknown_mother": true
+            "mother_id": "WX_002",
+            "unknown_mother": false
           }
         ],
         "children": [
@@ -563,8 +563,8 @@
             "death": null,
             "notes": null,
             "father_id": "WX_001",
-            "mother_id": null,
-            "unknown_mother": true
+            "mother_id": "WX_002",
+            "unknown_mother": false
           },
           {
             "name": "吴凤德",
@@ -757,8 +757,8 @@
             "death": null,
             "notes": null,
             "father_id": "WX_001",
-            "mother_id": null,
-            "unknown_mother": true
+            "mother_id": "WX_002",
+            "unknown_mother": false
           },
           {
             "name": "黄月玉",
@@ -1452,8 +1452,8 @@
             "death": null,
             "notes": null,
             "father_id": "WX_001",
-            "mother_id": null,
-            "unknown_mother": true
+            "mother_id": "WX_002",
+            "unknown_mother": false
           }
         ],
         "children": []
@@ -1479,8 +1479,8 @@
             "death": null,
             "notes": null,
             "father_id": "WX_001",
-            "mother_id": null,
-            "unknown_mother": true
+            "mother_id": "WX_002",
+            "unknown_mother": false
           }
         ],
         "children": [
@@ -1567,8 +1567,8 @@
             "death": null,
             "notes": null,
             "father_id": "WX_001",
-            "mother_id": null,
-            "unknown_mother": true
+            "mother_id": "WX_002",
+            "unknown_mother": false
           }
         ],
         "children": [
