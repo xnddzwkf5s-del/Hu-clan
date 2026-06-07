@@ -2911,14 +2911,14 @@
           {
             "persons": [
               {
-                "name": "龚百加",
+                "name": "龚百瀚",
                 "rel": "兒",
                 "id": "WX_116",
                 "father_id": "WX_114",
                 "mother_id": "WX_115",
                 "birth": null,
                 "death": null,
-                "notes": null
+                "notes": "Born in Australia"
               }
             ],
             "children": []
