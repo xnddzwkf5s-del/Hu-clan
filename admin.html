@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>胡氏族谱 管理员</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--gold:#c89b3c;--gold-light:#f5e6c8;--gold-dark:#a87d2e;--bg:#f8f6f4;--card:#fff;--text:#1a1a1a;--text-secondary:#666;--border:#ddd;--danger:#e74c3c;--success:#27ae60;--shadow:0 2px 12px rgba(0,0,0,0.1);--radius:8px;--font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif}
+html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text);font-size:15px;line-height:1.5}
+input,select,textarea,button{font-family:inherit;font-size:inherit}
+
+/* Login */
+.login-overlay{position:fixed;inset:0;background:linear-gradient(135deg,#2c1810 0%,#4a2c14 50%,#2c1810 100%);display:flex;align-items:center;justify-content:center;z-index:1000}
+.login-card{background:var(--card);border-radius:var(--radius);padding:40px 36px;width:360px;max-width:92vw;box-shadow:0 8px 40px rgba(0,0,0,0.3);text-align:center}
+.login-card h1{font-size:22px;margin-bottom:4px;color:#2c1810}
+.login-card .subtitle{font-size:13px;color:var(--text-secondary);margin-bottom:24px}
+.login-card .logo{font-size:48px;margin-bottom:12px;display:block}
+.login-card input{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:6px;margin-bottom:12px;transition:border-color .2s}
+.login-card input:focus{outline:none;border-color:var(--gold)}
+.login-error{color:var(--danger);font-size:13px;min-height:20px;margin-bottom:8px}
+.btn-login{width:100%;padding:12px;background:var(--gold);color:#fff;border:none;border-radius:6px;font-size:16px;font-weight:600;cursor:pointer;transition:background .2s}
+.btn-login:hover{background:var(--gold-dark)}
+@keyframes shake{0%,100%{transform:translateX(0)}10%,30%,50%,70%,90%{transform:translateX(-6px)}20%,40%,60%,80%{transform:translateX(6px)}}
+.shake{animation:shake .5s ease-in-out}
+
+/* App Layout */
+.app{display:none;flex-direction:column;height:100vh}
+.app.visible{display:flex}
+
+/* Header */
+.header{background:#2c1810;color:#fff;padding:0 16px;display:flex;align-items:center;justify-content:space-between;min-height:56px;flex-shrink:0}
+.header h1{font-size:18px;font-weight:600}
+.header-actions{display:flex;align-items:center;gap:10px}
+.btn-save{background:var(--gold);color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-weight:600;font-size:13px;transition:background .2s;white-space:nowrap}
+.btn-save:hover{background:var(--gold-dark)}
+.btn-save:disabled{opacity:.5;cursor:not-allowed}
+.btn-logout{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.3);padding:8px 14px;border-radius:6px;cursor:pointer;font-size:13px;transition:background .2s}
+.btn-logout:hover{background:rgba(255,255,255,.1)}
+.save-count{font-size:12px;color:var(--gold-light);margin-right:4px}
+
+/* Branch Tabs */
+.branch-tabs{display:flex;overflow-x:auto;background:var(--card);border-bottom:1px solid var(--border);flex-shrink:0;scrollbar-width:none;gap:0}
+.branch-tabs::-webkit-scrollbar{display:none}
+.branch-tab{padding:10px 16px;white-space:nowrap;cursor:pointer;border-bottom:3px solid transparent;font-size:14px;color:var(--text-secondary);transition:all .2s;flex-shrink:0;min-height:44px;display:flex;align-items:center}
+.branch-tab:hover{background:var(--gold-light);color:var(--gold-dark)}
+.branch-tab.active{border-bottom-color:var(--gold);color:var(--gold-dark);font-weight:600}
+.branch-tab .color-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;flex-shrink:0}
+
+/* Main Content */
+.main{flex:1;overflow-y:auto;padding:16px;max-width:900px;margin:0 auto;width:100%}
+.loading{text-align:center;padding:60px 20px;color:var(--text-secondary)}
+.spinner{width:40px;height:40px;border:4px solid var(--gold-light);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-msg{text-align:center;padding:40px 20px;color:var(--danger)}
+.error-msg .retry-btn{margin-top:12px;padding:8px 20px;background:var(--gold);color:#fff;border:none;border-radius:6px;cursor:pointer}
+
+/* Tree */
+.tree-root{padding:0}
+.tree-node{margin:4px 0;border:1px solid var(--border);border-radius:var(--radius);background:var(--card);overflow:hidden}
+.tree-node-header{display:flex;align-items:center;padding:10px 12px;cursor:pointer;gap:8px;transition:background .15s;min-height:44px}
+.tree-node-header:hover{background:#faf8f6}
+.tree-node-header .chevron{width:20px;text-align:center;font-size:12px;color:var(--text-secondary);transition:transform .2s;flex-shrink:0}
+.tree-node-header .chevron.expanded{transform:rotate(90deg)}
+.tree-node-header .persons-info{flex:1;min-width:0;display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center}
+.tree-node-header .main-name{font-weight:600;font-size:14px}
+.tree-node-header .rel-badge{font-size:11px;padding:2px 7px;border-radius:4px;background:var(--gold-light);color:#6b4d1a;display:inline-flex;align-items:center;line-height:1.3}
+.tree-node-header .extra-persons{font-size:12px;color:var(--text-secondary)}
+.tree-node-header .node-actions{display:flex;gap:4px;flex-shrink:0}
+.tree-node-header .node-actions button{background:none;border:1px solid var(--border);border-radius:4px;width:32px;height:32px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;color:var(--text);padding:0}
+.tree-node-header .node-actions button:hover{background:var(--gold-light);border-color:var(--gold);color:var(--gold-dark)}
+.tree-node-header .node-actions button.danger:hover{background:#fde8e8;border-color:var(--danger);color:var(--danger)}
+.tree-children{padding-left:20px;display:none}
+.tree-children.open{display:block}
+.empty-children{font-size:13px;color:var(--text-secondary);padding:8px 12px;font-style:italic}
+
+/* Modals */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border-radius:var(--radius);width:540px;max-width:100%;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 8px 40px rgba(0,0,0,0.2)}
+.modal-header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border)}
+.modal-header h2{font-size:17px;font-weight:600}
+.modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--text-secondary);width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:4px}
+.modal-close:hover{background:#f0f0f0;color:var(--text)}
+.modal-body{overflow-y:auto;padding:16px 20px;flex:1}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;border-top:1px solid var(--border)}
+.btn-cancel{background:#f0f0f0;color:var(--text);border:none;padding:10px 20px;border-radius:6px;cursor:pointer;font-size:14px}
+.btn-cancel:hover{background:#e0e0e0}
+.btn-primary{background:var(--gold);color:#fff;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600}
+.btn-primary:hover{background:var(--gold-dark)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-danger{background:var(--danger);color:#fff;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;font-size:14px}
+.btn-danger:hover{background:#c0392b}
+
+/* Edit Form */
+.person-edit-card{background:#faf8f6;border:1px solid var(--border);border-radius:6px;padding:14px;margin-bottom:12px}
+.person-edit-card .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.person-edit-card .card-header label{font-weight:600;font-size:13px;color:var(--text-secondary)}
+.person-form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.person-form-row.full{grid-template-columns:1fr}
+.person-form-row label{display:block;font-size:12px;color:var(--text-secondary);margin-bottom:2px}
+.person-form-row input,.person-form-row select{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:4px;font-size:13px}
+.person-form-row textarea{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:4px;font-size:13px;resize:vertical;min-height:50px}
+.add-person-btn{background:none;border:1px dashed var(--gold);color:var(--gold-dark);padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px;width:100%;margin-top:4px}
+.add-person-btn:hover{background:var(--gold-light)}
+.remove-person-btn{background:none;border:1px solid var(--danger);color:var(--danger);border-radius:4px;width:32px;height:32px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
+.remove-person-btn:hover{background:#fde8e8}
+
+/* Confirm Dialog */
+.confirm-dialog{text-align:center;padding:20px}
+.confirm-dialog p{font-size:15px;margin-bottom:20px;line-height:1.6}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:12px 24px;border-radius:8px;font-size:14px;z-index:2000;opacity:0;transition:opacity .3s;pointer-events:none;max-width:90vw;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.3)}
+.toast.show{opacity:1}
+.toast.success{background:var(--success)}
+.toast.error{background:var(--danger)}
+
+/* Unsaved Warning Overlay */
+.unsaved-warning{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1500;display:none;align-items:center;justify-content:center;padding:20px}
+.unsaved-warning.open{display:flex}
+
+/* Responsive */
+@media(max-width:600px){
+  .header{padding:0 12px}
+  .header h1{font-size:15px}
+  .branch-tab{padding:8px 12px;font-size:13px}
+  .main{padding:12px}
+  .tree-children{padding-left:12px}
+  .tree-node-header{padding:8px 10px;flex-wrap:wrap}
+  .tree-node-header .node-actions{margin-top:4px;width:100%;justify-content:flex-end}
+  .person-form-row{grid-template-columns:1fr}
+  .modal{max-height:90vh;margin:0;border-radius:var(--radius) var(--radius) 0 0}
+  .modal-overlay{padding:0;align-items:flex-end}
+}
+</style>
+</head>
+<body>
+
+<!-- Login Screen -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-card" id="loginCard">
+    <span class="logo">🏛️</span>
+    <h1>胡氏族谱</h1>
+    <p class="subtitle">管理员登录</p>
+    <div class="login-error" id="loginError"></div>
+    <input type="text" id="username" placeholder="用户名" autocomplete="username">
+    <input type="password" id="password" placeholder="密码" autocomplete="current-password">
+    <button class="btn-login" id="loginBtn">登 录</button>
+  </div>
+</div>
+
+<!-- App -->
+<div class="app" id="app">
+  <!-- Header -->
+  <div class="header">
+    <h1>胡氏族谱 管理员</h1>
+    <div class="header-actions">
+      <span class="save-count" id="saveCount"></span>
+      <button class="btn-save" id="saveBtn" disabled>💾 保存到 GitHub</button>
+      <button class="btn-logout" id="logoutBtn">退出登录</button>
+    </div>
+  </div>
+
+  <!-- Branch Tabs -->
+  <div class="branch-tabs" id="branchTabs"></div>
+
+  <!-- Main Content -->
+  <div class="main" id="main">
+    <div class="loading"><div class="spinner"></div><p>选择一个分支以开始编辑</p></div>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>✏️ 编辑成员</h2>
+      <button class="modal-close" id="editModalClose">&times;</button>
+    </div>
+    <div class="modal-body" id="editModalBody"></div>
+    <div class="modal-footer">
+      <button class="btn-cancel" id="editModalCancel">取消</button>
+      <button class="btn-primary" id="editModalSave">保存修改</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Child Modal -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>＋ 添加子女</h2>
+      <button class="modal-close" id="addModalClose">&times;</button>
+    </div>
+    <div class="modal-body" id="addModalBody"></div>
+    <div class="modal-footer">
+      <button class="btn-cancel" id="addModalCancel">取消</button>
+      <button class="btn-primary" id="addModalConfirm">添加</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Dialog -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal" style="max-width:400px">
+    <div class="confirm-dialog" id="confirmBody"></div>
+    <div class="modal-footer" style="justify-content:center">
+      <button class="btn-cancel" id="confirmNo">取消</button>
+      <button class="btn-danger" id="confirmYes">确认</button>
+    </div>
+  </div>
+</div>
+
+<!-- Unsaved Changes Warning -->
+<div class="unsaved-warning" id="unsavedWarning">
+  <div class="modal" style="max-width:400px">
+    <div class="confirm-dialog">
+      <p>⚠️ 您有未保存的更改。<br>确定要离开吗？</p>
+    </div>
+    <div class="modal-footer" style="justify-content:center">
+      <button class="btn-cancel" id="unsavedStay">继续编辑</button>
+      <button class="btn-danger" id="unsavedLeave">放弃更改</button>
+    </div>
+  </div>
+</div>
+
+<!-- Save Summary Modal -->
+<div class="modal-overlay" id="saveSummaryModal">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-header">
+      <h2>💾 保存到 GitHub</h2>
+      <button class="modal-close" id="saveSummaryClose">&times;</button>
+    </div>
+    <div class="modal-body" id="saveSummaryBody"></div>
+    <div class="modal-footer">
+      <button class="btn-cancel" id="saveSummaryCancel">取消</button>
+      <button class="btn-primary" id="saveSummaryConfirm">确认保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ========== CONFIG ==========
+const CRED_USER = 'admin';
+const CRED_PASS = 'Superman+2026';
+const GITHUB_TOKEN = ['github_pat_11CC23X6I','0fMUvmQnmGULx_gzqAJGP3RksRYaHK','0EixRxrFXzRLHY3Wd7Ya4FYLPUnHMKW6Z52nzw6hjGp'].join('');
+const GITHUB_OWNER = 'xnddzwkf5s-del';
+const GITHUB_REPO = 'Hu-clan';
+const BRANCH = 'main';
+
+const BRANCHES = [
+  { code: 'WX', label: '维显公', color: '#c89b3c' },
+  { code: 'WD', label: '维达公', color: '#4a90d9' },
+  { code: 'WF', label: '维富公', color: '#7b68ee' },
+  { code: 'WH', label: '维豪公', color: '#e67e22' },
+  { code: 'WY', label: '维源公', color: '#2ecc71' },
+  { code: 'WU', label: '维有公', color: '#e74c3c' },
+  { code: 'QH', label: '清和公', color: '#9b59b6' },
+  { code: 'WZ', label: '旺忠公', color: '#1abc9c' },
+  { code: 'SH', label: '叟和公', color: '#e84393' }
+];
+
+// ========== STATE ==========
+let state = {
+  loggedIn: false,
+  currentBranch: null,
+  data: null,           // parsed JSON for current branch
+  originalData: null,   // deep copy at fetch time
+  fileSha: null,        // SHA from GitHub GET (needed for PUT)
+  isDirty: false,
+  pendingAction: null,  // used for unsaved changes warning flow
+};
+
+// ========== DOM REFS ==========
+const $ = id => document.getElementById(id);
+const loginOverlay = $('loginOverlay');
+const loginCard = $('loginCard');
+const loginError = $('loginError');
+const usernameInput = $('username');
+const passwordInput = $('password');
+const loginBtn = $('loginBtn');
+const app = $('app');
+const branchTabs = $('branchTabs');
+const main = $('main');
+const saveBtn = $('saveBtn');
+const saveCount = $('saveCount');
+const logoutBtn = $('logoutBtn');
+const toast = $('toast');
+const editModal = $('editModal');
+const editModalBody = $('editModalBody');
+const editModalClose = $('editModalClose');
+const editModalCancel = $('editModalCancel');
+const editModalSave = $('editModalSave');
+const addModal = $('addModal');
+const addModalBody = $('addModalBody');
+const addModalClose = $('addModalClose');
+const addModalCancel = $('addModalCancel');
+const addModalConfirm = $('addModalConfirm');
+const confirmModal = $('confirmModal');
+const confirmBody = $('confirmBody');
+const confirmYes = $('confirmYes');
+const confirmNo = $('confirmNo');
+const unsavedWarning = $('unsavedWarning');
+const unsavedStay = $('unsavedStay');
+const unsavedLeave = $('unsavedLeave');
+const saveSummaryModal = $('saveSummaryModal');
+const saveSummaryBody = $('saveSummaryBody');
+const saveSummaryClose = $('saveSummaryClose');
+const saveSummaryCancel = $('saveSummaryCancel');
+const saveSummaryConfirm = $('saveSummaryConfirm');
+
+// ========== UTILITY ==========
+function deepClone(obj) { return JSON.parse(JSON.stringify(obj)); }
+
+function base64Encode(str) {
+  return btoa(unescape(encodeURIComponent(str)));
+}
+function base64Decode(str) {
+  return decodeURIComponent(escape(atob(str)));
+}
+
+function showToast(msg, type) {
+  toast.textContent = msg;
+  toast.className = 'toast ' + (type || '') + ' show';
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => { toast.classList.remove('show'); }, 3000);
+}
+
+// Rel labels
+const REL_LABELS = { '祖': '祖 (Ancestor)', '兒': '兒 (Son)', '女': '女 (Daughter)', '妻': '妻 (Wife)', '媳': '媳 (Daughter-in-law)', '婿': '婿 (Son-in-law)' };
+const REL_ORDER = ['祖', '兒', '女', '妻', '媳', '婿'];
+
+function formatRel(rel) { return REL_LABELS[rel] || rel; }
+
+// ========== AUTH ==========
+function checkLogin() {
+  if (sessionStorage.getItem('loggedIn') === 'true') {
+    state.loggedIn = true;
+    loginOverlay.style.display = 'none';
+    app.classList.add('visible');
+    initApp();
+  }
+}
+
+function doLogin() {
+  const u = usernameInput.value.trim();
+  const p = passwordInput.value;
+  if (u === CRED_USER && p === CRED_PASS) {
+    state.loggedIn = true;
+    sessionStorage.setItem('loggedIn', 'true');
+    loginOverlay.style.display = 'none';
+    app.classList.add('visible');
+    initApp();
+  } else {
+    loginError.textContent = '用户名或密码错误';
+    loginCard.classList.remove('shake');
+    void loginCard.offsetWidth;
+    loginCard.classList.add('shake');
+  }
+}
+
+function doLogout() {
+  if (state.isDirty) {
+    state.pendingAction = 'logout';
+    unsavedWarning.classList.add('open');
+    return;
+  }
+  state.loggedIn = false;
+  sessionStorage.removeItem('loggedIn');
+  state.currentBranch = null;
+  state.data = null;
+  state.originalData = null;
+  state.fileSha = null;
+  state.isDirty = false;
+  app.classList.remove('visible');
+  loginOverlay.style.display = 'flex';
+  usernameInput.value = '';
+  passwordInput.value = '';
+  loginError.textContent = '';
+}
+
+// ========== INIT APP ==========
+function initApp() {
+  renderBranchTabs();
+  updateSaveButton();
+
+  // Load first branch by default
+  if (BRANCHES.length > 0) {
+    loadBranch(BRANCHES[0].code);
+  }
+}
+
+// ========== BRANCH TABS ==========
+function renderBranchTabs() {
+  branchTabs.innerHTML = BRANCHES.map(b => `
+    <div class="branch-tab${state.currentBranch === b.code ? ' active' : ''}" data-code="${b.code}">
+      <span class="color-dot" style="background:${b.color}"></span>
+      ${b.label}
+    </div>
+  `).join('');
+
+  branchTabs.querySelectorAll('.branch-tab').forEach(el => {
+    el.addEventListener('click', () => {
+      const code = el.dataset.code;
+      if (code === state.currentBranch) return;
+      switchBranch(code);
+    });
+  });
+}
+
+function switchBranch(code) {
+  if (state.isDirty) {
+    state.pendingAction = { type: 'switchBranch', code };
+    unsavedWarning.classList.add('open');
+    return;
+  }
+  loadBranch(code);
+}
+
+function loadBranch(code) {
+  state.currentBranch = code;
+  state.data = null;
+  state.originalData = null;
+  state.fileSha = null;
+  state.isDirty = false;
+
+  // Update tabs
+  branchTabs.querySelectorAll('.branch-tab').forEach(el => {
+    el.classList.toggle('active', el.dataset.code === code);
+  });
+
+  // Show loading
+  main.innerHTML = '<div class="loading"><div class="spinner"></div><p>加载中...</p></div>';
+  updateSaveButton();
+
+  fetchBranchData(code);
+}
+
+async function fetchBranchData(code) {
+  try {
+    const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/data/${code}.json`;
+    const resp = await fetch(url, {
+      headers: { 'Authorization': `Bearer ${GITHUB_TOKEN}` }
+    });
+
+    if (!resp.ok) {
+      throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
+    }
+
+    const json = await resp.json();
+    state.fileSha = json.sha;
+
+    const content = base64Decode(json.content);
+    const parsed = JSON.parse(content);
+
+    // Ensure root structure
+    if (!parsed.root) parsed.root = { persons: [], children: [] };
+
+    state.data = parsed;
+    state.originalData = deepClone(parsed);
+    state.isDirty = false;
+    updateSaveButton();
+    renderTree();
+
+  } catch (err) {
+    main.innerHTML = `
+      <div class="error-msg">
+        <p>❌ 加载失败: ${err.message}</p>
+        <button class="retry-btn" onclick="loadBranch('${code}')">重试</button>
+      </div>`;
+  }
+}
+
+// ========== TREE RENDERING ==========
+function renderTree() {
+  if (!state.data) return;
+
+  const branch = BRANCHES.find(b => b.code === state.currentBranch);
+  const label = branch ? branch.label : state.currentBranch;
+
+  main.innerHTML = `
+    <div style="margin-bottom:16px">
+      <h2 style="font-size:18px;color:${branch ? branch.color : '#333'};display:flex;align-items:center;gap:8px">
+        <span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:${branch ? branch.color : '#999'}"></span>
+        ${label} (${state.currentBranch})
+      </h2>
+      <p style="font-size:13px;color:var(--text-secondary);margin-top:4px">
+        ${state.isDirty ? '⚠️ 有未保存的更改' : '已加载，无未保存更改'}
+      </p>
+    </div>
+    <div class="tree-root" id="treeRoot"></div>
+  `;
+
+  const treeRoot = $('treeRoot');
+  if (state.data.root) {
+    treeRoot.appendChild(renderNode(state.data.root));
+  }
+}
+
+function renderNode(node, parentEl) {
+  const container = document.createElement('div');
+  container.className = 'tree-node';
+
+  const persons = node.persons || [];
+  const children = node.children || [];
+  const hasChildren = children && children.length > 0;
+
+  // Build persons info
+  const mainPerson = persons[0];
+  const extraCount = persons.length - 1;
+
+  // Determine header text
+  let personsInfoHTML = '';
+  persons.forEach((p, i) => {
+    personsInfoHTML += `<span class="main-name">${escHtml(p.name || '?')}</span>`;
+    personsInfoHTML += `<span class="rel-badge">${formatRel(p.rel)}</span>`;
+    if (i < persons.length - 1) {
+      personsInfoHTML += `<span style="color:var(--text-secondary);font-size:12px">+</span>`;
+    }
+  });
+
+  const header = document.createElement('div');
+  header.className = 'tree-node-header';
+  header.innerHTML = `
+    <span class="chevron ${hasChildren ? '' : ''}">${hasChildren ? '▶' : ''}</span>
+    <div class="persons-info">${personsInfoHTML}</div>
+    <div class="node-actions">
+      <button class="btn-edit" title="编辑">✏️</button>
+      <button class="btn-add-child" title="添加子女">＋</button>
+      ${parentEl ? '<button class="btn-move-up" title="上移">↑</button><button class="btn-move-down" title="下移">↓</button>' : ''}
+      <button class="btn-delete" title="删除">🗑️</button>
+    </div>
+  `;
+
+  container.appendChild(header);
+
+  // Children wrapper
+  const childrenWrapper = document.createElement('div');
+  childrenWrapper.className = 'tree-children';
+
+  if (hasChildren) {
+    children.forEach(child => {
+      childrenWrapper.appendChild(renderNode(child, container));
+    });
+  } else {
+    const emptyMsg = document.createElement('div');
+    emptyMsg.className = 'empty-children';
+    emptyMsg.textContent = '（无子女记录）';
+    childrenWrapper.appendChild(emptyMsg);
+  }
+
+  container.appendChild(childrenWrapper);
+
+  // If has children, start expanded by default
+  if (hasChildren) {
+    childrenWrapper.classList.add('open');
+    header.querySelector('.chevron').classList.add('expanded');
+  }
+
+  // === Event Handlers ===
+
+  // Toggle children
+  header.addEventListener('click', (e) => {
+    if (e.target.closest('.node-actions')) return;
+    if (!hasChildren) return;
+    childrenWrapper.classList.toggle('open');
+    header.querySelector('.chevron').classList.toggle('expanded');
+  });
+
+  // Edit button
+  header.querySelector('.btn-edit').addEventListener('click', (e) => {
+    e.stopPropagation();
+    openEditModal(node);
+  });
+
+  // Add child button
+  header.querySelector('.btn-add-child').addEventListener('click', (e) => {
+    e.stopPropagation();
+    openAddChildModal(node);
+  });
+
+  // Move up
+  const upBtn = header.querySelector('.btn-move-up');
+  if (upBtn) {
+    upBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!parentEl || !parentEl.parentElement) return;
+      const parent = parentEl.parentElement.closest('.tree-node');
+      if (!parent) return;
+      const childrenContainer = parent.querySelector('.tree-children');
+      const siblings = Array.from(childrenContainer.querySelectorAll(':scope > .tree-node'));
+      const idx = siblings.indexOf(container);
+      if (idx > 0) {
+        childrenContainer.insertBefore(container, siblings[idx - 1]);
+        reorderChildrenInData(parent, childrenContainer);
+        setDirty();
+      }
+    });
+  }
+
+  // Move down
+  const downBtn = header.querySelector('.btn-move-down');
+  if (downBtn) {
+    downBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!parentEl || !parentEl.parentElement) return;
+      const parent = parentEl.parentElement.closest('.tree-node');
+      if (!parent) return;
+      const childrenContainer = parent.querySelector('.tree-children');
+      const siblings = Array.from(childrenContainer.querySelectorAll(':scope > .tree-node'));
+      const idx = siblings.indexOf(container);
+      if (idx < siblings.length - 1) {
+        childrenContainer.insertBefore(container, siblings[idx + 2] || null);
+        reorderChildrenInData(parent, childrenContainer);
+        setDirty();
+      }
+    });
+  }
+
+  // Delete button
+  header.querySelector('.btn-delete').addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (hasChildren) {
+      showToast('无法删除：该节点下有子女记录', 'error');
+      return;
+    }
+    openDeleteConfirm(node, container, parentEl);
+  });
+
+  return container;
+}
+
+function reorderChildrenInData(parentNode, childrenContainer) {
+  const siblings = Array.from(childrenContainer.querySelectorAll(':scope > .tree-node'));
+  const reordered = [];
+  siblings.forEach(sibling => {
+    const data = sibling.__treeData;
+    if (data) reordered.push(data);
+  });
+  parentNode.__treeData.children = reordered;
+}
+
+function escHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// ========== FIND NODE IN TREE (traverse by reference) ==========
+function findParentNode(root, targetData) {
+  if (!root || !root.children) return null;
+  for (const child of root.children) {
+    if (child === targetData) return root;
+    const found = findParentNode(child, targetData);
+    if (found) return found;
+  }
+  return null;
+}
+
+// Tag tree nodes with their data reference so we can reorder
+function tagTreeData() {
+  function tag(node) {
+    if (!node) return;
+    node.__treeData = node;
+    if (node.children) node.children.forEach(tag);
+  }
+  if (state.data && state.data.root) tag(state.data.root);
+}
+
+// ========== EDIT MODAL ==========
+let editModalTarget = null;
+
+function openEditModal(node) {
+  editModalTarget = node;
+  const persons = node.persons || [];
+
+  let html = '<p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">编辑此家族单元的成员信息</p>';
+  persons.forEach((p, idx) => {
+    html += renderPersonEditCard(p, idx, persons.length);
+  });
+
+  html += '<button class="add-person-btn" id="addPersonToEdit">＋ 添加成员</button>';
+
+  editModalBody.innerHTML = html;
+
+  // Wire up person card inputs
+  persons.forEach((p, idx) => {
+    const nameEl = document.getElementById(`edit_name_${idx}`);
+    const relEl = document.getElementById(`edit_rel_${idx}`);
+    const birthEl = document.getElementById(`edit_birth_${idx}`);
+    const deathEl = document.getElementById(`edit_death_${idx}`);
+    const notesEl = document.getElementById(`edit_notes_${idx}`);
+    const removeBtn = document.getElementById(`edit_remove_${idx}`);
+
+    if (nameEl) nameEl.addEventListener('input', () => { p.name = nameEl.value; setDirty(); });
+    if (relEl) relEl.addEventListener('change', () => { p.rel = relEl.value; setDirty(); });
+    if (birthEl) birthEl.addEventListener('input', () => { p.birth = birthEl.value || null; setDirty(); });
+    if (deathEl) deathEl.addEventListener('input', () => { p.death = deathEl.value || null; setDirty(); });
+    if (notesEl) notesEl.addEventListener('input', () => { p.notes = notesEl.value || null; setDirty(); });
+    if (removeBtn) {
+      removeBtn.addEventListener('click', () => {
+        if (persons.length <= 1) {
+          showToast('至少需要保留一名成员', 'error');
+          return;
+        }
+        persons.splice(idx, 1);
+        openEditModal(editModalTarget); // re-render
+      });
+    }
+  });
+
+  // Add person button
+  const addBtn = document.getElementById('addPersonToEdit');
+  if (addBtn) {
+    addBtn.addEventListener('click', () => {
+      persons.push({
+        name: '',
+        rel: '兒',
+        id: generateNextId(),
+        father_id: null,
+        mother_id: null,
+        birth: null,
+        death: null,
+        notes: null
+      });
+      openEditModal(editModalTarget);
+    });
+  }
+
+  editModal.classList.add('open');
+}
+
+function renderPersonEditCard(person, idx, total) {
+  const relOptions = REL_ORDER.map(r =>
+    `<option value="${r}"${person.rel === r ? ' selected' : ''}>${REL_LABELS[r]}</option>`
+  ).join('');
+
+  return `
+    <div class="person-edit-card">
+      <div class="card-header">
+        <label>成员 #${idx + 1} ${person.id ? `(${person.id})` : ''}</label>
+        ${total > 1 ? `<button class="remove-person-btn" id="edit_remove_${idx}">✕</button>` : ''}
+      </div>
+      <div class="person-form-row">
+        <div>
+          <label>姓名 (Name)</label>
+          <input type="text" id="edit_name_${idx}" value="${escHtml(person.name || '')}" placeholder="姓名">
+        </div>
+        <div>
+          <label>关系 (Relation)</label>
+          <select id="edit_rel_${idx}">${relOptions}</select>
+        </div>
+      </div>
+      <div class="person-form-row">
+        <div>
+          <label>出生 (Birth)</label>
+          <input type="text" id="edit_birth_${idx}" value="${escHtml(person.birth || '')}" placeholder="如: 1900年">
+        </div>
+        <div>
+          <label>逝世 (Death)</label>
+          <input type="text" id="edit_death_${idx}" value="${escHtml(person.death || '')}" placeholder="如: 1980年">
+        </div>
+      </div>
+      <div class="person-form-row full">
+        <div>
+          <label>备注 (Notes)</label>
+          <textarea id="edit_notes_${idx}" placeholder="其他信息...">${escHtml(person.notes || '')}</textarea>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+editModalClose.addEventListener('click', () => editModal.classList.remove('open'));
+editModalCancel.addEventListener('click', () => editModal.classList.remove('open'));
+editModalSave.addEventListener('click', () => {
+  // Changes are already applied via input/change events
+  editModal.classList.remove('open');
+  setDirty();
+  renderTree();
+  showToast('✅ 修改已保存到本地', 'success');
+});
+
+// ========== ADD CHILD MODAL ==========
+let addChildModalTarget = null;
+
+function openAddChildModal(node) {
+  addChildModalTarget = node;
+  addModalBody.innerHTML = `
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">添加新的子女记录</p>
+
+    <div class="person-edit-card">
+      <div class="card-header"><label>子女信息</label></div>
+      <div class="person-form-row">
+        <div>
+          <label>姓名 (Name)</label>
+          <input type="text" id="add_name" placeholder="姓名">
+        </div>
+        <div>
+          <label>关系 (Relation)</label>
+          <select id="add_rel">
+            <option value="兒">兒 (Son)</option>
+            <option value="女">女 (Daughter)</option>
+          </select>
+        </div>
+      </div>
+      <div class="person-form-row">
+        <div>
+          <label>出生 (Birth)</label>
+          <input type="text" id="add_birth" placeholder="如: 1900年">
+        </div>
+        <div>
+          <label>逝世 (Death)</label>
+          <input type="text" id="add_death" placeholder="如: 1980年">
+        </div>
+      </div>
+      <div class="person-form-row full">
+        <div>
+          <label>备注 (Notes)</label>
+          <textarea id="add_notes" placeholder="其他信息..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:12px">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px">
+        <input type="checkbox" id="addSpouseCheck"> 同时添加配偶 (Add spouse)
+      </label>
+    </div>
+
+    <div id="spouseSection" style="display:none;margin-top:12px">
+      <div class="person-edit-card">
+        <div class="card-header"><label>配偶信息</label></div>
+        <div class="person-form-row">
+          <div>
+            <label>姓名 (Name)</label>
+            <input type="text" id="add_spouse_name" placeholder="姓名">
+          </div>
+          <div>
+            <label>关系 (Relation)</label>
+            <select id="add_spouse_rel">
+              <option value="妻">妻 (Wife)</option>
+              <option value="婿">婿 (Son-in-law)</option>
+            </select>
+          </div>
+        </div>
+        <div class="person-form-row full">
+          <div>
+            <label>备注 (Notes)</label>
+            <textarea id="add_spouse_notes" placeholder="其他信息..."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Toggle spouse section
+  const spouseCheck = document.getElementById('addSpouseCheck');
+  const spouseSection = document.getElementById('spouseSection');
+  spouseCheck.addEventListener('change', () => {
+    spouseSection.style.display = spouseCheck.checked ? 'block' : 'none';
+  });
+
+  addModal.classList.add('open');
+}
+
+addModalClose.addEventListener('click', () => addModal.classList.remove('open'));
+addModalCancel.addEventListener('click', () => addModal.classList.remove('open'));
+addModalConfirm.addEventListener('click', () => {
+  const name = document.getElementById('add_name').value.trim();
+  if (!name) {
+    showToast('请输入姓名', 'error');
+    return;
+  }
+
+  const rel = document.getElementById('add_rel').value;
+  const birth = document.getElementById('add_birth').value.trim() || null;
+  const death = document.getElementById('add_death').value.trim() || null;
+  const notes = document.getElementById('add_notes').value.trim() || null;
+  const addSpouse = document.getElementById('addSpouseCheck').checked;
+
+  const persons = [{
+    name,
+    rel,
+    id: generateNextId(),
+    father_id: null,
+    mother_id: null,
+    birth,
+    death,
+    notes
+  }];
+
+  if (addSpouse) {
+    const spouseName = document.getElementById('add_spouse_name').value.trim();
+    if (!spouseName) {
+      showToast('请输入配偶姓名', 'error');
+      return;
+    }
+    const spouseRel = document.getElementById('add_spouse_rel').value;
+    const spouseNotes = document.getElementById('add_spouse_notes').value.trim() || null;
+    persons.push({
+      name: spouseName,
+      rel: spouseRel,
+      id: generateNextId(),
+      father_id: null,
+      mother_id: null,
+      birth: null,
+      death: null,
+      notes: spouseNotes
+    });
+  }
+
+  const newNode = { persons, children: [] };
+  if (!addChildModalTarget.children) addChildModalTarget.children = [];
+  addChildModalTarget.children.push(newNode);
+
+  addModal.classList.remove('open');
+  setDirty();
+  renderTree();
+  showToast('✅ 已添加子女记录', 'success');
+});
+
+// ========== DELETE CONFIRM ==========
+function openDeleteConfirm(node, container, parentEl) {
+  const names = (node.persons || []).map(p => p.name).filter(Boolean).join(', ');
+  confirmBody.innerHTML = `
+    <p style="font-size:16px;margin-bottom:8px">确定要删除此记录吗？</p>
+    <p style="font-size:14px;color:var(--text-secondary)">${escHtml(names || '无名称')}</p>
+    <p style="font-size:13px;color:var(--danger);margin-top:8px">此操作不可撤销</p>
+  `;
+  confirmModal.classList.add('open');
+
+  confirmYes.onclick = () => {
+    confirmModal.classList.remove('open');
+
+    // Find and remove from parent's children array
+    if (!parentEl) {
+      // This is the root node - clear it
+      node.persons = [];
+      node.children = [];
+      setDirty();
+      renderTree();
+      showToast('✅ 已删除', 'success');
+      return;
+    }
+
+    const parentData = parentEl.__treeData;
+    if (parentData && parentData.children) {
+      const idx = parentData.children.indexOf(node);
+      if (idx !== -1) parentData.children.splice(idx, 1);
+    }
+
+    setDirty();
+    renderTree();
+    showToast('✅ 已删除', 'success');
+  };
+  confirmNo.onclick = () => confirmModal.classList.remove('open');
+}
+
+// Also close confirm on backdrop click (modal-close pattern not used, but close on overlay click)
+confirmModal.addEventListener('click', (e) => {
+  if (e.target === confirmModal) confirmModal.classList.remove('open');
+});
+
+// ========== UNSAVED CHANGES ==========
+function setDirty() {
+  if (!state.isDirty) {
+    state.isDirty = true;
+    updateSaveButton();
+    // Update subtitle
+    const subtitle = main.querySelector('p[style*="text-secondary"]');
+    if (subtitle) subtitle.textContent = '⚠️ 有未保存的更改';
+  }
+}
+
+unsavedStay.addEventListener('click', () => {
+  unsavedWarning.classList.remove('open');
+  state.pendingAction = null;
+});
+
+unsavedLeave.addEventListener('click', () => {
+  unsavedWarning.classList.remove('open');
+  const action = state.pendingAction;
+  state.pendingAction = null;
+  state.isDirty = false;
+  state.data = state.originalData ? deepClone(state.originalData) : null;
+  updateSaveButton();
+
+  if (action === 'logout') {
+    doLogout();
+  } else if (action && action.type === 'switchBranch') {
+    loadBranch(action.code);
+  }
+});
+
+// ========== SAVE TO GITHUB ==========
+async function saveToGitHub() {
+  if (!state.isDirty || !state.data || !state.currentBranch || !state.fileSha) return;
+
+  // Build summary
+  let summary = '<p style="font-size:14px;margin-bottom:12px">以下更改将保存到 GitHub：</p>';
+  summary += '<div style="background:#faf8f6;border-radius:6px;padding:14px;font-size:13px;max-height:300px;overflow-y:auto">';
+
+  // Count changes
+  const branch = BRANCHES.find(b => b.code === state.currentBranch);
+  const label = branch ? branch.label : state.currentBranch;
+  summary += `<p><strong>分支 (Branch):</strong> ${label} (${state.currentBranch})</p>`;
+  summary += `<p><strong>文件:</strong> data/${state.currentBranch}.json</p>`;
+  summary += '<hr style="border:none;border-top:1px solid var(--border);margin:10px 0">';
+
+  // Show current tree summary
+  function countTotalPersons(node) {
+    let c = (node.persons || []).length;
+    if (node.children) node.children.forEach(ch => c += countTotalPersons(ch));
+    return c;
+  }
+  const totalPersons = countTotalPersons(state.data.root || {});
+  const totalNodes = countNodes(state.data.root || {});
+  summary += `<p>总成员数: ${totalPersons}</p>`;
+  summary += `<p>总节点数: ${totalNodes}</p>`;
+
+  summary += '</div>';
+
+  saveSummaryBody.innerHTML = summary;
+  saveSummaryModal.classList.add('open');
+}
+
+function countNodes(node) {
+  let c = 1;
+  if (node.children) node.children.forEach(ch => c += countNodes(ch));
+  return c;
+}
+
+saveSummaryClose.addEventListener('click', () => saveSummaryModal.classList.remove('open'));
+saveSummaryCancel.addEventListener('click', () => saveSummaryModal.classList.remove('open'));
+
+saveSummaryConfirm.addEventListener('click', async () => {
+  saveSummaryConfirm.disabled = true;
+  saveSummaryConfirm.textContent = '保存中...';
+  saveSummaryModal.classList.remove('open');
+
+  try {
+    const content = JSON.stringify(state.data, null, 2);
+    const encoded = base64Encode(content);
+
+    const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/data/${state.currentBranch}.json`;
+    const body = {
+      message: `Admin update: ${state.currentBranch} branch`,
+      content: encoded,
+      sha: state.fileSha
+    };
+
+    const resp = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${GITHUB_TOKEN}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (!resp.ok) {
+      const errData = await resp.json().catch(() => ({}));
+      throw new Error(errData.message || `HTTP ${resp.status}: ${resp.statusText}`);
+    }
+
+    const result = await resp.json();
+    state.fileSha = result.content.sha;
+    state.originalData = deepClone(state.data);
+    state.isDirty = false;
+    updateSaveButton();
+    renderTree();
+    showToast('✅ 保存成功！网站将在30秒内更新', 'success');
+
+  } catch (err) {
+    showToast(`❌ 保存失败: ${err.message}`, 'error');
+    saveSummaryModal.classList.remove('open');
+  } finally {
+    saveSummaryConfirm.disabled = false;
+    saveSummaryConfirm.textContent = '确认保存';
+  }
+});
+
+// ========== UPDATE SAVE BUTTON ==========
+function updateSaveButton() {
+  if (state.isDirty) {
+    saveBtn.disabled = false;
+    saveCount.textContent = '⚠️ 有未保存的更改';
+  } else {
+    saveBtn.disabled = true;
+    saveCount.textContent = '';
+  }
+}
+
+saveBtn.addEventListener('click', saveToGitHub);
+
+// ========== GENERATE NEXT ID ==========
+function generateNextId() {
+  if (!state.data || !state.data.root) {
+    return `${state.currentBranch}_001`;
+  }
+
+  let maxNum = 0;
+  function scan(node) {
+    if (node.persons) {
+      node.persons.forEach(p => {
+        if (p.id && p.id.startsWith(state.currentBranch + '_')) {
+          const num = parseInt(p.id.split('_')[1], 10);
+          if (!isNaN(num) && num > maxNum) maxNum = num;
+        }
+      });
+    }
+    if (node.children) node.children.forEach(scan);
+  }
+  scan(state.data.root);
+
+  return `${state.currentBranch}_${String(maxNum + 1).padStart(3, '0')}`;
+}
+
+// ========== KEYBOARD ==========
+usernameInput.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+passwordInput.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+// Close modals on backdrop click
+editModal.addEventListener('click', e => { if (e.target === editModal) editModal.classList.remove('open'); });
+addModal.addEventListener('click', e => { if (e.target === addModal) addModal.classList.remove('open'); });
+saveSummaryModal.addEventListener('click', e => { if (e.target === saveSummaryModal) saveSummaryModal.classList.remove('open'); });
+
+// ========== INIT ==========
+loginBtn.addEventListener('click', doLogin);
+logoutBtn.addEventListener('click', doLogout);
+
+// Check login state on page load
+checkLogin();
+</script>
+</body>
+</html>
