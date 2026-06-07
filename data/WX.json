@@ -927,8 +927,8 @@
             "death": null,
             "notes": null,
             "father_id": "WX_001",
-            "mother_id": null,
-            "unknown_mother": true
+            "mother_id": "WX_003",
+            "unknown_mother": false
           },
           {
             "name": "吕宝珍",
@@ -1154,8 +1154,8 @@
             "rel": "兒",
             "id": "WX_103",
             "father_id": "WX_001",
-            "mother_id": null,
-            "unknown_mother": true,
+            "mother_id": "WX_003",
+            "unknown_mother": false,
             "birth": null,
             "death": null,
             "notes": null
@@ -1206,8 +1206,8 @@
             "rel": "女",
             "id": "WX_110",
             "father_id": "WX_001",
-            "mother_id": null,
-            "unknown_mother": true,
+            "mother_id": "WX_003",
+            "unknown_mother": false,
             "birth": null,
             "death": null,
             "notes": null
@@ -1278,8 +1278,8 @@
             "rel": "女",
             "id": "WX_115",
             "father_id": "WX_001",
-            "mother_id": null,
-            "unknown_mother": true,
+            "mother_id": "WX_003",
+            "unknown_mother": false,
             "birth": null,
             "death": null,
             "notes": null
@@ -1343,8 +1343,8 @@
             "death": null,
             "notes": null,
             "father_id": "WX_001",
-            "mother_id": null,
-            "unknown_mother": true
+            "mother_id": "WX_003",
+            "unknown_mother": false
           },
           {
             "name": "陈翠媚",
