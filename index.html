@@ -3736,13 +3736,14 @@ function loadBranch(code) {
       nameEl.className = 'fv-name' + (gFv === 'm' ? ' fv-name-male' : gFv === 'f' ? ' fv-name-female' : '');
       var gIconFv = gFv === 'm' ? '♂︎ ' : gFv === 'f' ? '♀︎ ' : '';
 
-      // Colored role chip before name (matching footer legend)
+      // Colored role badge before name (matching footer legend)
       var roleLabelsShort = { '祖': '祖', '兒': '儿', '儿': '儿', '女': '女', '媳': '媳', '妻': '妻', '婿': '婿' };
+      var roleLabelsEn = { '祖': 'Founder', '兒': 'Son', '儿': 'Son', '女': 'Daughter', '媳': 'Wife', '妻': 'Wife', '婿': 'Husband' };
       var chipColor = REL_COLORS[p.rel] || '#6b7280';
       var chip = document.createElement('span');
       chip.className = 'fv-role-chip';
       chip.style.background = chipColor;
-      chip.textContent = roleLabelsShort[p.rel] || p.rel || '?';
+      chip.textContent = (roleLabelsShort[p.rel] || p.rel || '?') + ' ' + (roleLabelsEn[p.rel] || '');
       nameEl.appendChild(chip);
 
       // Name text
@@ -4750,12 +4751,13 @@ function loadBranch(code) {
   font-size: 9px;
   font-weight: 700;
   color: #fff;
-  padding: 1px 5px;
-  border-radius: 8px;
-  margin-right: 4px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  margin-right: 5px;
   display: inline-block;
   vertical-align: middle;
   line-height: 1.4;
+  white-space: nowrap;
 }
 /* Hover tooltip for person metadata */
 .fv-name.has-tip {
