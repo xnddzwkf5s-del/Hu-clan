@@ -1073,21 +1073,6 @@
           {
             "persons": [
               {
-                "name": "胡渐镇",
-                "rel": "兒",
-                "id": "WX_078",
-                "birth": null,
-                "death": null,
-                "notes": null,
-                "father_id": "WX_067",
-                "mother_id": "WX_068"
-              }
-            ],
-            "children": []
-          },
-          {
-            "persons": [
-              {
                 "name": "胡润欣",
                 "rel": "女",
                 "id": "WX_102",
@@ -1096,6 +1081,21 @@
                 "birth": null,
                 "death": null,
                 "notes": null
+              }
+            ],
+            "children": []
+          },
+          {
+            "persons": [
+              {
+                "name": "胡渐镇",
+                "rel": "兒",
+                "id": "WX_078",
+                "birth": null,
+                "death": null,
+                "notes": null,
+                "father_id": "WX_067",
+                "mother_id": "WX_068"
               }
             ],
             "children": []
