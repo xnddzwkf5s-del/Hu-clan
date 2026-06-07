@@ -1098,7 +1098,23 @@
                 "mother_id": "WX_068"
               }
             ],
-            "children": []
+            "children": [
+              {
+                "persons": [
+                  {
+                    "name": "胡桢厚",
+                    "rel": "兒",
+                    "id": "WX_104",
+                    "father_id": null,
+                    "mother_id": null,
+                    "birth": "2021",
+                    "death": null,
+                    "notes": null
+                  }
+                ],
+                "children": []
+              }
+            ]
           }
         ]
       },
