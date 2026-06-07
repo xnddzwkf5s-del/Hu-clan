@@ -3664,8 +3664,9 @@ function loadBranch(code) {
 
       card.appendChild(row);
 
-      // Parent links (self card only)
-      if (isSelf && (p.father_id || p.mother_id || p.unknown_mother)) {
+      // Parent links (self card only, primary Hu person only)
+      var isHuPerson = p.name && p.name.charAt(0) === '胡';
+      if (isSelf && isHuPerson && (p.father_id || p.mother_id || p.unknown_mother)) {
         var links = document.createElement('div');
         links.className = 'fv-parent-links';
         if (p.father_id) {
@@ -4655,9 +4656,21 @@ function loadBranch(code) {
   font-weight: 600;
   color: #2c2018;
 }
+.fv-name.fv-name-male {
+  color: #1d4ed8;
+}
+.fv-name.fv-name-female {
+  color: #be185d;
+}
 .fv-card-self .fv-name {
   font-size: 15px;
   color: #5a3e10;
+}
+.fv-card-self .fv-name.fv-name-male {
+  color: #1d4ed8;
+}
+.fv-card-self .fv-name.fv-name-female {
+  color: #be185d;
 }
 .fv-role-badge {
   font-size: 9px;
