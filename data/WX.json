@@ -40,6 +40,22 @@
       {
         "persons": [
           {
+            "name": "胡龙赞",
+            "rel": "兒",
+            "id": "WX_087",
+            "birth": null,
+            "death": null,
+            "notes": null,
+            "father_id": "WX_001",
+            "mother_id": "WX_002",
+            "unknown_mother": false
+          }
+        ],
+        "children": []
+      },
+      {
+        "persons": [
+          {
             "name": "司徒元洪",
             "rel": "婿",
             "id": "WX_004",
@@ -1441,22 +1457,6 @@
             "children": []
           }
         ]
-      },
-      {
-        "persons": [
-          {
-            "name": "胡龙赞",
-            "rel": "兒",
-            "id": "WX_087",
-            "birth": null,
-            "death": null,
-            "notes": null,
-            "father_id": "WX_001",
-            "mother_id": "WX_002",
-            "unknown_mother": false
-          }
-        ],
-        "children": []
       },
       {
         "persons": [
