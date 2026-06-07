@@ -504,6 +504,7 @@ function renderTree() {
 function renderNode(node, parentEl) {
   const container = document.createElement('div');
   container.className = 'tree-node';
+  container.__treeData = node;  // link DOM → data for reordering
 
   const persons = node.persons || [];
   const children = node.children || [];
