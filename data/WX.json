@@ -2597,7 +2597,7 @@
                     "id": "WX_071",
                     "birth": null,
                     "death": null,
-                    "notes": null,
+                    "notes": "Born in Australia",
                     "father_id": "WX_069",
                     "mother_id": "WX_070"
                   }
@@ -2612,7 +2612,7 @@
                     "id": "WX_072",
                     "birth": null,
                     "death": null,
-                    "notes": null,
+                    "notes": "Born in Australia",
                     "father_id": "WX_069",
                     "mother_id": "WX_070"
                   }
@@ -2627,7 +2627,7 @@
                     "id": "WX_073",
                     "birth": null,
                     "death": null,
-                    "notes": null,
+                    "notes": "Born in Australia",
                     "father_id": "WX_069",
                     "mother_id": "WX_070"
                   }
