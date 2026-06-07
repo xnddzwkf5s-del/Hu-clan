@@ -2670,7 +2670,7 @@ function loadBranch(code) {
   }
 
   function walkTree(node, branchId, branchCode, branchColor, depth, segs) {
-    var path = branchCode + '-' + (segs.length === 0 ? '0' : segs.join('-'));
+    var path = branchCode + '-' + (segs.length === 0 ? '0' : '0-' + segs.join('-'));
     node._path = path;
     node._depth = depth;
     node._branchId = branchId;
