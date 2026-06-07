@@ -1605,10 +1605,10 @@
           <div class="tree-actions">
             <button class="tree-action-btn" id="collapse-all-btn" aria-label="Collapse all branches">− Collapse All</button>
             <select id="layout-mode-select" class="tree-action-btn" aria-label="Layout mode">
-              <option value="vertical" selected>Vertical (Top-Down)</option>
+              <option value="vertical">Vertical (Top-Down)</option>
               <option value="horizontal">Horizontal (Left-Right)</option>
               <option value="pedigree">Pedigree (Pyramid)</option>
-              <option value="focus">Focus View</option>
+              <option value="focus" selected>Focus View</option>
             </select>
           </div>
         </div>
@@ -2650,7 +2650,7 @@ function loadBranch(code) {
     connections: [],      // [{parentPath, childPath, branchId}]
     maxDepth: 0,
     container: null,
-    layoutMode: 'vertical',
+    layoutMode: 'focus',
     focusNode: null,
     parentMap: {},
   };
