@@ -1608,6 +1608,7 @@
               <option value="vertical" selected>Vertical (Top-Down)</option>
               <option value="horizontal">Horizontal (Left-Right)</option>
               <option value="pedigree">Pedigree (Pyramid)</option>
+              <option value="focus">Focus View</option>
             </select>
           </div>
         </div>
@@ -2650,6 +2651,8 @@ function loadBranch(code) {
     maxDepth: 0,
     container: null,
     layoutMode: 'vertical',
+    focusNode: null,
+    parentMap: {},
   };
 
   // ========================================================================
@@ -2682,6 +2685,8 @@ function loadBranch(code) {
       var childSegs = segs.concat([i]);
       walkTree(child, branchId, branchCode, branchColor, depth + 1, childSegs);
       state.connections.push({ parentPath: path, childPath: child._path, branchId: branchId });
+      // Record child -> parent mapping for focus view
+      state.parentMap[child._path] = path;
     });
   }
 
@@ -2733,6 +2738,12 @@ function loadBranch(code) {
     if (!container) return;
     container.innerHTML = '';
 
+    // Focus mode short-circuits normal tree rendering
+    if (state.layoutMode === 'focus') {
+      renderFocus();
+      return;
+    }
+
     // Determine visible branches
     var visible = state.activeBranch === 'all'
       ? state.treeData
@@ -2781,6 +2792,8 @@ function loadBranch(code) {
       renderVertical(visible, visibleSet);
     } else if (state.layoutMode === 'pedigree') {
       renderPedigree(visible, visibleSet);
+    } else if (state.layoutMode === 'focus') {
+      renderFocus();
     } else {
       renderHorizontal(visible, visibleSet);
     }
@@ -3372,6 +3385,222 @@ function loadBranch(code) {
   }
 
   // ========================================================================
+  // FOCUS VIEW
+  // ========================================================================
+
+  function renderFocus() {
+    var container = state.container;
+    if (!container) return;
+    container.innerHTML = '';
+
+    var node = state.nodeMap[state.focusNode];
+    if (!node) {
+      // No node focused — show instruction
+      var msg = document.createElement('div');
+      msg.className = 'focus-empty';
+      msg.textContent = 'Click a person in the tree to focus on their family';
+      container.appendChild(msg);
+      return;
+    }
+
+    var wrapper = document.createElement('div');
+    wrapper.className = 'ts-wrapper-focus';
+
+    // Build focus hierarchy:
+    // Row 3 (top): Grandparents (parent's parent)
+    // Row 2: Parents (parent node) + Siblings (other children of parent)
+    // Row 1 (bottom/center): SELF node (focused) + Children
+
+    // Get relationships
+    var parentPath = state.parentMap[state.focusNode];
+    var grandparentPath = parentPath ? state.parentMap[parentPath] : null;
+
+    var selfNode = node;
+    var parentNode = parentPath ? state.nodeMap[parentPath] : null;
+    var grandparentNode = grandparentPath ? state.nodeMap[grandparentPath] : null;
+
+    // Siblings = other children of parent (excluding self)
+    var siblings = [];
+    if (parentNode) {
+      parentNode.children.forEach(function(child) {
+        if (child._path !== state.focusNode) {
+          siblings.push(child);
+        }
+      });
+    }
+
+    // Children of self
+    var children = selfNode.children || [];
+
+    // ===== ROW 1: SELF + CHILDREN (bottom) =====
+    var selfRow = document.createElement('div');
+    selfRow.className = 'focus-row focus-row-self';
+
+    var selfLabel = document.createElement('div');
+    selfLabel.className = 'focus-label';
+    selfLabel.textContent = 'SELF';
+    selfRow.appendChild(selfLabel);
+
+    var selfCards = document.createElement('div');
+    selfCards.className = 'focus-cards';
+
+    // Self card (highlighted)
+    var selfCard = buildFocusCard(selfNode, true);
+    selfCards.appendChild(selfCard);
+
+    // Children cards
+    children.forEach(function(child) {
+      var childCard = buildFocusCard(child, false, 'child');
+      selfCards.appendChild(childCard);
+    });
+
+    selfRow.appendChild(selfCards);
+    wrapper.appendChild(selfRow);
+
+    // ===== ROW 2: PARENTS + SIBLINGS (middle) =====
+    if (parentNode) {
+      var parentRow = document.createElement('div');
+      parentRow.className = 'focus-row focus-row-parents';
+
+      var parentLabel = document.createElement('div');
+      parentLabel.className = 'focus-label';
+      parentLabel.textContent = 'PARENTS';
+      parentRow.appendChild(parentLabel);
+
+      var parentCards = document.createElement('div');
+      parentCards.className = 'focus-cards';
+
+      var parentCard = buildFocusCard(parentNode, false, 'parent');
+      parentCards.appendChild(parentCard);
+
+      // Siblings
+      siblings.forEach(function(sib) {
+        var sibCard = buildFocusCard(sib, false, 'sibling');
+        parentCards.appendChild(sibCard);
+      });
+
+      parentRow.appendChild(parentCards);
+      wrapper.appendChild(parentRow);
+    }
+
+    // ===== ROW 3: GRANDPARENTS (top) =====
+    if (grandparentNode) {
+      var gpRow = document.createElement('div');
+      gpRow.className = 'focus-row focus-row-grandparents';
+
+      var gpLabel = document.createElement('div');
+      gpLabel.className = 'focus-label';
+      gpLabel.textContent = 'GRANDPARENTS';
+      gpRow.appendChild(gpLabel);
+
+      var gpCards = document.createElement('div');
+      gpCards.className = 'focus-cards';
+
+      var gpCard = buildFocusCard(grandparentNode, false, 'grandparent');
+      gpCards.appendChild(gpCard);
+
+      gpRow.appendChild(gpCards);
+      wrapper.appendChild(gpRow);
+    }
+
+    container.appendChild(wrapper);
+    drawLinesFocus();
+  }
+
+  function buildFocusCard(node, isFocused, relationship) {
+    var card = document.createElement('div');
+    card.className = 'fp-card' + (isFocused ? ' fp-card-focused' : '');
+    card.setAttribute('data-path', node._path);
+    card.style.borderLeft = '3px solid ' + (node._branchColor || '#999');
+
+    // Persons
+    var persons = node.persons || [];
+
+    // Show all persons in a compact list
+    persons.forEach(function(p, i) {
+      var pEl = document.createElement('div');
+      pEl.className = 'fp-person';
+      pEl.textContent = p.name;
+
+      var relEl = document.createElement('span');
+      relEl.className = 'fp-person-rel';
+      var relText = REL_LABELS[p.rel] || p.rel || '?';
+      relEl.textContent = relText;
+      pEl.appendChild(relEl);
+
+      card.appendChild(pEl);
+    });
+
+    // Relationship label
+    if (relationship) {
+      var relLabel = document.createElement('div');
+      relLabel.className = 'fp-rel-label';
+      relLabel.textContent = relationship.toUpperCase();
+      card.appendChild(relLabel);
+    }
+
+    // Click to re-focus (focus on this node instead)
+    card.addEventListener('click', function(e) {
+      e.stopPropagation();
+      state.focusNode = node._path;
+      if (typeof renderFocus === 'function') renderFocus();
+    });
+
+    return card;
+  }
+
+  function drawLinesFocus() {
+    var container = state.container;
+    if (!container) return;
+
+    var oldSvg = container.querySelector('.ts-lines-svg-focus');
+    if (oldSvg) oldSvg.remove();
+
+    // Find all focus rows and draw lines between them
+    var rows = container.querySelectorAll('.focus-row');
+    if (rows.length < 2) return;
+
+    // Draw lines from row[i+1] (parent row) bottom-center to row[i] (child row) top-center
+    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('class', 'ts-lines-svg-focus');
+    svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;';
+
+    for (var i = 0; i < rows.length - 1; i++) {
+      var parentRow = rows[i + 1];
+      var childRow = rows[i];
+
+      var parentCards = parentRow.querySelectorAll('.fp-card');
+      var childCards = childRow.querySelectorAll('.fp-card');
+
+      // Connect each parent card bottom-center to each child card top-center
+      parentCards.forEach(function(pCard) {
+        childCards.forEach(function(cCard) {
+          var pRect = pCard.getBoundingClientRect();
+          var cRect = cCard.getBoundingClientRect();
+          var wrapperRect = container.getBoundingClientRect();
+
+          var x1 = pRect.left + pRect.width / 2 - wrapperRect.left;
+          var y1 = pRect.bottom - wrapperRect.top;
+          var x2 = cRect.left + cRect.width / 2 - wrapperRect.left;
+          var y2 = cRect.top - wrapperRect.top;
+
+          var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          line.setAttribute('x1', x1);
+          line.setAttribute('y1', y1);
+          line.setAttribute('x2', x2);
+          line.setAttribute('y2', y2);
+          line.setAttribute('stroke', '#c89b3c');
+          line.setAttribute('stroke-width', '2');
+          line.setAttribute('stroke-linecap', 'round');
+          svg.appendChild(line);
+        });
+      });
+    }
+
+    container.appendChild(svg);
+  }
+
+  // ========================================================================
   // CARD BUILDER
   // ========================================================================
 
@@ -3425,10 +3654,15 @@ function loadBranch(code) {
       card.appendChild(toggle);
     }
 
-    // Click to toggle children
+    // Click to toggle children in normal modes, or focus in focus mode
     card.addEventListener('click', function (e) {
       e.stopPropagation();
-      toggleNode(node._path);
+      if (state.layoutMode === 'focus') {
+        state.focusNode = node._path;
+        if (typeof renderFocus === 'function') renderFocus();
+      } else {
+        toggleNode(node._path);
+      }
     });
 
     return card;
@@ -3991,6 +4225,92 @@ function loadBranch(code) {
   width: 80px;
   min-height: 70px;
 }
+
+/* ===== Focus View ===== */
+.ts-wrapper-focus {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 32px;
+  align-items: center;
+  position: relative;
+}
+.focus-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  width: 100%;
+  max-width: 800px;
+}
+.focus-row-self {
+  background: rgba(200, 155, 60, 0.06);
+  border-radius: 12px;
+  border: 2px solid rgba(200, 155, 60, 0.2);
+}
+.focus-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #999;
+  margin-bottom: 4px;
+}
+.focus-cards {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.focus-cards .fp-card {
+  width: 90px;
+  min-height: 70px;
+  cursor: pointer;
+  border: 2px solid #e0d8c8;
+}
+.focus-cards .fp-card:hover {
+  border-color: #c89b3c;
+}
+.focus-cards .fp-card-focused {
+  border-color: #c89b3c;
+  box-shadow: 0 0 0 3px rgba(200, 155, 60, 0.25);
+  background: #fefcf7;
+}
+.focus-cards .fp-card-focused .fp-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #7a5c1a;
+}
+.fp-person {
+  font-size: 11px;
+  text-align: center;
+  line-height: 1.4;
+  margin: 2px 0;
+}
+.fp-person-rel {
+  margin-left: 3px;
+  font-size: 9px;
+  color: #999;
+  font-weight: 400;
+}
+.fp-rel-label {
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #bbb;
+  margin-top: 6px;
+  text-align: center;
+}
+.focus-empty {
+  text-align: center;
+  padding: 80px 20px;
+  color: #999;
+  font-size: 18px;
+  font-weight: 400;
+}
 `;
     document.head.appendChild(style);
   }
@@ -4104,6 +4424,9 @@ function loadBranch(code) {
     setLayoutMode: function (mode) {
       if (mode === 'pedigree') {
         state.layoutMode = 'pedigree';
+      } else if (mode === 'focus') {
+        state.layoutMode = 'focus';
+        state.focusNode = null;
       } else if (mode === 'horizontal') {
         state.layoutMode = 'horizontal';
       } else {
