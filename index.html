@@ -1687,7 +1687,8 @@
           <span class="legend-title">Roles</span>
           <span class="legend-item"><span class="legend-badge" style="background:#2563eb">儿</span><span class="legend-name">Son</span></span>
           <span class="legend-item"><span class="legend-badge" style="background:#ec4899">女</span><span class="legend-name">Daughter</span></span>
-          <span class="legend-item"><span class="legend-badge" style="background:#9333ea">媳/妻</span><span class="legend-name">Wife</span></span>
+          <span class="legend-item"><span class="legend-badge" style="background:#7c3aed">妻</span><span class="legend-name">Wife</span></span>
+          <span class="legend-item"><span class="legend-badge" style="background:#9333ea">媳</span><span class="legend-name">D-in-law</span></span>
           <span class="legend-item"><span class="legend-badge" style="background:#16a34a">婿</span><span class="legend-name">Son-in-law</span></span>
           <span class="legend-item"><span class="legend-badge" style="background:#d4a017">祖</span><span class="legend-name">Founder</span></span>
           <span class="legend-item"><span class="legend-badge" style="background:#6b7280">?</span><span class="legend-name">Unknown</span></span>
@@ -1795,7 +1796,7 @@ function loadBranch(code) {
     '女': { text: '女', bg: '#ec4899', cls: 'rel-daughter' },
     '媳': { text: '媳', bg: '#9333ea', cls: 'rel-wife' },
     '婿': { text: '婿', bg: '#16a34a', cls: 'rel-husband' },
-    '妻': { text: '妻', bg: '#9333ea', cls: 'rel-wife' },
+    '妻': { text: '妻', bg: '#7c3aed', cls: 'rel-wife' },
     '?':  { text: '?',  bg: '#6b7280', cls: 'rel-unknown' },
   };
 
@@ -2232,7 +2233,7 @@ function loadBranch(code) {
     var relLegendItems = [
       { text: '儿', bg: '#2563eb', label: 'Son' },
       { text: '女', bg: '#ec4899', label: 'Daughter' },
-      { text: '媳/妻', bg: '#9333ea', label: 'Wife' },
+      { text: '媳', bg: '#9333ea', label: 'D-in-law' },
       { text: '婿', bg: '#16a34a', label: 'Son-in-law' },
       { text: '祖', bg: '#d4a017', label: 'Founder' },
       { text: '?', bg: '#6b7280', label: 'Unknown' },
@@ -2710,7 +2711,7 @@ function loadBranch(code) {
     '女': '#ec4899',
     '媳': '#9333ea',
     '婿': '#16a34a',
-    '妻': '#9333ea',
+    '妻': '#7c3aed',
     '?': '#6b7280',
   };
   const REL_LABELS = {
@@ -2718,7 +2719,7 @@ function loadBranch(code) {
     '儿': '儿 Son',
     '兒': '儿 Son',
     '女': '女 Daughter',
-    '媳': '媳 Wife',
+    '媳': '媳 D-in-law',
     '婿': '婿 Son-in-law',
     '妻': '妻 Wife',
     '?': '?',
@@ -4933,7 +4934,8 @@ function loadBranch(code) {
     [
       { text: '儿', bg: '#2563eb', label: 'Son' },
       { text: '女', bg: '#ec4899', label: 'Daughter' },
-      { text: '媳/妻', bg: '#9333ea', label: 'Wife' },
+      { text: '妻', bg: '#7c3aed', label: 'Wife' },
+      { text: '媳', bg: '#9333ea', label: 'D-in-law' },
       { text: '婿', bg: '#16a34a', label: 'Son-in-law' },
       { text: '祖', bg: '#d4a017', label: 'Founder' },
       { text: '?', bg: '#6b7280', label: 'Unknown' },
