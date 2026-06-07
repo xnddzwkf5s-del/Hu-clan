@@ -1647,6 +1647,10 @@
           <!-- Actions -->
           <div class="tree-actions">
             <button class="tree-action-btn" id="collapse-all-btn" aria-label="Collapse all branches">− Collapse All</button>
+            <select id="layout-mode-select" class="tree-action-btn" aria-label="Layout mode">
+              <option value="vertical" selected>Vertical (Top-Down)</option>
+              <option value="horizontal">Horizontal (Left-Right)</option>
+            </select>
           </div>
         </div>
 
@@ -2162,6 +2166,13 @@ window.HU_TREE_DATA = [
     }
   }
 ];
+
+// Primary: load from external JSON (overrides inline data)
+fetch('data/tree-data.json').then(function(r){return r.json()}).then(function(d){
+  window.HU_TREE_DATA = d;
+  if (window.HUTreeScroll && window.reloadTree) window.reloadTree();
+}).catch(function(){/* fine, inline data works */});
+
 </script>
   <script>
 /**
@@ -3126,6 +3137,7 @@ window.HU_TREE_DATA = [
     connections: [],      // [{parentPath, childPath, branchId}]
     maxDepth: 0,
     container: null,
+    layoutMode: 'vertical',
   };
 
   // ========================================================================
@@ -3252,7 +3264,29 @@ window.HU_TREE_DATA = [
       });
     }
 
-    // ===== WRAPPER =====
+    // ----- Dispatch by layout mode -----
+    if (state.layoutMode === 'vertical') {
+      renderVertical(visible, visibleSet);
+    } else {
+      renderHorizontal(visible, visibleSet);
+    }
+
+    // ----- Search highlights -----
+    applySearchHighlights();
+  }
+
+  // ========================================================================
+  // HORIZONTAL RENDER
+  // ========================================================================
+
+  /**
+   * Render the tree in horizontal (left-to-right) layout.
+   * Generations as columns, horizontal scroll. Original tree-scroll rendering.
+   */
+  function renderHorizontal(visible, visibleSet) {
+    var container = state.container;
+    if (!container) return;
+
     var wrapper = document.createElement('div');
     wrapper.className = 'ts-wrapper';
 
@@ -3329,9 +3363,248 @@ window.HU_TREE_DATA = [
 
     // ----- SVG Lines -----
     drawLines();
+  }
 
-    // ----- Search highlights -----
-    applySearchHighlights();
+  // ========================================================================
+  // VERTICAL RENDER
+  // ========================================================================
+
+  /**
+   * Render the tree in vertical (top-down) layout.
+   * Generations as rows from top to bottom. Scroll down to see all.
+   */
+  function renderVertical(visible, visibleSet) {
+    var container = state.container;
+    if (!container) return;
+
+    var wrapper = document.createElement('div');
+    wrapper.className = 'ts-wrapper-vertical';
+
+    visible.forEach(function (branch) {
+      var band = document.createElement('div');
+      band.className = 'ts-band-vertical';
+      band.setAttribute('data-branch', branch.id);
+
+      // ----- Branch Header -----
+      var header = document.createElement('div');
+      header.className = 'ts-band-header';
+      var dot = document.createElement('span');
+      dot.className = 'ts-band-dot';
+      dot.style.background = branch.color;
+      header.appendChild(dot);
+      var label = document.createElement('span');
+      label.className = 'ts-band-label';
+      label.textContent = branch.label + ' (' + branch.code + ')';
+      header.appendChild(label);
+      band.appendChild(header);
+
+      // ----- Tree Area -----
+      var treeArea = document.createElement('div');
+      treeArea.className = 'ts-vert-tree';
+      band.appendChild(treeArea);
+
+      // Build row nodes grouped by generation
+      var rowNodes = {};
+      for (var d = 0; d <= state.maxDepth; d++) {
+        rowNodes[d] = [];
+      }
+      Object.keys(state.nodeMap).forEach(function (path) {
+        var node = state.nodeMap[path];
+        if (node._branchId === branch.id && visibleSet.has(path)) {
+          rowNodes[node._depth].push(node);
+        }
+      });
+
+      // Assign horizontal positions to center children under parents
+      var colMap = {}; // path -> column index (float)
+
+      for (var d = 0; d <= state.maxDepth; d++) {
+        var row = rowNodes[d] || [];
+        if (row.length === 0) continue;
+
+        var nextCol = 0;
+        row.forEach(function (node) {
+          if (d === 0) {
+            // Root: centered
+            colMap[node._path] = 0;
+          } else {
+            // Find parent position
+            var pathParts = node._path.split('-');
+            var parentPath = pathParts.length > 1 ? pathParts.slice(0, -1).join('-') : null;
+            if (parentPath && colMap[parentPath] !== undefined) {
+              var parentNode = state.nodeMap[parentPath];
+              if (parentNode) {
+                // Get visible children of this parent
+                var siblings = parentNode.children.slice(); // copy
+                var visibleSiblings = [];
+                siblings.forEach(function (s) {
+                  if (visibleSet.has(s._path)) visibleSiblings.push(s);
+                });
+                var siblingIndex = visibleSiblings.indexOf(node);
+                if (siblingIndex >= 0 && visibleSiblings.length > 1) {
+                  colMap[node._path] = colMap[parentPath] - (visibleSiblings.length - 1) / 2 + siblingIndex;
+                } else {
+                  colMap[node._path] = colMap[parentPath];
+                }
+              } else {
+                colMap[node._path] = nextCol++;
+              }
+            } else {
+              colMap[node._path] = nextCol++;
+            }
+          }
+        });
+      }
+
+      // Create rows (generations from top to bottom)
+      for (var d = 0; d <= state.maxDepth; d++) {
+        var nodes = rowNodes[d];
+        if (nodes.length === 0) continue;
+
+        var row = document.createElement('div');
+        row.className = 'ts-row';
+        row.setAttribute('data-gen', d);
+
+        // Generation label
+        var genLabel = document.createElement('div');
+        genLabel.className = 'ts-gen-label-v';
+        genLabel.textContent = 'G' + d;
+        row.appendChild(genLabel);
+
+        // Cards area
+        var cardsRow = document.createElement('div');
+        cardsRow.className = 'ts-cards-row';
+
+        // Sort nodes by column position for consistent ordering
+        nodes.sort(function (a, b) {
+          return (colMap[a._path] || 0) - (colMap[b._path] || 0);
+        });
+
+        nodes.forEach(function (node) {
+          var card = buildCard(node);
+          cardsRow.appendChild(card);
+        });
+
+        row.appendChild(cardsRow);
+        treeArea.appendChild(row);
+      }
+
+      wrapper.appendChild(band);
+    });
+
+    container.appendChild(wrapper);
+
+    // ----- SVG Lines (vertical mode) -----
+    drawLinesVertical();
+  }
+
+  // ========================================================================
+  // VERTICAL SVG LINES
+  // ========================================================================
+
+  /**
+   * Draw parent-child connection lines for the vertical (top-down) layout.
+   * Lines connect center-bottom of parent card to center-top of child card,
+   * using T-shaped connectors for multiple children.
+   */
+  function drawLinesVertical() {
+    var container = state.container;
+    if (!container) return;
+
+    var oldSvg = container.querySelector('.ts-lines-svg-v');
+    if (oldSvg) oldSvg.remove();
+
+    var bands = container.querySelectorAll('.ts-band-vertical');
+    bands.forEach(function (band) {
+      var branchId = band.getAttribute('data-branch');
+      var branchConns = state.connections.filter(function (c) { return c.branchId === branchId; });
+      if (branchConns.length === 0) return;
+
+      var bandRect = band.getBoundingClientRect();
+      var paths = [];
+
+      branchConns.forEach(function (conn) {
+        var parentEl = band.querySelector('.fp-card[data-path="' + cssEscape(conn.parentPath) + '"]');
+        var childEl = band.querySelector('.fp-card[data-path="' + cssEscape(conn.childPath) + '"]');
+        if (!parentEl || !childEl) return;
+
+        var pRect = parentEl.getBoundingClientRect();
+        var cRect = childEl.getBoundingClientRect();
+
+        // Coordinates relative to band (accounting for vertical scroll)
+        var x1 = pRect.left + pRect.width / 2 - bandRect.left;
+        var y1 = pRect.bottom - bandRect.top;
+        var x2 = cRect.left + cRect.width / 2 - bandRect.left;
+        var y2 = cRect.top - bandRect.top;
+
+        var branchColor = '#c8b0a0';
+        var node = state.nodeMap[conn.parentPath];
+        if (node && node._branchColor) {
+          branchColor = hexToRgba(node._branchColor, 0.4);
+        }
+
+        paths.push({ x1: x1, y1: y1, x2: x2, y2: y2, color: branchColor });
+      });
+
+      if (paths.length === 0) return;
+
+      var svgW = band.scrollWidth || band.offsetWidth;
+      var svgH = band.scrollHeight;
+
+      var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('class', 'ts-lines-svg-v');
+      svg.setAttribute('width', svgW);
+      svg.setAttribute('height', svgH);
+      svg.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none;z-index:1;overflow:visible;';
+
+      function makeLine(x1, y1, x2, y2, color) {
+        var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', x1);
+        line.setAttribute('y1', y1);
+        line.setAttribute('x2', x2);
+        line.setAttribute('y2', y2);
+        line.setAttribute('stroke', color);
+        line.setAttribute('stroke-width', '2');
+        line.setAttribute('stroke-linecap', 'round');
+        return line;
+      }
+
+      // Group by parent path for horizontal bars
+      var parentGroups = {};
+      paths.forEach(function (p) {
+        var key = p.x1 + ',' + p.y1;
+        if (!parentGroups[key]) parentGroups[key] = [];
+        parentGroups[key].push(p);
+      });
+
+      Object.keys(parentGroups).forEach(function (key) {
+        var group = parentGroups[key];
+        var first = group[0];
+
+        var minX = group[0].x2;
+        var maxX = group[0].x2;
+        group.forEach(function (p) {
+          if (p.x2 < minX) minX = p.x2;
+          if (p.x2 > maxX) maxX = p.x2;
+        });
+
+        var barY = first.y1 + (first.y2 - first.y1) * 0.35;
+        if (group.length === 1) {
+          // Single child: straight vertical line
+          svg.appendChild(makeLine(first.x1, first.y1, first.x2, first.y2, first.color));
+        } else {
+          // Multiple children: T-shape
+          svg.appendChild(makeLine(first.x1, first.y1, first.x1, barY, first.color));
+          svg.appendChild(makeLine(minX, barY, maxX, barY, first.color));
+          group.forEach(function (p) {
+            svg.appendChild(makeLine(p.x2, barY, p.x2, p.y2, p.color));
+          });
+        }
+      });
+
+      band.style.position = 'relative';
+      band.appendChild(svg);
+    });
   }
 
   // ========================================================================
@@ -3886,6 +4159,69 @@ window.HU_TREE_DATA = [
   color: #999;
   font-size: 14px;
 }
+
+/* ===== Vertical Mode (Top-Down) ===== */
+.ts-wrapper-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.ts-band-vertical {
+  margin-bottom: 24px;
+  background: #fff;
+  border-radius: 6px;
+  border: 1px solid #e0d8c8;
+  overflow: visible;
+}
+.ts-vert-tree {
+  padding: 20px 32px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow: visible;
+}
+.ts-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0ece4;
+  min-height: 160px;
+}
+.ts-row:last-child {
+  border-bottom: none;
+}
+.ts-gen-label-v {
+  width: 32px;
+  flex-shrink: 0;
+  font-size: 10px;
+  color: #ccc;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding-top: 8px;
+  text-align: center;
+}
+.ts-cards-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+.ts-cards-row .fp-card {
+  min-height: 80px;
+}
+.ts-band-vertical .fp-name {
+  writing-mode: horizontal-tb;
+  font-size: 12px;
+  letter-spacing: 0;
+}
+.ts-band-vertical .fp-card {
+  width: 80px;
+  min-height: 80px;
+}
 `;
     document.head.appendChild(style);
   }
@@ -3993,6 +4329,11 @@ window.HU_TREE_DATA = [
 
     filterBranch: function (branchId) {
       state.activeBranch = branchId || 'all';
+      render();
+    },
+
+    setLayoutMode: function (mode) {
+      state.layoutMode = mode === 'horizontal' ? 'horizontal' : 'vertical';
       render();
     },
 
@@ -4171,6 +4512,16 @@ window.HU_TREE_DATA = [
           window.HUTreeScroll.init(treeContainer, window.HU_TREE_DATA);
         }
       });
+
+      /* ---------- Layout mode toggle ---------- */
+      var layoutSelect = document.getElementById('layout-mode-select');
+      if (layoutSelect) {
+        layoutSelect.addEventListener('change', function() {
+          if (typeof window.HUTreeScroll !== 'undefined' && window.HUTreeScroll.setLayoutMode) {
+            window.HUTreeScroll.setLayoutMode(this.value);
+          }
+        });
+      }
 
       /* ---------- Nav button clicks ---------- */
       for (var n = 0; n < navBtns.length; n++) {
