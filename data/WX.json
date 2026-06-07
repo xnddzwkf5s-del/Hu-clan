@@ -1081,6 +1081,16 @@
                 "birth": null,
                 "death": null,
                 "notes": null
+              },
+              {
+                "name": "伍向褀",
+                "rel": "婿",
+                "id": "WX_106",
+                "father_id": null,
+                "mother_id": null,
+                "birth": null,
+                "death": null,
+                "notes": null
               }
             ],
             "children": [
@@ -1089,16 +1099,6 @@
                   {
                     "name": "伍世茗",
                     "rel": "兒",
-                    "id": "WX_105",
-                    "father_id": null,
-                    "mother_id": null,
-                    "birth": null,
-                    "death": null,
-                    "notes": null
-                  },
-                  {
-                    "name": "伍向褀",
-                    "rel": "婿",
                     "id": "WX_105",
                     "father_id": null,
                     "mother_id": null,
