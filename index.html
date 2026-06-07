@@ -1650,6 +1650,7 @@
             <select id="layout-mode-select" class="tree-action-btn" aria-label="Layout mode">
               <option value="vertical" selected>Vertical (Top-Down)</option>
               <option value="horizontal">Horizontal (Left-Right)</option>
+              <option value="pedigree">Pedigree (Pyramid)</option>
             </select>
           </div>
         </div>
@@ -3267,6 +3268,8 @@ fetch('data/tree-data.json').then(function(r){return r.json()}).then(function(d)
     // ----- Dispatch by layout mode -----
     if (state.layoutMode === 'vertical') {
       renderVertical(visible, visibleSet);
+    } else if (state.layoutMode === 'pedigree') {
+      renderPedigree(visible, visibleSet);
     } else {
       renderHorizontal(visible, visibleSet);
     }
@@ -3553,6 +3556,256 @@ fetch('data/tree-data.json').then(function(r){return r.json()}).then(function(d)
 
       var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
       svg.setAttribute('class', 'ts-lines-svg-v');
+      svg.setAttribute('width', svgW);
+      svg.setAttribute('height', svgH);
+      svg.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none;z-index:1;overflow:visible;';
+
+      function makeLine(x1, y1, x2, y2, color) {
+        var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', x1);
+        line.setAttribute('y1', y1);
+        line.setAttribute('x2', x2);
+        line.setAttribute('y2', y2);
+        line.setAttribute('stroke', color);
+        line.setAttribute('stroke-width', '2');
+        line.setAttribute('stroke-linecap', 'round');
+        return line;
+      }
+
+      // Group by parent path for horizontal bars
+      var parentGroups = {};
+      paths.forEach(function (p) {
+        var key = p.x1 + ',' + p.y1;
+        if (!parentGroups[key]) parentGroups[key] = [];
+        parentGroups[key].push(p);
+      });
+
+      Object.keys(parentGroups).forEach(function (key) {
+        var group = parentGroups[key];
+        var first = group[0];
+
+        var minX = group[0].x2;
+        var maxX = group[0].x2;
+        group.forEach(function (p) {
+          if (p.x2 < minX) minX = p.x2;
+          if (p.x2 > maxX) maxX = p.x2;
+        });
+
+        var barY = first.y1 + (first.y2 - first.y1) * 0.35;
+        if (group.length === 1) {
+          // Single child: straight vertical line
+          svg.appendChild(makeLine(first.x1, first.y1, first.x2, first.y2, first.color));
+        } else {
+          // Multiple children: T-shape
+          svg.appendChild(makeLine(first.x1, first.y1, first.x1, barY, first.color));
+          svg.appendChild(makeLine(minX, barY, maxX, barY, first.color));
+          group.forEach(function (p) {
+            svg.appendChild(makeLine(p.x2, barY, p.x2, p.y2, p.color));
+          });
+        }
+      });
+
+      band.style.position = 'relative';
+      band.appendChild(svg);
+    });
+  }
+
+  // ========================================================================
+  // PEDIGREE RENDER (Pyramid — ancestors at bottom, descendants above)
+  // ========================================================================
+
+  /**
+   * Render the tree in pedigree/pyramid layout.
+   * Generations as rows from bottom to top. G0 (root ancestors) at the bottom,
+   * highest generation at the top, fanning outward like a pyramid.
+   */
+  function renderPedigree(visible, visibleSet) {
+    var container = state.container;
+    if (!container) return;
+
+    var wrapper = document.createElement('div');
+    wrapper.className = 'ts-wrapper-pedigree';
+
+    visible.forEach(function (branch) {
+      var band = document.createElement('div');
+      band.className = 'ts-band-pedigree';
+      band.setAttribute('data-branch', branch.id);
+
+      // ----- Branch Header -----
+      var header = document.createElement('div');
+      header.className = 'ts-band-header';
+      var dot = document.createElement('span');
+      dot.className = 'ts-band-dot';
+      dot.style.background = branch.color;
+      header.appendChild(dot);
+      var label = document.createElement('span');
+      label.className = 'ts-band-label';
+      label.textContent = branch.label + ' (' + branch.code + ')';
+      header.appendChild(label);
+      band.appendChild(header);
+
+      // ----- Tree Area (column-reverse: G0 at bottom, highest at top) -----
+      var treeArea = document.createElement('div');
+      treeArea.className = 'ts-pedigree-tree';
+      band.appendChild(treeArea);
+
+      // Build row nodes grouped by generation
+      var rowNodes = {};
+      for (var d = 0; d <= state.maxDepth; d++) {
+        rowNodes[d] = [];
+      }
+      Object.keys(state.nodeMap).forEach(function (path) {
+        var node = state.nodeMap[path];
+        if (node._branchId === branch.id && visibleSet.has(path)) {
+          rowNodes[node._depth].push(node);
+        }
+      });
+
+      // Assign horizontal positions to center children under parents
+      var colMap = {}; // path -> column index (float)
+
+      for (var d = 0; d <= state.maxDepth; d++) {
+        var row = rowNodes[d] || [];
+        if (row.length === 0) continue;
+
+        var nextCol = 0;
+        row.forEach(function (node) {
+          if (d === 0) {
+            // Root: centered
+            colMap[node._path] = 0;
+          } else {
+            // Find parent position
+            var pathParts = node._path.split('-');
+            var parentPath = pathParts.length > 1 ? pathParts.slice(0, -1).join('-') : null;
+            if (parentPath && colMap[parentPath] !== undefined) {
+              var parentNode = state.nodeMap[parentPath];
+              if (parentNode) {
+                // Get visible children of this parent
+                var siblings = parentNode.children.slice();
+                var visibleSiblings = [];
+                siblings.forEach(function (s) {
+                  if (visibleSet.has(s._path)) visibleSiblings.push(s);
+                });
+                var siblingIndex = visibleSiblings.indexOf(node);
+                if (siblingIndex >= 0 && visibleSiblings.length > 1) {
+                  colMap[node._path] = colMap[parentPath] - (visibleSiblings.length - 1) / 2 + siblingIndex;
+                } else {
+                  colMap[node._path] = colMap[parentPath];
+                }
+              } else {
+                colMap[node._path] = nextCol++;
+              }
+            } else {
+              colMap[node._path] = nextCol++;
+            }
+          }
+        });
+      }
+
+      // Find the max depth that has nodes for this branch
+      var branchMaxDepth = 0;
+      for (var d = 0; d <= state.maxDepth; d++) {
+        if (rowNodes[d].length > 0) branchMaxDepth = d;
+      }
+
+      // Create rows in REVERSE order — highest depth at top, G0 at bottom
+      for (var d = branchMaxDepth; d >= 0; d--) {
+        var nodes = rowNodes[d];
+        if (nodes.length === 0) continue;
+
+        var row = document.createElement('div');
+        row.className = 'ts-pedigree-row';
+        row.setAttribute('data-gen', d);
+
+        // Generation label
+        var genLabel = document.createElement('div');
+        genLabel.className = 'ts-gen-label-p';
+        genLabel.textContent = 'G' + d;
+        row.appendChild(genLabel);
+
+        // Cards area
+        var cardsRow = document.createElement('div');
+        cardsRow.className = 'ts-cards-pedigree';
+
+        // Sort nodes by column position for consistent ordering
+        nodes.sort(function (a, b) {
+          return (colMap[a._path] || 0) - (colMap[b._path] || 0);
+        });
+
+        nodes.forEach(function (node) {
+          var card = buildCard(node);
+          cardsRow.appendChild(card);
+        });
+
+        row.appendChild(cardsRow);
+        treeArea.appendChild(row);
+      }
+
+      wrapper.appendChild(band);
+    });
+
+    container.appendChild(wrapper);
+
+    // ----- SVG Lines (pedigree mode) -----
+    drawLinesPedigree();
+  }
+
+  // ========================================================================
+  // PEDIGREE SVG LINES
+  // ========================================================================
+
+  /**
+   * Draw parent-child connection lines for the pedigree (pyramid) layout.
+   * Lines connect from parent card TOP to child card BOTTOM,
+   * because parents are below and children are above in this view.
+   */
+  function drawLinesPedigree() {
+    var container = state.container;
+    if (!container) return;
+
+    var oldSvg = container.querySelector('.ts-lines-svg-p');
+    if (oldSvg) oldSvg.remove();
+
+    var bands = container.querySelectorAll('.ts-band-pedigree');
+    bands.forEach(function (band) {
+      var branchId = band.getAttribute('data-branch');
+      var branchConns = state.connections.filter(function (c) { return c.branchId === branchId; });
+      if (branchConns.length === 0) return;
+
+      var bandRect = band.getBoundingClientRect();
+      var paths = [];
+
+      branchConns.forEach(function (conn) {
+        var parentEl = band.querySelector('.fp-card[data-path="' + cssEscape(conn.parentPath) + '"]');
+        var childEl = band.querySelector('.fp-card[data-path="' + cssEscape(conn.childPath) + '"]');
+        if (!parentEl || !childEl) return;
+
+        var pRect = parentEl.getBoundingClientRect();
+        var cRect = childEl.getBoundingClientRect();
+
+        // Coordinates relative to band
+        // Parent TOP -> Child BOTTOM (since parents are below children)
+        var x1 = pRect.left + pRect.width / 2 - bandRect.left;
+        var y1 = pRect.top - bandRect.top;  // TOP of parent card
+        var x2 = cRect.left + cRect.width / 2 - bandRect.left;
+        var y2 = cRect.bottom - bandRect.top;  // BOTTOM of child card
+
+        var branchColor = '#c8b0a0';
+        var node = state.nodeMap[conn.parentPath];
+        if (node && node._branchColor) {
+          branchColor = hexToRgba(node._branchColor, 0.4);
+        }
+
+        paths.push({ x1: x1, y1: y1, x2: x2, y2: y2, color: branchColor });
+      });
+
+      if (paths.length === 0) return;
+
+      var svgW = band.scrollWidth || band.offsetWidth;
+      var svgH = band.scrollHeight;
+
+      var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('class', 'ts-lines-svg-p');
       svg.setAttribute('width', svgW);
       svg.setAttribute('height', svgH);
       svg.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none;z-index:1;overflow:visible;';
@@ -4222,6 +4475,70 @@ fetch('data/tree-data.json').then(function(r){return r.json()}).then(function(d)
   width: 80px;
   min-height: 80px;
 }
+
+/* ===== Pedigree Mode (Pyramid — ancestors at bottom) ===== */
+.ts-wrapper-pedigree {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.ts-band-pedigree {
+  margin-bottom: 24px;
+  background: #fff;
+  border-radius: 6px;
+  border: 1px solid #e0d8c8;
+  overflow: visible;
+}
+.ts-pedigree-tree {
+  padding: 40px 32px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow: visible;
+}
+.ts-pedigree-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 8px 0;
+  gap: 16px;
+  min-height: 120px;
+}
+.ts-pedigree-row[data-gen="1"] { gap: 24px; }
+.ts-pedigree-row[data-gen="2"] { gap: 32px; }
+.ts-pedigree-row[data-gen="3"] { gap: 40px; }
+.ts-pedigree-row[data-gen="4"] { gap: 48px; }
+.ts-pedigree-row[data-gen="5"] { gap: 56px; }
+.ts-pedigree-row[data-gen="6"] { gap: 64px; }
+.ts-pedigree-row[data-gen="7"] { gap: 72px; }
+.ts-pedigree-row[data-gen="8"] { gap: 80px; }
+.ts-gen-label-p {
+  width: 32px;
+  flex-shrink: 0;
+  font-size: 10px;
+  color: #ccc;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
+  align-self: center;
+}
+.ts-cards-pedigree {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: inherit;
+  flex-wrap: nowrap;
+}
+.ts-band-pedigree .fp-name {
+  writing-mode: horizontal-tb;
+  font-size: 11px;
+  letter-spacing: 0;
+}
+.ts-band-pedigree .fp-card {
+  width: 80px;
+  min-height: 70px;
+}
 `;
     document.head.appendChild(style);
   }
@@ -4333,7 +4650,13 @@ fetch('data/tree-data.json').then(function(r){return r.json()}).then(function(d)
     },
 
     setLayoutMode: function (mode) {
-      state.layoutMode = mode === 'horizontal' ? 'horizontal' : 'vertical';
+      if (mode === 'pedigree') {
+        state.layoutMode = 'pedigree';
+      } else if (mode === 'horizontal') {
+        state.layoutMode = 'horizontal';
+      } else {
+        state.layoutMode = 'vertical';
+      }
       render();
     },
 
