@@ -2475,7 +2475,7 @@
                 "id": "WX_069",
                 "birth": null,
                 "death": null,
-                "notes": null,
+                "notes": "Born in Malaysia, migrated to Australia",
                 "father_id": "WX_067",
                 "mother_id": "WX_068"
               },
@@ -2604,7 +2604,7 @@
                 "mother_id": "WX_068",
                 "birth": null,
                 "death": null,
-                "notes": null
+                "notes": "Born in Malaysia, migrated to Australia"
               },
               {
                 "name": "伍向褀",
@@ -2645,7 +2645,7 @@
                 "id": "WX_078",
                 "birth": null,
                 "death": null,
-                "notes": null,
+                "notes": "Born in Malaysia, migrated to Australia",
                 "father_id": "WX_067",
                 "mother_id": "WX_068"
               }
