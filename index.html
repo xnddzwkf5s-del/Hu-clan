@@ -3562,6 +3562,41 @@ function loadBranch(code) {
     // ---- Row: SELF (focused, prominent) ----
     var selfSection = buildFocusSection('★ This Family', [node], 'self');
     selfSection.classList.add('focus-section-self');
+
+    // Descendant counters — only shown when known descendants exist
+    var childCount = node.children ? node.children.length : 0;
+    var grandCount = 0;
+    if (node.children) {
+      node.children.forEach(function(ch) {
+        grandCount += ch.children ? ch.children.length : 0;
+      });
+    }
+    var totalDesc = countDescendants(node);
+    if (childCount > 0 || grandCount > 0) {
+      var counters = document.createElement('div');
+      counters.className = 'fv-desc-counters';
+      if (childCount > 0) {
+        var cc = document.createElement('span');
+        cc.className = 'fv-desc-pill fv-desc-children';
+        cc.textContent = childCount + (childCount === 1 ? ' child family' : ' child families');
+        counters.appendChild(cc);
+      }
+      if (grandCount > 0) {
+        var gc = document.createElement('span');
+        gc.className = 'fv-desc-pill fv-desc-grand';
+        gc.textContent = grandCount + ' grandchild ' + (grandCount === 1 ? 'family' : 'families');
+        counters.appendChild(gc);
+      }
+      if (totalDesc > childCount) {
+        var tc = document.createElement('span');
+        tc.className = 'fv-desc-pill fv-desc-total';
+        tc.textContent = totalDesc + ' total descendants';
+        counters.appendChild(tc);
+      }
+      var selfCard = selfSection.querySelector('.fv-card-self');
+      if (selfCard) selfCard.appendChild(counters);
+    }
+
     wrapper.appendChild(selfSection);
 
     // ---- Row: Children ----
@@ -4655,6 +4690,34 @@ function loadBranch(code) {
 .fv-name {
   font-weight: 600;
   color: #2c2018;
+}
+/* Descendant counters on self card */
+.fv-desc-counters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #e8dfc8;
+}
+.fv-desc-pill {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 2px 9px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.fv-desc-children {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+.fv-desc-grand {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+.fv-desc-total {
+  background: #f0fdf4;
+  color: #166534;
 }
 .fv-name.fv-name-male {
   color: #1d4ed8;
