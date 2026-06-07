@@ -1713,9 +1713,14 @@ function loadBranch(code) {
   // CONSTANTS
   // ========================================================================
 
+  const REL_GENDER = {
+    '祖': 'm', '兒': 'm', '儿': 'm', '婿': 'm',
+    '妻': 'f', '媳': 'f', '女': 'f',
+  };
   const REL_STYLES = {
     '祖': { text: '祖', bg: '#d4a017', cls: 'rel-ancestor' },
     '兒': { text: '儿', bg: '#2563eb', cls: 'rel-son' },
+    '儿': { text: '儿', bg: '#2563eb', cls: 'rel-son' },
     '女': { text: '女', bg: '#ec4899', cls: 'rel-daughter' },
     '媳': { text: '媳', bg: '#9333ea', cls: 'rel-wife' },
     '婿': { text: '婿', bg: '#16a34a', cls: 'rel-husband' },
@@ -1908,8 +1913,9 @@ function loadBranch(code) {
   function createPersonBadge(person, branchColor, nodePath) {
     var relStyle = REL_STYLES[person.rel] || REL_STYLES['?'];
     var isHu = person.name && person.name.charAt(0) === '胡';
+    var gender = REL_GENDER[person.rel] || null;
     var card = document.createElement('div');
-    card.className = 'person-card' + (isHu ? ' person-primary' : ' person-secondary');
+    card.className = 'person-card' + (isHu ? ' person-primary' : ' person-secondary') + (gender === 'm' ? ' gender-male' : gender === 'f' ? ' gender-female' : '');
     card.setAttribute('data-path', nodePath);
     card.setAttribute('data-queryable', '1');
 
@@ -1927,6 +1933,14 @@ function loadBranch(code) {
     nameSpan.className = 'card-name';
     nameSpan.textContent = person.name;
     body.appendChild(nameSpan);
+
+    // Gender icon inline with name
+    if (gender) {
+      var gIcon = document.createElement('span');
+      gIcon.className = gender === 'm' ? 'card-gender card-gender-m' : 'card-gender card-gender-f';
+      gIcon.textContent = gender === 'm' ? '♂' : '♀';
+      body.appendChild(gIcon);
+    }
 
     var relSpan = document.createElement('span');
     relSpan.className = 'card-rel';
@@ -3606,14 +3620,16 @@ function loadBranch(code) {
       var row = document.createElement('div');
       row.className = 'fv-person-row';
 
-      // Name
+      // Gender icon + Name
+      var gFv = REL_GENDER[p.rel];
       var nameEl = document.createElement('span');
-      nameEl.className = 'fv-name';
-      nameEl.textContent = p.name;
+      nameEl.className = 'fv-name' + (gFv === 'm' ? ' fv-name-male' : gFv === 'f' ? ' fv-name-female' : '');
+      var gIconFv = gFv === 'm' ? '♂︎ ' : gFv === 'f' ? '♀︎ ' : '';
+      nameEl.textContent = gIconFv + p.name;
       row.appendChild(nameEl);
 
       // Role badge
-      var roleLabels = { '祖': 'Ancestor', '兒': 'Son', '婿': 'Son-in-law', '妻': 'Wife', '媳': 'Daughter-in-law', '女': 'Daughter' };
+      var roleLabels = { '祖': 'Ancestor', '兒': 'Son', '儿': 'Son', '婿': 'Son-in-law', '妻': 'Wife', '媳': 'Daughter-in-law', '女': 'Daughter' };
       var roleTxt = roleLabels[p.rel] || p.rel || '';
       if (roleTxt) {
         var badge = document.createElement('span');
@@ -3802,6 +3818,20 @@ function loadBranch(code) {
     nameEl.className = 'fp-name';
     nameEl.textContent = primaryName;
     card.appendChild(nameEl);
+
+    // Gender icon row
+    var genderRow = document.createElement('div');
+    genderRow.className = 'fp-gender-row';
+    persons.forEach(function(p) {
+      var g = REL_GENDER[p.rel];
+      if (!g) return;
+      var icon = document.createElement('span');
+      icon.className = g === 'm' ? 'fp-gender-m' : 'fp-gender-f';
+      icon.textContent = g === 'm' ? '♂' : '♀';
+      icon.title = p.name;
+      genderRow.appendChild(icon);
+    });
+    if (genderRow.children.length) card.appendChild(genderRow);
 
     // Rel badge — use the 胡 person's rel if available
     if (persons.length > 0) {
@@ -4208,6 +4238,34 @@ function loadBranch(code) {
   font-style: italic;
   font-weight: 400;
 }
+/* Gender icons on fp-card (vertical/pedigree) */
+.fp-gender-row {
+  display: flex;
+  gap: 3px;
+  justify-content: center;
+  margin-top: 3px;
+}
+.fp-gender-m {
+  font-size: 11px;
+  color: #2563eb;
+  font-style: normal;
+}
+.fp-gender-f {
+  font-size: 11px;
+  color: #ec4899;
+  font-style: normal;
+}
+/* Gender icons on person-card (horizontal mode) */
+.card-gender {
+  font-size: 10px;
+  margin-left: 2px;
+  font-style: normal;
+}
+.card-gender-m { color: #2563eb; }
+.card-gender-f { color: #ec4899; }
+/* Gender tint on Focus View names */
+.fv-name-male { color: #1d4ed8; }
+.fv-name-female { color: #be185d; }
 .fp-card.search-match {
   box-shadow: 0 0 0 2px #e74c3c;
   border-color: #e74c3c;
