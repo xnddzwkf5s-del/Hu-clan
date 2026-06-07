@@ -5153,15 +5153,6 @@ function loadBranch(code) {
         });
       }
 
-      /* ---------- Collapse all ---------- */
-      collapseBtn.addEventListener('click', function() {
-        if (typeof window.HUTreeScroll !== 'undefined' && window.HUTreeScroll.reinit) {
-          window.HUTreeScroll.reinit();
-        } else if (typeof window.HUTreeScroll !== 'undefined') {
-          window.HUTreeScroll.init(treeContainer, window.HU_TREE_DATA);
-        }
-      });
-
       /* ---------- Nav button clicks ---------- */
       for (var n = 0; n < navBtns.length; n++) {
         navBtns[n].addEventListener('click', function() {
