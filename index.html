@@ -3756,6 +3756,8 @@ function loadBranch(code) {
         var badge = document.createElement('span');
         badge.className = 'fv-role-badge';
         badge.textContent = roleTxt;
+        badge.style.background = REL_COLORS[p.rel] || '#6b7280';
+        badge.style.color = '#fff';
         row.appendChild(badge);
       }
 
@@ -4827,8 +4829,6 @@ function loadBranch(code) {
   font-size: 9px;
   padding: 1px 5px;
   border-radius: 8px;
-  background: #f0ece4;
-  color: #888;
   font-weight: 500;
   white-space: nowrap;
 }
