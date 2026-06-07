@@ -2219,7 +2219,7 @@ function loadBranch(code) {
       { text: '儿', bg: '#2563eb', label: 'Son' },
       { text: '女', bg: '#ec4899', label: 'Daughter' },
       { text: '媳/妻', bg: '#9333ea', label: 'Wife' },
-      { text: '婿', bg: '#16a34a', label: 'Husband/Son-in-law' },
+      { text: '婿', bg: '#16a34a', label: 'Son-in-law' },
       { text: '祖', bg: '#d4a017', label: 'Founder' },
       { text: '?', bg: '#6b7280', label: 'Unknown' },
     ];
@@ -2705,7 +2705,7 @@ function loadBranch(code) {
     '兒': '儿 Son',
     '女': '女 Daughter',
     '媳': '媳 Wife',
-    '婿': '婿 Husband',
+    '婿': '婿 Son-in-law',
     '妻': '妻 Wife',
     '?': '?',
   };
@@ -3738,7 +3738,7 @@ function loadBranch(code) {
 
       // Colored role badge before name (matching footer legend)
       var roleLabelsShort = { '祖': '祖', '兒': '儿', '儿': '儿', '女': '女', '媳': '媳', '妻': '妻', '婿': '婿' };
-      var roleLabelsEn = { '祖': 'Founder', '兒': 'Son', '儿': 'Son', '女': 'Daughter', '媳': 'Wife', '妻': 'Wife', '婿': 'Husband' };
+      var roleLabelsEn = { '祖': 'Founder', '兒': 'Son', '儿': 'Son', '女': 'Daughter', '媳': 'Wife', '妻': 'Wife', '婿': 'Son-in-law' };
       var chipColor = REL_COLORS[p.rel] || '#6b7280';
       var chip = document.createElement('span');
       chip.className = 'fv-role-chip';
@@ -4931,7 +4931,7 @@ function loadBranch(code) {
       { text: '儿', bg: '#2563eb', label: 'Son' },
       { text: '女', bg: '#ec4899', label: 'Daughter' },
       { text: '媳', bg: '#9333ea', label: 'Wife/DIL' },
-      { text: '婿', bg: '#16a34a', label: 'Husband/SIL' },
+      { text: '婿', bg: '#16a34a', label: 'Son-in-law' },
       { text: '祖', bg: '#d4a017', label: 'Founder' },
       { text: '?', bg: '#6b7280', label: 'Unknown' },
     ].forEach(function (item) {
