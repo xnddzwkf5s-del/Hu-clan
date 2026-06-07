@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>胡氏族谱 — 更新记录 Changelog</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    background: #f7f5f0;
+    color: #2c2c2c;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+    padding: 28px 24px 20px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  }
+  .site-header h1 {
+    color: #c89b3c;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .site-header p {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.8rem;
+    margin-top: 4px;
+  }
+  .nav-links {
+    margin-top: 12px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .nav-links a {
+    color: rgba(255,255,255,0.75);
+    text-decoration: none;
+    font-size: 0.82rem;
+    padding: 4px 12px;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 20px;
+    transition: all 0.2s;
+  }
+  .nav-links a:hover { background: rgba(200,155,60,0.2); border-color: #c89b3c; color: #c89b3c; }
+
+  /* ── Main layout ── */
+  .container {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+  }
+
+  /* ── Stats bar ── */
+  .stats-bar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .stat-card {
+    background: #fff;
+    border: 1px solid #e8e0d0;
+    border-radius: 10px;
+    padding: 12px 18px;
+    flex: 1;
+    min-width: 120px;
+    text-align: center;
+  }
+  .stat-card .num {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #c89b3c;
+    line-height: 1;
+  }
+  .stat-card .label {
+    font-size: 0.72rem;
+    color: #888;
+    margin-top: 4px;
+  }
+
+  /* ── Loading / error ── */
+  .loading {
+    text-align: center;
+    padding: 60px 20px;
+    color: #888;
+  }
+  .loading .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid #e8e0d0;
+    border-top-color: #c89b3c;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error-box {
+    background: #fff3f3;
+    border: 1px solid #f5c6c6;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    color: #c0392b;
+  }
+  .retry-btn {
+    margin-top: 12px;
+    background: #c89b3c;
+    color: #fff;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+  }
+
+  /* ── Timeline ── */
+  .timeline {
+    position: relative;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 18px;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, #c89b3c, #e8e0d0);
+  }
+
+  /* ── Day group ── */
+  .day-group { margin-bottom: 8px; }
+  .day-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .day-label::before {
+    content: '';
+    width: 14px; height: 14px;
+    background: #c89b3c;
+    border: 3px solid #f7f5f0;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-left: 12px;
+    box-shadow: 0 0 0 2px #c89b3c;
+  }
+  .day-label span {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: #f7f5f0;
+    padding: 2px 8px;
+  }
+
+  /* ── Commit card ── */
+  .commit-list {
+    margin-left: 38px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .commit-card {
+    background: #fff;
+    border: 1px solid #e8e0d0;
+    border-radius: 10px;
+    padding: 14px 16px;
+    transition: box-shadow 0.2s, border-color 0.2s;
+    position: relative;
+  }
+  .commit-card:hover {
+    box-shadow: 0 4px 16px rgba(200,155,60,0.12);
+    border-color: #c89b3c;
+  }
+
+  .commit-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .commit-msg {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #1a1a2e;
+    line-height: 1.4;
+    flex: 1;
+  }
+  .commit-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 0.75rem;
+    color: #999;
+  }
+  .commit-time {
+    white-space: nowrap;
+    color: #aaa;
+  }
+  .commit-sha {
+    font-family: 'SFMono-Regular', Consolas, monospace;
+    background: #f0ede8;
+    color: #c89b3c;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    text-decoration: none;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .commit-sha:hover { background: #c89b3c; color: #fff; }
+
+  /* Version badge */
+  .version-badge {
+    display: inline-block;
+    background: #1a1a2e;
+    color: #c89b3c;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* Category tags */
+  .tag {
+    display: inline-block;
+    font-size: 0.68rem;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .tag-fix    { background: #fff3cd; color: #856404; }
+  .tag-add    { background: #d4edda; color: #155724; }
+  .tag-data   { background: #cce5ff; color: #004085; }
+  .tag-feat   { background: #e2d9f3; color: #4a235a; }
+  .tag-admin  { background: #f8d7da; color: #721c24; }
+  .tag-design { background: #d1ecf1; color: #0c5460; }
+  .tag-other  { background: #e8e0d0; color: #5a4a2e; }
+
+  /* Files changed */
+  .commit-files {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .file-chip {
+    font-size: 0.68rem;
+    background: #f7f5f0;
+    border: 1px solid #e8e0d0;
+    color: #666;
+    padding: 1px 7px;
+    border-radius: 4px;
+    font-family: 'SFMono-Regular', Consolas, monospace;
+  }
+
+  /* ── Footer ── */
+  .page-footer {
+    text-align: center;
+    color: #bbb;
+    font-size: 0.75rem;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #e8e0d0;
+  }
+
+  @media (max-width: 500px) {
+    .commit-top { flex-direction: column; }
+    .stats-bar { gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <h1>胡氏族谱 — 更新记录</h1>
+  <p>Hu Clan Genealogy · Change Log · All times in GMT+8 (Malaysia)</p>
+  <nav class="nav-links">
+    <a href="index.html">🌳 族谱 Family Tree</a>
+    <a href="admin.html">⚙️ 管理员 Admin</a>
+  </nav>
+</header>
+
+<div class="container">
+  <div class="stats-bar" id="statsBar" style="display:none">
+    <div class="stat-card"><div class="num" id="statCommits">—</div><div class="label">更新次数 Commits</div></div>
+    <div class="stat-card"><div class="num" id="statDays">—</div><div class="label">活跃天数 Days</div></div>
+    <div class="stat-card"><div class="num" id="statLatest">—</div><div class="label">最新版本 Latest</div></div>
+  </div>
+
+  <div id="timelineContainer">
+    <div class="loading" id="loadingEl">
+      <div class="spinner"></div>
+      <div>正在加载更新记录…</div>
+    </div>
+  </div>
+</div>
+
+<footer class="page-footer">
+  <p>数据来源 GitHub API · 胡氏族谱 © 2026</p>
+</footer>
+
+<script>
+const OWNER = 'xnddzwkf5s-del';
+const REPO  = 'Hu-clan';
+const API   = 'https://api.github.com/repos/' + OWNER + '/' + REPO + '/commits?per_page=100';
+
+// ── Categorise commit message ──
+function categorise(msg) {
+  const m = msg.toLowerCase();
+  if (/^fix|bug|path|collision|correct|wrong/.test(m))          return { tag: 'fix',    label: '修复 Fix' };
+  if (/add|新增|添加/.test(m))                                    return { tag: 'add',    label: '新增 Add' };
+  if (/admin|管理员/.test(m))                                     return { tag: 'admin',  label: '管理 Admin' };
+  if (/data|json|branch|分支|资料/.test(m))                       return { tag: 'data',   label: '数据 Data' };
+  if (/design|redesign|css|layout|style|ui|ux|theme/.test(m))   return { tag: 'design', label: '设计 Design' };
+  if (/v\d+\.\d+|feat|feature|功能/.test(m))                     return { tag: 'feat',   label: '功能 Feature' };
+  return { tag: 'other', label: '其他 Other' };
+}
+
+// ── Extract version tag from message ──
+function extractVersion(msg) {
+  const m = msg.match(/\bv(\d+\.\d+[\w.]*)\b/i);
+  return m ? 'v' + m[1] : null;
+}
+
+// ── Convert ISO timestamp to GMT+8 ──
+function toGMT8(isoStr) {
+  const d = new Date(isoStr);
+  // Offset by +8 hours
+  const offset = 8 * 60 * 60 * 1000;
+  const local = new Date(d.getTime() + offset);
+  const YYYY = local.getUTCFullYear();
+  const MM   = String(local.getUTCMonth() + 1).padStart(2, '0');
+  const DD   = String(local.getUTCDate()).padStart(2, '0');
+  const hh   = String(local.getUTCHours()).padStart(2, '0');
+  const mm   = String(local.getUTCMinutes()).padStart(2, '0');
+  return {
+    date:     YYYY + '-' + MM + '-' + DD,
+    time:     hh + ':' + mm,
+    dateLabel: YYYY + '年' + MM + '月' + DD + '日',
+    full:     YYYY + '-' + MM + '-' + DD + ' ' + hh + ':' + mm,
+  };
+}
+
+// ── Format day label ──
+function dayLabel(dateStr) {
+  const [y, m, d] = dateStr.split('-');
+  const days = ['日','一','二','三','四','五','六'];
+  const dt = new Date(parseInt(y), parseInt(m)-1, parseInt(d));
+  const dow = days[dt.getDay()];
+  return y + '年' + m + '月' + d + '日 (星期' + dow + ')';
+}
+
+// ── Guess files changed from commit message ──
+function guessFiles(msg) {
+  const files = [];
+  if (/admin\.html/i.test(msg))     files.push('admin.html');
+  if (/index\.html/i.test(msg))     files.push('index.html');
+  if (/changelog/i.test(msg))       files.push('changelog.html');
+  if (/WX\.json/i.test(msg) || /维显/.test(msg) || /WX_/.test(msg)) files.push('data/WX.json');
+  if (/WD\.json/i.test(msg) || /维达/.test(msg)) files.push('data/WD.json');
+  if (/WF\.json/i.test(msg) || /维富/.test(msg)) files.push('data/WF.json');
+  if (/\.json/.test(msg) && files.length === 0) files.push('data/*.json');
+  return files;
+}
+
+// ── Render timeline ──
+function renderTimeline(commits) {
+  const container = document.getElementById('timelineContainer');
+  container.innerHTML = '';
+
+  // Group by date (GMT+8)
+  const groups = {};
+  const dateOrder = [];
+  commits.forEach(function(c) {
+    const ts = toGMT8(c.commit.author.date);
+    if (!groups[ts.date]) {
+      groups[ts.date] = [];
+      dateOrder.push(ts.date);
+    }
+    groups[ts.date].push({ commit: c, ts: ts });
+  });
+
+  // Stats
+  const statCommits = document.getElementById('statCommits');
+  const statDays    = document.getElementById('statDays');
+  const statLatest  = document.getElementById('statLatest');
+  statCommits.textContent = commits.length;
+  statDays.textContent    = dateOrder.length;
+
+  // Find latest version
+  let latestVer = '—';
+  for (let i = 0; i < commits.length; i++) {
+    const v = extractVersion(commits[i].commit.message.split('\n')[0]);
+    if (v) { latestVer = v; break; }
+  }
+  statLatest.textContent = latestVer;
+  document.getElementById('statsBar').style.display = 'flex';
+
+  const timeline = document.createElement('div');
+  timeline.className = 'timeline';
+
+  dateOrder.forEach(function(date) {
+    const group = document.createElement('div');
+    group.className = 'day-group';
+
+    // Day label
+    const dl = document.createElement('div');
+    dl.className = 'day-label';
+    const span = document.createElement('span');
+    span.textContent = dayLabel(date);
+    dl.appendChild(span);
+    group.appendChild(dl);
+
+    // Commits
+    const list = document.createElement('div');
+    list.className = 'commit-list';
+
+    groups[date].forEach(function(item) {
+      const c   = item.commit;
+      const ts  = item.ts;
+      const msg = c.commit.message.split('\n')[0];
+      const sha = c.sha.slice(0, 7);
+      const cat = categorise(msg);
+      const ver = extractVersion(msg);
+      const files = guessFiles(msg);
+
+      const card = document.createElement('div');
+      card.className = 'commit-card';
+
+      // Top row
+      const top = document.createElement('div');
+      top.className = 'commit-top';
+
+      const msgEl = document.createElement('div');
+      msgEl.className = 'commit-msg';
+      msgEl.textContent = msg;
+      top.appendChild(msgEl);
+
+      // Right side: version + time
+      const right = document.createElement('div');
+      right.style.display = 'flex';
+      right.style.flexDirection = 'column';
+      right.style.alignItems = 'flex-end';
+      right.style.gap = '4px';
+      right.style.flexShrink = '0';
+
+      if (ver) {
+        const vb = document.createElement('span');
+        vb.className = 'version-badge';
+        vb.textContent = ver;
+        right.appendChild(vb);
+      }
+
+      const timeEl = document.createElement('span');
+      timeEl.className = 'commit-time';
+      timeEl.textContent = ts.time + ' GMT+8';
+      right.appendChild(timeEl);
+      top.appendChild(right);
+      card.appendChild(top);
+
+      // Meta row: tag + SHA link
+      const meta = document.createElement('div');
+      meta.className = 'commit-meta';
+
+      const tagEl = document.createElement('span');
+      tagEl.className = 'tag tag-' + cat.tag;
+      tagEl.textContent = cat.label;
+      meta.appendChild(tagEl);
+
+      const shaEl = document.createElement('a');
+      shaEl.className = 'commit-sha';
+      shaEl.textContent = sha;
+      shaEl.href = 'https://github.com/' + OWNER + '/' + REPO + '/commit/' + c.sha;
+      shaEl.target = '_blank';
+      shaEl.rel = 'noopener';
+      shaEl.title = '在 GitHub 查看此提交 / View commit on GitHub';
+      meta.appendChild(shaEl);
+
+      card.appendChild(meta);
+
+      // Files row
+      if (files.length > 0) {
+        const filesRow = document.createElement('div');
+        filesRow.className = 'commit-files';
+        files.forEach(function(f) {
+          const chip = document.createElement('span');
+          chip.className = 'file-chip';
+          chip.textContent = f;
+          filesRow.appendChild(chip);
+        });
+        card.appendChild(filesRow);
+      }
+
+      list.appendChild(card);
+    });
+
+    group.appendChild(list);
+    timeline.appendChild(group);
+  });
+
+  container.appendChild(timeline);
+}
+
+// ── Fetch commits ──
+function loadCommits() {
+  document.getElementById('timelineContainer').innerHTML =
+    '<div class="loading" id="loadingEl"><div class="spinner"></div><div>正在加载更新记录…</div></div>';
+  document.getElementById('statsBar').style.display = 'none';
+
+  fetch(API, {
+    headers: { 'Accept': 'application/vnd.github.v3+json' }
+  })
+  .then(function(r) {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  })
+  .then(function(commits) {
+    renderTimeline(commits);
+  })
+  .catch(function(err) {
+    document.getElementById('timelineContainer').innerHTML =
+      '<div class="error-box">' +
+        '<div>⚠️ 无法加载更新记录</div>' +
+        '<div style="font-size:0.8rem;margin-top:6px;color:#999">' + err.message + '</div>' +
+        '<button class="retry-btn" onclick="loadCommits()">重试 Retry</button>' +
+      '</div>';
+  });
+}
+
+loadCommits();
+</script>
+</body>
+</html>
