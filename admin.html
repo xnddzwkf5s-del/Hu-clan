@@ -662,16 +662,6 @@ function findParentNode(root, targetData) {
   return null;
 }
 
-// Tag tree nodes with their data reference so we can reorder
-function tagTreeData() {
-  function tag(node) {
-    if (!node) return;
-    node.__treeData = node;
-    if (node.children) node.children.forEach(tag);
-  }
-  if (state.data && state.data.root) tag(state.data.root);
-}
-
 // ========== EDIT MODAL ==========
 let editModalTarget = null;
 
