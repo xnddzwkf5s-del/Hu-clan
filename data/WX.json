@@ -1090,7 +1090,8 @@
                 "mother_id": null,
                 "birth": null,
                 "death": null,
-                "notes": null
+                "notes": null,
+                "unknown_mother": false
               }
             ],
             "children": [
@@ -1100,11 +1101,12 @@
                     "name": "伍世茗",
                     "rel": "兒",
                     "id": "WX_105",
-                    "father_id": null,
-                    "mother_id": null,
+                    "father_id": "WX_106",
+                    "mother_id": "WX_102",
                     "birth": null,
                     "death": null,
-                    "notes": null
+                    "notes": null,
+                    "unknown_mother": false
                   }
                 ],
                 "children": []
@@ -1131,11 +1133,12 @@
                     "name": "胡桢厚",
                     "rel": "兒",
                     "id": "WX_104",
-                    "father_id": null,
+                    "father_id": "WX_078",
                     "mother_id": null,
                     "birth": "2021",
                     "death": null,
-                    "notes": null
+                    "notes": null,
+                    "unknown_mother": true
                   }
                 ],
                 "children": []
