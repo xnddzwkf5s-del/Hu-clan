@@ -1671,11 +1671,6 @@
           <!-- Actions -->
           <div class="tree-actions">
             <button class="tree-action-btn" id="collapse-all-btn" aria-label="Collapse all branches">− Collapse All</button>
-            <select id="layout-mode-select" class="tree-action-btn" aria-label="Layout mode">
-              <option value="vertical">Vertical (Top-Down)</option>
-              <option value="horizontal">Horizontal (Left-Right)</option>
-              <option value="focus" selected>Focus View</option>
-            </select>
           </div>
         </div>
 
@@ -5193,16 +5188,6 @@ function loadBranch(code) {
           window.HUTreeScroll.init(treeContainer, window.HU_TREE_DATA);
         }
       });
-
-      /* ---------- Layout mode toggle ---------- */
-      var layoutSelect = document.getElementById('layout-mode-select');
-      if (layoutSelect) {
-        layoutSelect.addEventListener('change', function() {
-          if (typeof window.HUTreeScroll !== 'undefined' && window.HUTreeScroll.setLayoutMode) {
-            window.HUTreeScroll.setLayoutMode(this.value);
-          }
-        });
-      }
 
       /* ---------- Nav button clicks ---------- */
       for (var n = 0; n < navBtns.length; n++) {
