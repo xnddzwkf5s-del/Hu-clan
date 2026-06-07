@@ -3410,126 +3410,175 @@ function loadBranch(code) {
   // FOCUS VIEW
   // ========================================================================
 
+  // ============================================================
+  // FOCUS VIEW — complete redesign
+  // Top-down: Grandparent → Parent (+siblings) → ★ SELF → Children
+  // ============================================================
+
   function renderFocus() {
     var container = state.container;
     if (!container) return;
 
+    // Remove any previous resize handler
+    if (container._focusResizeHandler) {
+      window.removeEventListener('resize', container._focusResizeHandler);
+      container._focusResizeHandler = null;
+    }
+
     var node = state.nodeMap[state.focusNode];
+
+    // No node selected — show normal tree with banner prompt
     if (!node) {
-      // No node focused — render normal tree with focus prompt banner
       container.innerHTML = '';
       renderVertical(state.treeData, computeVisibleSet());
       applySearchHighlights();
       drawLines();
       var banner = document.createElement('div');
       banner.className = 'focus-banner';
-      banner.innerHTML = '<span class="focus-banner-icon">🔍</span> Focus View — click any person to see their family';
+      banner.innerHTML = '<span class="focus-banner-icon">🔍</span> Focus View — click any person card to see their family';
       container.insertBefore(banner, container.firstChild);
       return;
     }
 
-    var wrapper = document.createElement('div');
-    wrapper.className = 'ts-wrapper-focus';
-
-    // Build focus hierarchy:
-    // Row 3 (top): Grandparents (parent's parent)
-    // Row 2: Parents (parent node) + Siblings (other children of parent)
-    // Row 1 (bottom/center): SELF node (focused) + Children
-
-    // Get relationships
+    // Gather relationships
     var parentPath = state.parentMap[state.focusNode];
     var grandparentPath = parentPath ? state.parentMap[parentPath] : null;
-
-    var selfNode = node;
     var parentNode = parentPath ? state.nodeMap[parentPath] : null;
     var grandparentNode = grandparentPath ? state.nodeMap[grandparentPath] : null;
-
-    // Siblings = other children of parent (excluding self)
     var siblings = [];
-    if (parentNode) {
-      parentNode.children.forEach(function(child) {
-        if (child._path !== state.focusNode) {
-          siblings.push(child);
-        }
+    if (parentNode && parentNode.children) {
+      parentNode.children.forEach(function(ch) {
+        if (ch._path !== state.focusNode) siblings.push(ch);
       });
     }
+    var children = node.children || [];
 
-    // Children of self
-    var children = selfNode.children || [];
+    // Wrapper
+    var wrapper = document.createElement('div');
+    wrapper.className = 'ts-wrapper-focus';
+    wrapper.style.position = 'relative';
 
-    // ===== ROW 1: SELF + CHILDREN (bottom) =====
-    var selfRow = document.createElement('div');
-    selfRow.className = 'focus-row focus-row-self';
+    // ---- Controls bar ----
+    var controls = document.createElement('div');
+    controls.className = 'focus-controls';
 
-    var selfLabel = document.createElement('div');
-    selfLabel.className = 'focus-label';
-    selfLabel.textContent = 'SELF';
-    selfRow.appendChild(selfLabel);
+    if (parentPath) {
+      var upBtn = document.createElement('button');
+      upBtn.className = 'focus-btn focus-btn-up';
+      upBtn.innerHTML = '⬆ Up';
+      upBtn.title = 'Go to parent family';
+      (function(pp) {
+        upBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          state.focusNode = pp;
+          renderFocus();
+        });
+      })(parentPath);
+      controls.appendChild(upBtn);
+    }
 
-    var selfCards = document.createElement('div');
-    selfCards.className = 'focus-cards';
-
-    // Self card (highlighted)
-    var selfCard = buildFocusCard(selfNode, true);
-    selfCards.appendChild(selfCard);
-
-    // Children cards
-    children.forEach(function(child) {
-      var childCard = buildFocusCard(child, false, 'child');
-      selfCards.appendChild(childCard);
+    var exitBtn = document.createElement('button');
+    exitBtn.className = 'focus-btn focus-btn-exit';
+    exitBtn.innerHTML = '✕ Exit';
+    exitBtn.title = 'Return to full tree';
+    exitBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      state.focusNode = null;
+      state.layoutMode = 'vertical';
+      render();
     });
+    controls.appendChild(exitBtn);
 
-    selfRow.appendChild(selfCards);
-    wrapper.appendChild(selfRow);
+    // Breadcrumb: show names of focused node
+    var crumb = document.createElement('span');
+    crumb.className = 'focus-breadcrumb';
+    var focusNames = (node.persons || []).map(function(p) { return p.name; }).join(' · ');
+    crumb.textContent = focusNames;
+    controls.appendChild(crumb);
 
-    // ===== ROW 2: PARENTS + SIBLINGS (middle) =====
-    if (parentNode) {
-      var parentRow = document.createElement('div');
-      parentRow.className = 'focus-row focus-row-parents';
+    wrapper.appendChild(controls);
 
-      var parentLabel = document.createElement('div');
-      parentLabel.className = 'focus-label';
-      parentLabel.textContent = 'PARENTS';
-      parentRow.appendChild(parentLabel);
-
-      var parentCards = document.createElement('div');
-      parentCards.className = 'focus-cards';
-
-      var parentCard = buildFocusCard(parentNode, false, 'parent');
-      parentCards.appendChild(parentCard);
-
-      // Siblings
-      siblings.forEach(function(sib) {
-        var sibCard = buildFocusCard(sib, false, 'sibling');
-        parentCards.appendChild(sibCard);
-      });
-
-      parentRow.appendChild(parentCards);
-      wrapper.appendChild(parentRow);
-    }
-
-    // ===== ROW 3: GRANDPARENTS (top) =====
+    // ---- Row: Grandparent ----
     if (grandparentNode) {
-      var gpRow = document.createElement('div');
-      gpRow.className = 'focus-row focus-row-grandparents';
-
-      var gpLabel = document.createElement('div');
-      gpLabel.className = 'focus-label';
-      gpLabel.textContent = 'GRANDPARENTS';
-      gpRow.appendChild(gpLabel);
-
-      var gpCards = document.createElement('div');
-      gpCards.className = 'focus-cards';
-
-      var gpCard = buildFocusCard(grandparentNode, false, 'grandparent');
-      gpCards.appendChild(gpCard);
-
-      gpRow.appendChild(gpCards);
-      wrapper.appendChild(gpRow);
+      var gpSection = buildFocusSection('Grandparent Family', [grandparentNode], 'ancestors');
+      wrapper.appendChild(gpSection);
+      wrapper.appendChild(buildConnector());
     }
 
+    // ---- Row: Parent ----
+    if (parentNode) {
+      var parentSection = buildFocusSection('Parent Family', [parentNode], 'parent');
+      // Siblings as a sub-group
+      if (siblings.length > 0) {
+        var sibGroup = document.createElement('div');
+        sibGroup.className = 'focus-sibling-group';
+        var sibLabel = document.createElement('div');
+        sibLabel.className = 'focus-sibling-label';
+        sibLabel.textContent = 'Sibling Families (' + siblings.length + ')';
+        sibGroup.appendChild(sibLabel);
+        var sibCards = document.createElement('div');
+        sibCards.className = 'focus-sibling-cards';
+        siblings.forEach(function(sib) {
+          sibCards.appendChild(buildFocusCard(sib, 'sibling'));
+        });
+        sibGroup.appendChild(sibCards);
+        parentSection.appendChild(sibGroup);
+      }
+      wrapper.appendChild(parentSection);
+      wrapper.appendChild(buildConnector());
+    }
+
+    // ---- Row: SELF (focused, prominent) ----
+    var selfSection = buildFocusSection('★ This Family', [node], 'self');
+    selfSection.classList.add('focus-section-self');
+    wrapper.appendChild(selfSection);
+
+    // ---- Row: Children ----
+    if (children.length > 0) {
+      wrapper.appendChild(buildConnector());
+      var childSection = buildFocusSection('Children Families (' + children.length + ')', children, 'children');
+      wrapper.appendChild(childSection);
+    }
+
+    container.innerHTML = '';
     container.appendChild(wrapper);
     drawLinesFocus();
+
+    // Redraw lines on resize (debounced)
+    var resizeTimer = null;
+    var onResize = function() {
+      if (resizeTimer) clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function() {
+        drawLinesFocus();
+      }, 150);
+    };
+    container._focusResizeHandler = onResize;
+    window.addEventListener('resize', onResize);
+  }
+
+  function buildFocusSection(label, nodes, role) {
+    var section = document.createElement('div');
+    section.className = 'focus-section focus-section-' + role;
+    section.setAttribute('data-focus-role', role);
+
+    var lbl = document.createElement('div');
+    lbl.className = 'focus-section-label';
+    lbl.textContent = label;
+    section.appendChild(lbl);
+
+    var cardsRow = document.createElement('div');
+    cardsRow.className = 'focus-cards-row';
+    nodes.forEach(function(n) {
+      cardsRow.appendChild(buildFocusCard(n, role));
+    });
+    section.appendChild(cardsRow);
+    return section;
+  }
+
+  function buildConnector() {
+    var c = document.createElement('div');
+    c.className = 'focus-connector';
+    return c;
   }
 
   function findPersonById(id) {
@@ -3544,103 +3593,99 @@ function loadBranch(code) {
     return null;
   }
 
-  function buildFocusCard(node, isFocused, relationship) {
+  function buildFocusCard(node, role) {
+    var isSelf = (role === 'self');
     var card = document.createElement('div');
-    card.className = 'fp-card' + (isFocused ? ' fp-card-focused' : '');
+    card.className = 'fv-card' + (isSelf ? ' fv-card-self' : ' fv-card-other');
     card.setAttribute('data-path', node._path);
-    card.style.borderLeft = '3px solid ' + (node._branchColor || '#999');
-    card.setAttribute('data-focused', isFocused ? 'true' : 'false');
+    card.style.borderColor = node._branchColor || '#c89b3c';
 
     var persons = node.persons || [];
-
-    persons.forEach(function(p, i) {
-      var pEl = document.createElement('div');
-      pEl.className = 'fp-person';
+    persons.forEach(function(p) {
+      var row = document.createElement('div');
+      row.className = 'fv-person-row';
 
       // Name
       var nameEl = document.createElement('span');
-      nameEl.className = 'fp-person-name';
+      nameEl.className = 'fv-name';
       nameEl.textContent = p.name;
-      pEl.appendChild(nameEl);
+      row.appendChild(nameEl);
 
-      // Rel badge
-      var relEl = document.createElement('span');
-      relEl.className = 'fp-person-rel';
-      var relText = REL_LABELS[p.rel] || p.rel || '?';
-      relEl.textContent = relText;
-      pEl.appendChild(relEl);
-
-      // ID badge
-      if (p.id) {
-        var idEl = document.createElement('span');
-        idEl.className = 'fp-person-id';
-        idEl.textContent = p.id;
-        pEl.appendChild(idEl);
+      // Role badge
+      var roleLabels = { '祖': 'Ancestor', '兒': 'Son', '婿': 'Son-in-law', '妻': 'Wife', '媳': 'Daughter-in-law', '女': 'Daughter' };
+      var roleTxt = roleLabels[p.rel] || p.rel || '';
+      if (roleTxt) {
+        var badge = document.createElement('span');
+        badge.className = 'fv-role-badge';
+        badge.textContent = roleTxt;
+        row.appendChild(badge);
       }
 
-      // Parent links (show only for focused card)
-      if (isFocused && (p.father_id || p.mother_id)) {
-        var parentInfo = document.createElement('div');
-        parentInfo.className = 'fp-parent-links';
+      // ID tag
+      if (p.id) {
+        var idTag = document.createElement('span');
+        idTag.className = 'fv-id-tag';
+        idTag.textContent = p.id;
+        row.appendChild(idTag);
+      }
+
+      card.appendChild(row);
+
+      // Parent links (self card only)
+      if (isSelf && (p.father_id || p.mother_id || p.unknown_mother)) {
+        var links = document.createElement('div');
+        links.className = 'fv-parent-links';
         if (p.father_id) {
-          var father = findPersonById(p.father_id);
-          var fatherSpan = document.createElement('span');
-          fatherSpan.className = 'fp-parent-link';
-          fatherSpan.textContent = 'Father: ' + (father ? father.name : p.father_id);
-          parentInfo.appendChild(fatherSpan);
+          var f = findPersonById(p.father_id);
+          var fl = document.createElement('span');
+          fl.className = 'fv-parent-link';
+          fl.textContent = '♂ ' + (f ? f.name : p.father_id);
+          links.appendChild(fl);
         }
         if (p.mother_id) {
-          var mother = findPersonById(p.mother_id);
-          var motherSpan = document.createElement('span');
-          motherSpan.className = 'fp-parent-link';
-          motherSpan.textContent = 'Mother: ' + (mother ? mother.name : p.mother_id);
-          parentInfo.appendChild(motherSpan);
+          var m = findPersonById(p.mother_id);
+          var ml = document.createElement('span');
+          ml.className = 'fv-parent-link';
+          ml.textContent = '♀ ' + (m ? m.name : p.mother_id);
+          links.appendChild(ml);
+        } else if (p.unknown_mother) {
+          var ul = document.createElement('span');
+          ul.className = 'fv-parent-link fv-parent-unknown';
+          ul.textContent = '♀ unknown';
+          links.appendChild(ul);
         }
-        if (p.unknown_mother) {
-          var unkSpan = document.createElement('span');
-          unkSpan.className = 'fp-parent-link fp-parent-unknown';
-          unkSpan.textContent = 'Mother unknown';
-          parentInfo.appendChild(unkSpan);
-        }
-        pEl.appendChild(parentInfo);
+        card.appendChild(links);
       }
 
-      // Birth/death
+      // Dates
       if (p.birth || p.death) {
-        var dates = [];
-        if (p.birth) dates.push('b.' + p.birth);
-        if (p.death) dates.push('d.' + p.death);
-        var dateEl = document.createElement('div');
-        dateEl.className = 'fp-person-dates';
-        dateEl.textContent = dates.join(' ');
-        pEl.appendChild(dateEl);
+        var dates = document.createElement('div');
+        dates.className = 'fv-dates';
+        if (p.birth) dates.textContent += 'b.' + p.birth + ' ';
+        if (p.death) dates.textContent += 'd.' + p.death;
+        card.appendChild(dates);
       }
 
       // Notes
       if (p.notes) {
-        var noteEl = document.createElement('div');
-        noteEl.className = 'fp-person-notes';
-        noteEl.textContent = p.notes;
-        pEl.appendChild(noteEl);
+        var notes = document.createElement('div');
+        notes.className = 'fv-notes';
+        notes.textContent = p.notes;
+        card.appendChild(notes);
       }
-
-      card.appendChild(pEl);
     });
 
-    // Relationship label
-    if (relationship) {
-      var relLabel = document.createElement('div');
-      relLabel.className = 'fp-rel-label';
-      relLabel.textContent = relationship.toUpperCase();
-      card.appendChild(relLabel);
+    // Click to re-focus (non-self cards)
+    if (!isSelf) {
+      card.style.cursor = 'pointer';
+      (function(n) {
+        card.addEventListener('click', function(e) {
+          e.stopPropagation();
+          state.focusNode = n._path;
+          renderFocus();
+        });
+      })(node);
     }
-
-    // Click to re-focus
-    card.addEventListener('click', function(e) {
-      e.stopPropagation();
-      state.focusNode = node._path;
-      if (typeof renderFocus === 'function') renderFocus();
-    });
 
     return card;
   }
@@ -3648,52 +3693,86 @@ function loadBranch(code) {
   function drawLinesFocus() {
     var container = state.container;
     if (!container) return;
-
     var oldSvg = container.querySelector('.ts-lines-svg-focus');
     if (oldSvg) oldSvg.remove();
 
-    // Find all focus rows and draw lines between them
-    var rows = container.querySelectorAll('.focus-row');
-    if (rows.length < 2) return;
+    var wrapper = container.querySelector('.ts-wrapper-focus');
+    if (!wrapper) return;
 
-    // Draw lines from row[i+1] (parent row) bottom-center to row[i] (child row) top-center
+    // SVG overlay on the wrapper
+    var wRect = wrapper.getBoundingClientRect();
+    if (!wRect.width) return;
+
     var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('class', 'ts-lines-svg-focus');
-    svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;';
+    svg.style.cssText = 'position:absolute;top:0;left:0;width:' + wrapper.scrollWidth + 'px;height:' + wrapper.scrollHeight + 'px;pointer-events:none;z-index:0;overflow:visible;';
 
-    for (var i = 0; i < rows.length - 1; i++) {
-      var parentRow = rows[i + 1];
-      var childRow = rows[i];
+    // Draw a vertical elbow from each connector element
+    var connectors = wrapper.querySelectorAll('.focus-connector');
+    connectors.forEach(function(conn) {
+      // Section above connector
+      var above = conn.previousElementSibling;
+      // Section below connector
+      var below = conn.nextElementSibling;
+      if (!above || !below) return;
 
-      var parentCards = parentRow.querySelectorAll('.fp-card');
-      var childCards = childRow.querySelectorAll('.fp-card');
+      // Primary card of above section = first .fv-card in above
+      var aboveCard = above.querySelector('.fv-card');
+      // Primary card of below section = first .fv-card in below
+      var belowCard = below.querySelector('.fv-card-self') || below.querySelector('.fv-card');
+      if (!aboveCard || !belowCard) return;
 
-      // Connect each parent card bottom-center to each child card top-center
-      parentCards.forEach(function(pCard) {
-        childCards.forEach(function(cCard) {
-          var pRect = pCard.getBoundingClientRect();
-          var cRect = cCard.getBoundingClientRect();
-          var wrapperRect = container.getBoundingClientRect();
+      var aRect = aboveCard.getBoundingClientRect();
+      var bRect = belowCard.getBoundingClientRect();
 
-          var x1 = pRect.left + pRect.width / 2 - wrapperRect.left;
-          var y1 = pRect.bottom - wrapperRect.top;
-          var x2 = cRect.left + cRect.width / 2 - wrapperRect.left;
-          var y2 = cRect.top - wrapperRect.top;
+      var x1 = aRect.left + aRect.width / 2 - wRect.left + wrapper.scrollLeft;
+      var y1 = aRect.bottom - wRect.top + wrapper.scrollTop;
+      var x2 = bRect.left + bRect.width / 2 - wRect.left + wrapper.scrollLeft;
+      var y2 = bRect.top - wRect.top + wrapper.scrollTop;
+      var mid = (y1 + y2) / 2;
 
-          var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-          line.setAttribute('x1', x1);
-          line.setAttribute('y1', y1);
-          line.setAttribute('x2', x2);
-          line.setAttribute('y2', y2);
-          line.setAttribute('stroke', '#c89b3c');
-          line.setAttribute('stroke-width', '2');
-          line.setAttribute('stroke-linecap', 'round');
-          svg.appendChild(line);
+      var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      var d = 'M ' + x1 + ' ' + y1 +
+              ' C ' + x1 + ' ' + mid + ', ' + x2 + ' ' + mid + ', ' + x2 + ' ' + y2;
+      path.setAttribute('d', d);
+      path.setAttribute('stroke', '#c89b3c');
+      path.setAttribute('stroke-width', '2');
+      path.setAttribute('fill', 'none');
+      path.setAttribute('stroke-linecap', 'round');
+      svg.appendChild(path);
+    });
+
+    // Also draw lines from self card to each child card
+    var selfSection = wrapper.querySelector('.focus-section-self');
+    var childSection = wrapper.querySelector('.focus-section-children');
+    if (selfSection && childSection) {
+      var selfCard = selfSection.querySelector('.fv-card-self');
+      var childCards = childSection.querySelectorAll('.fv-card');
+      if (selfCard && childCards.length > 0) {
+        var sRect = selfCard.getBoundingClientRect();
+        var sx = sRect.left + sRect.width / 2 - wRect.left;
+        var sy = sRect.bottom - wRect.top;
+
+        childCards.forEach(function(cc) {
+          var cRect = cc.getBoundingClientRect();
+          var cx = cRect.left + cRect.width / 2 - wRect.left;
+          var cy = cRect.top - wRect.top;
+          var cmid = (sy + cy) / 2;
+
+          var cp = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          var cd = 'M ' + sx + ' ' + sy +
+                   ' C ' + sx + ' ' + cmid + ', ' + cx + ' ' + cmid + ', ' + cx + ' ' + cy;
+          cp.setAttribute('d', cd);
+          cp.setAttribute('stroke', '#c89b3c');
+          cp.setAttribute('stroke-width', '1.5');
+          cp.setAttribute('fill', 'none');
+          cp.setAttribute('stroke-opacity', '0.6');
+          svg.appendChild(cp);
         });
-      });
+      }
     }
 
-    container.appendChild(svg);
+    wrapper.appendChild(svg);
   }
 
   // ========================================================================
@@ -4323,91 +4402,210 @@ function loadBranch(code) {
 }
 
 /* ===== Focus View ===== */
+/* ====== Focus View v2 ====== */
 .ts-wrapper-focus {
   display: flex;
   flex-direction: column;
   gap: 0;
-  padding: 32px;
+  padding: 20px 24px 40px;
   align-items: center;
   position: relative;
+  min-width: 320px;
 }
-.focus-row {
+/* Controls bar */
+.focus-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: #fafaf8;
+  border: 1px solid #e8e0d0;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 760px;
+  box-sizing: border-box;
+}
+.focus-btn {
+  padding: 5px 12px;
+  border: 1px solid #d0c8b8;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  color: #555;
+  transition: background 0.15s;
+}
+.focus-btn:hover { background: #f5f0e8; border-color: #c89b3c; }
+.focus-btn-up { color: #7a5c1a; border-color: #c89b3c; }
+.focus-breadcrumb {
+  font-size: 13px;
+  font-weight: 600;
+  color: #7a5c1a;
+  margin-left: 6px;
+  flex: 1;
+}
+/* Section rows */
+.focus-section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 16px;
+  gap: 10px;
   width: 100%;
-  max-width: 800px;
+  max-width: 900px;
+  padding: 14px 16px;
+  box-sizing: border-box;
 }
-.focus-row-self {
-  background: rgba(200, 155, 60, 0.06);
-  border-radius: 12px;
-  border: 2px solid rgba(200, 155, 60, 0.2);
-}
-.focus-label {
-  font-size: 11px;
+.focus-section-label {
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 2px;
-  color: #999;
-  margin-bottom: 4px;
+  color: #aaa;
+  margin-bottom: 2px;
 }
-.focus-cards {
+.focus-section-self .focus-section-label {
+  color: #c89b3c;
+}
+.focus-section-self {
+  background: rgba(200,155,60,0.06);
+  border: 2px solid rgba(200,155,60,0.35);
+  border-radius: 14px;
+}
+.focus-section-ancestors { opacity: 0.75; }
+.focus-cards-row {
   display: flex;
   flex-direction: row;
   gap: 12px;
-  justify-content: center;
   flex-wrap: wrap;
+  justify-content: center;
 }
-.focus-cards .fp-card {
-  width: 90px;
-  min-height: 70px;
-  cursor: pointer;
-  border: 2px solid #e0d8c8;
+/* Connector between sections */
+.focus-connector {
+  width: 2px;
+  height: 28px;
+  background: rgba(200,155,60,0.35);
+  margin: 0 auto;
 }
-.focus-cards .fp-card:hover {
-  border-color: #c89b3c;
+/* Sibling group inside parent section */
+.focus-sibling-group {
+  width: 100%;
+  margin-top: 10px;
+  border-top: 1px dashed #e0d8c8;
+  padding-top: 10px;
 }
-.focus-cards .fp-card-focused {
-  border-color: #c89b3c;
-  box-shadow: 0 0 0 3px rgba(200, 155, 60, 0.25);
-  background: #fefcf7;
-}
-.focus-cards .fp-card-focused .fp-name {
-  font-size: 16px;
-  font-weight: 700;
-  color: #7a5c1a;
-}
-.fp-person {
-  font-size: 11px;
-  text-align: center;
-  line-height: 1.4;
-  margin: 2px 0;
-}
-.fp-person-rel {
-  margin-left: 3px;
+.focus-sibling-label {
   font-size: 9px;
-  color: #999;
-  font-weight: 400;
-}
-.fp-rel-label {
-  font-size: 8px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
   color: #bbb;
+  margin-bottom: 8px;
+  text-align: center;
+}
+.focus-sibling-cards {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+/* Cards */
+.fv-card {
+  background: #fff;
+  border: 2px solid #e0d8c8;
+  border-radius: 10px;
+  padding: 10px 14px;
+  min-width: 120px;
+  max-width: 200px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  transition: border-color 0.15s, box-shadow 0.15s;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.fv-card-other {
+  cursor: pointer;
+}
+.fv-card-other:hover {
+  border-color: #c89b3c;
+  box-shadow: 0 2px 10px rgba(200,155,60,0.2);
+}
+.fv-card-self {
+  border-color: #c89b3c;
+  background: #fffdf7;
+  box-shadow: 0 2px 16px rgba(200,155,60,0.25);
+  min-width: 160px;
+  font-size: 14px;
+}
+.focus-sibling-cards .fv-card {
+  min-width: 100px;
+  max-width: 150px;
+  font-size: 11px;
+  opacity: 0.85;
+}
+.fv-person-row {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin: 3px 0;
+}
+.fv-name {
+  font-weight: 600;
+  color: #2c2018;
+}
+.fv-card-self .fv-name {
+  font-size: 15px;
+  color: #5a3e10;
+}
+.fv-role-badge {
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 8px;
+  background: #f0ece4;
+  color: #888;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.fv-id-tag {
+  font-size: 8px;
+  color: #ccc;
+  font-family: monospace;
+  margin-left: 2px;
+}
+.fv-parent-links {
   margin-top: 6px;
-  text-align: center;
+  padding-top: 6px;
+  border-top: 1px solid #f0ece4;
+  font-size: 10px;
+  line-height: 1.6;
 }
-.focus-empty {
-  text-align: center;
-  padding: 80px 20px;
+.fv-parent-link {
+  display: block;
+  color: #7a6040;
+}
+.fv-parent-unknown {
+  color: #bbb;
+  font-style: italic;
+}
+.fv-dates {
+  font-size: 9px;
+  color: #aaa;
+  margin-top: 3px;
+}
+.fv-notes {
+  font-size: 9px;
   color: #999;
-  font-size: 18px;
-  font-weight: 400;
+  font-style: italic;
+  margin-top: 3px;
 }
+/* Banner (enter-focus prompt) */
 .focus-banner {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   padding: 10px 16px;
   background: #fefcf7;
   border-bottom: 1px solid rgba(200,155,60,0.25);
@@ -4415,56 +4613,12 @@ function loadBranch(code) {
   color: #7a5c1a;
   text-align: center;
 }
-.focus-banner-icon {
-  margin-right: 6px;
-}
-.fp-person {
-  margin: 3px 0;
-  line-height: 1.3;
-}
-.fp-person-name {
-  font-weight: 600;
-  font-size: 12px;
-}
-.fp-person-rel {
-  margin-left: 3px;
-  font-size: 9px;
-  color: #888;
-  font-weight: 400;
-  background: #f0ece4;
-  padding: 1px 5px;
-  border-radius: 8px;
-}
-.fp-person-id {
-  display: block;
-  font-size: 8px;
-  color: #ccc;
-  font-family: monospace;
-  margin-top: 1px;
-}
-.fp-parent-links {
-  margin-top: 4px;
-  font-size: 9px;
-  line-height: 1.4;
-}
-.fp-parent-link {
-  display: block;
-  color: #888;
-}
-.fp-parent-unknown {
-  color: #bbb;
-  font-style: italic;
-}
-.fp-person-dates {
-  font-size: 9px;
-  color: #aaa;
-  margin-top: 2px;
-}
-.fp-person-notes {
-  font-size: 9px;
+.focus-banner-icon { margin-right: 6px; }
+.focus-empty {
+  text-align: center;
+  padding: 80px 20px;
   color: #999;
-  font-style: italic;
-  margin-top: 2px;
+  font-size: 18px;
 }
 `;
     document.head.appendChild(style);
