@@ -3699,33 +3699,6 @@ function loadBranch(code) {
 
       card.appendChild(row);
 
-      // Parent links (self card only, primary Hu person only)
-      var isHuPerson = p.name && p.name.charAt(0) === '胡';
-      if (isSelf && isHuPerson && (p.father_id || p.mother_id || p.unknown_mother)) {
-        var links = document.createElement('div');
-        links.className = 'fv-parent-links';
-        if (p.father_id) {
-          var f = findPersonById(p.father_id);
-          var fl = document.createElement('span');
-          fl.className = 'fv-parent-link';
-          fl.textContent = '♂ ' + (f ? f.name : p.father_id);
-          links.appendChild(fl);
-        }
-        if (p.mother_id) {
-          var m = findPersonById(p.mother_id);
-          var ml = document.createElement('span');
-          ml.className = 'fv-parent-link';
-          ml.textContent = '♀ ' + (m ? m.name : p.mother_id);
-          links.appendChild(ml);
-        } else if (p.unknown_mother) {
-          var ul = document.createElement('span');
-          ul.className = 'fv-parent-link fv-parent-unknown';
-          ul.textContent = '♀ unknown';
-          links.appendChild(ul);
-        }
-        card.appendChild(links);
-      }
-
       // Dates
       if (p.birth || p.death) {
         var dates = document.createElement('div');
