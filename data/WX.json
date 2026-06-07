@@ -1105,6 +1105,22 @@
       {
         "persons": [
           {
+            "name": "胡龙迪",
+            "rel": "兒",
+            "id": "WX_103",
+            "father_id": "WX_001",
+            "mother_id": null,
+            "unknown_mother": true,
+            "birth": null,
+            "death": null,
+            "notes": null
+          }
+        ],
+        "children": []
+      },
+      {
+        "persons": [
+          {
             "name": "胡龙勇",
             "rel": "兒",
             "id": "WX_079",
