@@ -2926,14 +2926,14 @@
           {
             "persons": [
               {
-                "name": "龚百淋",
+                "name": "龚百煒",
                 "rel": "兒",
                 "id": "WX_117",
                 "father_id": "WX_114",
                 "mother_id": "WX_115",
                 "birth": null,
                 "death": null,
-                "notes": null
+                "notes": "Born in Australia. English name: Jason Koong"
               }
             ],
             "children": []
