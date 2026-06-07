@@ -3507,26 +3507,97 @@ function loadBranch(code) {
     drawLinesFocus();
   }
 
+  function findPersonById(id) {
+    if (!id) return null;
+    for (var path in state.nodeMap) {
+      var node = state.nodeMap[path];
+      var persons = node.persons || [];
+      for (var i = 0; i < persons.length; i++) {
+        if (persons[i].id === id) return persons[i];
+      }
+    }
+    return null;
+  }
+
   function buildFocusCard(node, isFocused, relationship) {
     var card = document.createElement('div');
     card.className = 'fp-card' + (isFocused ? ' fp-card-focused' : '');
     card.setAttribute('data-path', node._path);
     card.style.borderLeft = '3px solid ' + (node._branchColor || '#999');
+    card.setAttribute('data-focused', isFocused ? 'true' : 'false');
 
-    // Persons
     var persons = node.persons || [];
 
-    // Show all persons in a compact list
     persons.forEach(function(p, i) {
       var pEl = document.createElement('div');
       pEl.className = 'fp-person';
-      pEl.textContent = p.name;
 
+      // Name
+      var nameEl = document.createElement('span');
+      nameEl.className = 'fp-person-name';
+      nameEl.textContent = p.name;
+      pEl.appendChild(nameEl);
+
+      // Rel badge
       var relEl = document.createElement('span');
       relEl.className = 'fp-person-rel';
       var relText = REL_LABELS[p.rel] || p.rel || '?';
       relEl.textContent = relText;
       pEl.appendChild(relEl);
+
+      // ID badge
+      if (p.id) {
+        var idEl = document.createElement('span');
+        idEl.className = 'fp-person-id';
+        idEl.textContent = p.id;
+        pEl.appendChild(idEl);
+      }
+
+      // Parent links (show only for focused card)
+      if (isFocused && (p.father_id || p.mother_id)) {
+        var parentInfo = document.createElement('div');
+        parentInfo.className = 'fp-parent-links';
+        if (p.father_id) {
+          var father = findPersonById(p.father_id);
+          var fatherSpan = document.createElement('span');
+          fatherSpan.className = 'fp-parent-link';
+          fatherSpan.textContent = 'Father: ' + (father ? father.name : p.father_id);
+          parentInfo.appendChild(fatherSpan);
+        }
+        if (p.mother_id) {
+          var mother = findPersonById(p.mother_id);
+          var motherSpan = document.createElement('span');
+          motherSpan.className = 'fp-parent-link';
+          motherSpan.textContent = 'Mother: ' + (mother ? mother.name : p.mother_id);
+          parentInfo.appendChild(motherSpan);
+        }
+        if (p.unknown_mother) {
+          var unkSpan = document.createElement('span');
+          unkSpan.className = 'fp-parent-link fp-parent-unknown';
+          unkSpan.textContent = 'Mother unknown';
+          parentInfo.appendChild(unkSpan);
+        }
+        pEl.appendChild(parentInfo);
+      }
+
+      // Birth/death
+      if (p.birth || p.death) {
+        var dates = [];
+        if (p.birth) dates.push('b.' + p.birth);
+        if (p.death) dates.push('d.' + p.death);
+        var dateEl = document.createElement('div');
+        dateEl.className = 'fp-person-dates';
+        dateEl.textContent = dates.join(' ');
+        pEl.appendChild(dateEl);
+      }
+
+      // Notes
+      if (p.notes) {
+        var noteEl = document.createElement('div');
+        noteEl.className = 'fp-person-notes';
+        noteEl.textContent = p.notes;
+        pEl.appendChild(noteEl);
+      }
 
       card.appendChild(pEl);
     });
@@ -3539,7 +3610,7 @@ function loadBranch(code) {
       card.appendChild(relLabel);
     }
 
-    // Click to re-focus (focus on this node instead)
+    // Click to re-focus
     card.addEventListener('click', function(e) {
       e.stopPropagation();
       state.focusNode = node._path;
@@ -4310,6 +4381,54 @@ function loadBranch(code) {
   color: #999;
   font-size: 18px;
   font-weight: 400;
+}
+.fp-person {
+  margin: 3px 0;
+  line-height: 1.3;
+}
+.fp-person-name {
+  font-weight: 600;
+  font-size: 12px;
+}
+.fp-person-rel {
+  margin-left: 3px;
+  font-size: 9px;
+  color: #888;
+  font-weight: 400;
+  background: #f0ece4;
+  padding: 1px 5px;
+  border-radius: 8px;
+}
+.fp-person-id {
+  display: block;
+  font-size: 8px;
+  color: #ccc;
+  font-family: monospace;
+  margin-top: 1px;
+}
+.fp-parent-links {
+  margin-top: 4px;
+  font-size: 9px;
+  line-height: 1.4;
+}
+.fp-parent-link {
+  display: block;
+  color: #888;
+}
+.fp-parent-unknown {
+  color: #bbb;
+  font-style: italic;
+}
+.fp-person-dates {
+  font-size: 9px;
+  color: #aaa;
+  margin-top: 2px;
+}
+.fp-person-notes {
+  font-size: 9px;
+  color: #999;
+  font-style: italic;
+  margin-top: 2px;
 }
 `;
     document.head.appendChild(style);

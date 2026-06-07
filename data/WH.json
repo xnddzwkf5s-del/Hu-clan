@@ -7,11 +7,23 @@
     "persons": [
       {
         "name": "胡维豪",
-        "rel": "祖"
+        "rel": "祖",
+        "id": "WH_001",
+        "birth": null,
+        "death": null,
+        "notes": null,
+        "father_id": null,
+        "mother_id": null
       },
       {
         "name": "关金笑",
-        "rel": "妻"
+        "rel": "妻",
+        "id": "WH_002",
+        "birth": null,
+        "death": null,
+        "notes": null,
+        "father_id": null,
+        "mother_id": null
       }
     ],
     "children": [
@@ -19,15 +31,33 @@
         "persons": [
           {
             "name": "胡开基",
-            "rel": "兒"
+            "rel": "兒",
+            "id": "WH_003",
+            "birth": null,
+            "death": null,
+            "notes": null,
+            "father_id": "WH_001",
+            "mother_id": "WH_002"
           },
           {
             "name": "刘桂春",
-            "rel": "媳"
+            "rel": "媳",
+            "id": "WH_004",
+            "birth": null,
+            "death": null,
+            "notes": null,
+            "father_id": "WH_001",
+            "mother_id": "WH_002"
           },
           {
             "name": "刘开兰",
-            "rel": "媳"
+            "rel": "媳",
+            "id": "WH_005",
+            "birth": null,
+            "death": null,
+            "notes": null,
+            "father_id": "WH_001",
+            "mother_id": "WH_002"
           }
         ],
         "children": [
@@ -35,11 +65,25 @@
             "persons": [
               {
                 "name": "胡健明",
-                "rel": "兒"
+                "rel": "兒",
+                "id": "WH_006",
+                "birth": null,
+                "death": null,
+                "notes": null,
+                "father_id": "WH_003",
+                "mother_id": null,
+                "unknown_mother": true
               },
               {
                 "name": "陈惠珠",
-                "rel": "媳"
+                "rel": "媳",
+                "id": "WH_007",
+                "birth": null,
+                "death": null,
+                "notes": null,
+                "father_id": "WH_003",
+                "mother_id": null,
+                "unknown_mother": true
               }
             ],
             "children": [
@@ -47,7 +91,13 @@
                 "persons": [
                   {
                     "name": "陈翔辉",
-                    "rel": "婿"
+                    "rel": "婿",
+                    "id": "WH_008",
+                    "birth": null,
+                    "death": null,
+                    "notes": null,
+                    "father_id": "WH_006",
+                    "mother_id": "WH_007"
                   }
                 ],
                 "children": []
@@ -56,7 +106,13 @@
                 "persons": [
                   {
                     "name": "陈凤芬",
-                    "rel": "女"
+                    "rel": "女",
+                    "id": "WH_009",
+                    "birth": null,
+                    "death": null,
+                    "notes": null,
+                    "father_id": "WH_006",
+                    "mother_id": "WH_007"
                   }
                 ],
                 "children": []
@@ -65,7 +121,13 @@
                 "persons": [
                   {
                     "name": "陈翔伟",
-                    "rel": "兒"
+                    "rel": "兒",
+                    "id": "WH_010",
+                    "birth": null,
+                    "death": null,
+                    "notes": null,
+                    "father_id": "WH_006",
+                    "mother_id": "WH_007"
                   }
                 ],
                 "children": []
@@ -76,11 +138,25 @@
             "persons": [
               {
                 "name": "胡辉强",
-                "rel": "兒"
+                "rel": "兒",
+                "id": "WH_011",
+                "birth": null,
+                "death": null,
+                "notes": null,
+                "father_id": "WH_003",
+                "mother_id": null,
+                "unknown_mother": true
               },
               {
                 "name": "谢士莲",
-                "rel": "媳"
+                "rel": "媳",
+                "id": "WH_012",
+                "birth": null,
+                "death": null,
+                "notes": null,
+                "father_id": "WH_003",
+                "mother_id": null,
+                "unknown_mother": true
               }
             ],
             "children": [
@@ -88,7 +164,13 @@
                 "persons": [
                   {
                     "name": "胡淑娴",
-                    "rel": "女"
+                    "rel": "女",
+                    "id": "WH_013",
+                    "birth": null,
+                    "death": null,
+                    "notes": null,
+                    "father_id": "WH_011",
+                    "mother_id": "WH_012"
                   }
                 ],
                 "children": []
@@ -97,7 +179,13 @@
                 "persons": [
                   {
                     "name": "胡淑蓉",
-                    "rel": "女"
+                    "rel": "女",
+                    "id": "WH_014",
+                    "birth": null,
+                    "death": null,
+                    "notes": null,
+                    "father_id": "WH_011",
+                    "mother_id": "WH_012"
                   }
                 ],
                 "children": []
@@ -108,11 +196,25 @@
             "persons": [
               {
                 "name": "胡辉光",
-                "rel": "兒"
+                "rel": "兒",
+                "id": "WH_015",
+                "birth": null,
+                "death": null,
+                "notes": null,
+                "father_id": "WH_003",
+                "mother_id": null,
+                "unknown_mother": true
               },
               {
                 "name": "林细妹",
-                "rel": "媳"
+                "rel": "媳",
+                "id": "WH_016",
+                "birth": null,
+                "death": null,
+                "notes": null,
+                "father_id": "WH_003",
+                "mother_id": null,
+                "unknown_mother": true
               }
             ],
             "children": []
@@ -121,7 +223,14 @@
             "persons": [
               {
                 "name": "胡辉鸿",
-                "rel": "兒"
+                "rel": "兒",
+                "id": "WH_017",
+                "birth": null,
+                "death": null,
+                "notes": null,
+                "father_id": "WH_003",
+                "mother_id": null,
+                "unknown_mother": true
               }
             ],
             "children": []
@@ -130,11 +239,25 @@
             "persons": [
               {
                 "name": "李发",
-                "rel": "婿"
+                "rel": "婿",
+                "id": "WH_018",
+                "birth": null,
+                "death": null,
+                "notes": null,
+                "father_id": "WH_003",
+                "mother_id": null,
+                "unknown_mother": true
               },
               {
                 "name": "胡玉宝",
-                "rel": "女"
+                "rel": "女",
+                "id": "WH_019",
+                "birth": null,
+                "death": null,
+                "notes": null,
+                "father_id": "WH_003",
+                "mother_id": null,
+                "unknown_mother": true
               }
             ],
             "children": []
@@ -145,11 +268,23 @@
         "persons": [
           {
             "name": "张伟瑶",
-            "rel": "婿"
+            "rel": "婿",
+            "id": "WH_020",
+            "birth": null,
+            "death": null,
+            "notes": null,
+            "father_id": "WH_001",
+            "mother_id": "WH_002"
           },
           {
             "name": "胡美娟",
-            "rel": "女"
+            "rel": "女",
+            "id": "WH_021",
+            "birth": null,
+            "death": null,
+            "notes": null,
+            "father_id": "WH_001",
+            "mother_id": "WH_002"
           }
         ],
         "children": [
@@ -157,11 +292,23 @@
             "persons": [
               {
                 "name": "刘丰登",
-                "rel": "婿"
+                "rel": "婿",
+                "id": "WH_022",
+                "birth": null,
+                "death": null,
+                "notes": null,
+                "father_id": "WH_020",
+                "mother_id": "WH_021"
               },
               {
                 "name": "张玉莲",
-                "rel": "女"
+                "rel": "女",
+                "id": "WH_023",
+                "birth": null,
+                "death": null,
+                "notes": null,
+                "father_id": "WH_020",
+                "mother_id": "WH_021"
               }
             ],
             "children": []
@@ -172,11 +319,23 @@
         "persons": [
           {
             "name": "张国明",
-            "rel": "兒"
+            "rel": "兒",
+            "id": "WH_024",
+            "birth": null,
+            "death": null,
+            "notes": null,
+            "father_id": "WH_001",
+            "mother_id": "WH_002"
           },
           {
             "name": "邱郁敏",
-            "rel": "媳"
+            "rel": "媳",
+            "id": "WH_025",
+            "birth": null,
+            "death": null,
+            "notes": null,
+            "father_id": "WH_001",
+            "mother_id": "WH_002"
           }
         ],
         "children": []
@@ -185,15 +344,32 @@
         "persons": [
           {
             "name": "陈锦适",
-            "rel": "婿"
+            "rel": "婿",
+            "id": "WH_026",
+            "birth": null,
+            "death": null,
+            "notes": null,
+            "father_id": "WH_001",
+            "mother_id": "WH_002"
           },
           {
             "name": "张玉萍",
-            "rel": "女"
+            "rel": "女",
+            "id": "WH_027",
+            "birth": null,
+            "death": null,
+            "notes": null,
+            "father_id": "WH_001",
+            "mother_id": "WH_002"
           }
         ],
         "children": []
       }
     ]
+  },
+  "_meta": {
+    "version": 2,
+    "schema": "person-centric",
+    "description": "Each person has a unique ID. father_id/mother_id link to parent IDs. unknown_mother=true when mother cannot be determined from data. Add birth, death, notes as needed."
   }
 }

@@ -7,11 +7,23 @@
     "persons": [
       {
         "name": "胡维富",
-        "rel": "祖"
+        "rel": "祖",
+        "id": "WF_001",
+        "birth": null,
+        "death": null,
+        "notes": null,
+        "father_id": null,
+        "mother_id": null
       },
       {
         "name": "关月眉",
-        "rel": "妻"
+        "rel": "妻",
+        "id": "WF_002",
+        "birth": null,
+        "death": null,
+        "notes": null,
+        "father_id": null,
+        "mother_id": null
       }
     ],
     "children": [
@@ -19,11 +31,23 @@
         "persons": [
           {
             "name": "胡现龙",
-            "rel": "兒"
+            "rel": "兒",
+            "id": "WF_003",
+            "birth": null,
+            "death": null,
+            "notes": null,
+            "father_id": "WF_001",
+            "mother_id": "WF_002"
           },
           {
             "name": "李亚明",
-            "rel": "媳"
+            "rel": "媳",
+            "id": "WF_004",
+            "birth": null,
+            "death": null,
+            "notes": null,
+            "father_id": "WF_001",
+            "mother_id": "WF_002"
           }
         ],
         "children": [
@@ -31,11 +55,23 @@
             "persons": [
               {
                 "name": "陈潮生",
-                "rel": "婿"
+                "rel": "婿",
+                "id": "WF_005",
+                "birth": null,
+                "death": null,
+                "notes": null,
+                "father_id": "WF_003",
+                "mother_id": "WF_004"
               },
               {
                 "name": "胡月莲",
-                "rel": "女"
+                "rel": "女",
+                "id": "WF_006",
+                "birth": null,
+                "death": null,
+                "notes": null,
+                "father_id": "WF_003",
+                "mother_id": "WF_004"
               }
             ],
             "children": [
@@ -43,7 +79,13 @@
                 "persons": [
                   {
                     "name": "陈素仪",
-                    "rel": "女"
+                    "rel": "女",
+                    "id": "WF_007",
+                    "birth": null,
+                    "death": null,
+                    "notes": null,
+                    "father_id": "WF_005",
+                    "mother_id": "WF_006"
                   }
                 ],
                 "children": []
@@ -54,11 +96,23 @@
             "persons": [
               {
                 "name": "洪及元",
-                "rel": "婿"
+                "rel": "婿",
+                "id": "WF_008",
+                "birth": null,
+                "death": null,
+                "notes": null,
+                "father_id": "WF_003",
+                "mother_id": "WF_004"
               },
               {
                 "name": "胡元英",
-                "rel": "女"
+                "rel": "女",
+                "id": "WF_009",
+                "birth": null,
+                "death": null,
+                "notes": null,
+                "father_id": "WF_003",
+                "mother_id": "WF_004"
               }
             ],
             "children": [
@@ -66,7 +120,13 @@
                 "persons": [
                   {
                     "name": "洪楚彬",
-                    "rel": "兒"
+                    "rel": "兒",
+                    "id": "WF_010",
+                    "birth": null,
+                    "death": null,
+                    "notes": null,
+                    "father_id": "WF_008",
+                    "mother_id": "WF_009"
                   }
                 ],
                 "children": []
@@ -75,7 +135,13 @@
                 "persons": [
                   {
                     "name": "洪有瑞",
-                    "rel": "女"
+                    "rel": "女",
+                    "id": "WF_011",
+                    "birth": null,
+                    "death": null,
+                    "notes": null,
+                    "father_id": "WF_008",
+                    "mother_id": "WF_009"
                   }
                 ],
                 "children": []
@@ -88,7 +154,13 @@
         "persons": [
           {
             "name": "胡业龙",
-            "rel": "兒"
+            "rel": "兒",
+            "id": "WF_012",
+            "birth": null,
+            "death": null,
+            "notes": null,
+            "father_id": "WF_001",
+            "mother_id": "WF_002"
           }
         ],
         "children": []
@@ -97,11 +169,23 @@
         "persons": [
           {
             "name": "胡均龙",
-            "rel": "兒"
+            "rel": "兒",
+            "id": "WF_013",
+            "birth": null,
+            "death": null,
+            "notes": null,
+            "father_id": "WF_001",
+            "mother_id": "WF_002"
           },
           {
             "name": "关如娣",
-            "rel": "媳"
+            "rel": "媳",
+            "id": "WF_014",
+            "birth": null,
+            "death": null,
+            "notes": null,
+            "father_id": "WF_001",
+            "mother_id": "WF_002"
           }
         ],
         "children": [
@@ -109,11 +193,23 @@
             "persons": [
               {
                 "name": "胡志雄",
-                "rel": "兒"
+                "rel": "兒",
+                "id": "WF_015",
+                "birth": null,
+                "death": null,
+                "notes": null,
+                "father_id": "WF_013",
+                "mother_id": "WF_014"
               },
               {
                 "name": "陈祖梅",
-                "rel": "媳"
+                "rel": "媳",
+                "id": "WF_016",
+                "birth": null,
+                "death": null,
+                "notes": null,
+                "father_id": "WF_013",
+                "mother_id": "WF_014"
               }
             ],
             "children": [
@@ -121,7 +217,13 @@
                 "persons": [
                   {
                     "name": "胡宏骏",
-                    "rel": "兒"
+                    "rel": "兒",
+                    "id": "WF_017",
+                    "birth": null,
+                    "death": null,
+                    "notes": null,
+                    "father_id": "WF_015",
+                    "mother_id": "WF_016"
                   }
                 ],
                 "children": []
@@ -130,7 +232,13 @@
                 "persons": [
                   {
                     "name": "胡诗敏",
-                    "rel": "女"
+                    "rel": "女",
+                    "id": "WF_018",
+                    "birth": null,
+                    "death": null,
+                    "notes": null,
+                    "father_id": "WF_015",
+                    "mother_id": "WF_016"
                   }
                 ],
                 "children": []
@@ -139,7 +247,13 @@
                 "persons": [
                   {
                     "name": "胡诗雅",
-                    "rel": "女"
+                    "rel": "女",
+                    "id": "WF_019",
+                    "birth": null,
+                    "death": null,
+                    "notes": null,
+                    "father_id": "WF_015",
+                    "mother_id": "WF_016"
                   }
                 ],
                 "children": []
@@ -150,7 +264,13 @@
             "persons": [
               {
                 "name": "胡齐爱",
-                "rel": "女"
+                "rel": "女",
+                "id": "WF_020",
+                "birth": null,
+                "death": null,
+                "notes": null,
+                "father_id": "WF_013",
+                "mother_id": "WF_014"
               }
             ],
             "children": []
@@ -159,7 +279,13 @@
             "persons": [
               {
                 "name": "胡西回",
-                "rel": "兒"
+                "rel": "兒",
+                "id": "WF_021",
+                "birth": null,
+                "death": null,
+                "notes": null,
+                "father_id": "WF_013",
+                "mother_id": "WF_014"
               }
             ],
             "children": []
@@ -170,7 +296,13 @@
         "persons": [
           {
             "name": "胡锐龙",
-            "rel": "兒"
+            "rel": "兒",
+            "id": "WF_022",
+            "birth": null,
+            "death": null,
+            "notes": null,
+            "father_id": "WF_001",
+            "mother_id": "WF_002"
           }
         ],
         "children": [
@@ -178,7 +310,13 @@
             "persons": [
               {
                 "name": "胡景群",
-                "rel": "女"
+                "rel": "女",
+                "id": "WF_023",
+                "birth": null,
+                "death": null,
+                "notes": null,
+                "father_id": "WF_022",
+                "mother_id": "WF_002"
               }
             ],
             "children": []
@@ -189,7 +327,13 @@
         "persons": [
           {
             "name": "胡运女",
-            "rel": "女"
+            "rel": "女",
+            "id": "WF_024",
+            "birth": null,
+            "death": null,
+            "notes": null,
+            "father_id": "WF_001",
+            "mother_id": "WF_002"
           }
         ],
         "children": []
@@ -198,11 +342,23 @@
         "persons": [
           {
             "name": "麦志光",
-            "rel": "婿"
+            "rel": "婿",
+            "id": "WF_025",
+            "birth": null,
+            "death": null,
+            "notes": null,
+            "father_id": "WF_001",
+            "mother_id": "WF_002"
           },
           {
             "name": "胡超仪",
-            "rel": "女"
+            "rel": "女",
+            "id": "WF_026",
+            "birth": null,
+            "death": null,
+            "notes": null,
+            "father_id": "WF_001",
+            "mother_id": "WF_002"
           }
         ],
         "children": [
@@ -210,7 +366,13 @@
             "persons": [
               {
                 "name": "麦永海",
-                "rel": "兒"
+                "rel": "兒",
+                "id": "WF_027",
+                "birth": null,
+                "death": null,
+                "notes": null,
+                "father_id": "WF_025",
+                "mother_id": "WF_026"
               }
             ],
             "children": []
@@ -219,7 +381,13 @@
             "persons": [
               {
                 "name": "麦永曙",
-                "rel": "兒"
+                "rel": "兒",
+                "id": "WF_028",
+                "birth": null,
+                "death": null,
+                "notes": null,
+                "father_id": "WF_025",
+                "mother_id": "WF_026"
               }
             ],
             "children": []
@@ -228,7 +396,13 @@
             "persons": [
               {
                 "name": "麦永岳",
-                "rel": "兒"
+                "rel": "兒",
+                "id": "WF_029",
+                "birth": null,
+                "death": null,
+                "notes": null,
+                "father_id": "WF_025",
+                "mother_id": "WF_026"
               }
             ],
             "children": []
@@ -237,7 +411,13 @@
             "persons": [
               {
                 "name": "麦永波",
-                "rel": "兒"
+                "rel": "兒",
+                "id": "WF_030",
+                "birth": null,
+                "death": null,
+                "notes": null,
+                "father_id": "WF_025",
+                "mother_id": "WF_026"
               }
             ],
             "children": []
@@ -246,7 +426,13 @@
             "persons": [
               {
                 "name": "麦美英",
-                "rel": "女"
+                "rel": "女",
+                "id": "WF_031",
+                "birth": null,
+                "death": null,
+                "notes": null,
+                "father_id": "WF_025",
+                "mother_id": "WF_026"
               }
             ],
             "children": []
@@ -254,5 +440,10 @@
         ]
       }
     ]
+  },
+  "_meta": {
+    "version": 2,
+    "schema": "person-centric",
+    "description": "Each person has a unique ID. father_id/mother_id link to parent IDs. unknown_mother=true when mother cannot be determined from data. Add birth, death, notes as needed."
   }
 }

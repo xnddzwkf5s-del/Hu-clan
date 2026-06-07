@@ -7,9 +7,20 @@
     "persons": [
       {
         "name": "胡维有",
-        "rel": "?"
+        "rel": "?",
+        "id": "WU_001",
+        "birth": null,
+        "death": null,
+        "notes": null,
+        "father_id": null,
+        "mother_id": null
       }
     ],
     "children": []
+  },
+  "_meta": {
+    "version": 2,
+    "schema": "person-centric",
+    "description": "Each person has a unique ID. father_id/mother_id link to parent IDs. unknown_mother=true when mother cannot be determined from data. Add birth, death, notes as needed."
   }
 }

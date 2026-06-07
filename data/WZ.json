@@ -7,7 +7,13 @@
     "persons": [
       {
         "name": "胡旺忠",
-        "rel": "?"
+        "rel": "?",
+        "id": "WZ_001",
+        "birth": null,
+        "death": null,
+        "notes": null,
+        "father_id": null,
+        "mother_id": null
       }
     ],
     "children": [
@@ -15,7 +21,13 @@
         "persons": [
           {
             "name": "胡顺兴",
-            "rel": "兒"
+            "rel": "兒",
+            "id": "WZ_002",
+            "birth": null,
+            "death": null,
+            "notes": null,
+            "father_id": null,
+            "mother_id": null
           }
         ],
         "children": []
@@ -24,7 +36,13 @@
         "persons": [
           {
             "name": "胡顺华",
-            "rel": "兒"
+            "rel": "兒",
+            "id": "WZ_003",
+            "birth": null,
+            "death": null,
+            "notes": null,
+            "father_id": null,
+            "mother_id": null
           }
         ],
         "children": []
@@ -33,7 +51,13 @@
         "persons": [
           {
             "name": "胡顺均",
-            "rel": "兒"
+            "rel": "兒",
+            "id": "WZ_004",
+            "birth": null,
+            "death": null,
+            "notes": null,
+            "father_id": null,
+            "mother_id": null
           }
         ],
         "children": []
@@ -42,7 +66,13 @@
         "persons": [
           {
             "name": "胡顺五",
-            "rel": "兒"
+            "rel": "兒",
+            "id": "WZ_005",
+            "birth": null,
+            "death": null,
+            "notes": null,
+            "father_id": null,
+            "mother_id": null
           }
         ],
         "children": []
@@ -51,7 +81,13 @@
         "persons": [
           {
             "name": "胡顺肇",
-            "rel": "兒"
+            "rel": "兒",
+            "id": "WZ_006",
+            "birth": null,
+            "death": null,
+            "notes": null,
+            "father_id": null,
+            "mother_id": null
           }
         ],
         "children": []
@@ -60,11 +96,22 @@
         "persons": [
           {
             "name": "胡金儿",
-            "rel": "女"
+            "rel": "女",
+            "id": "WZ_007",
+            "birth": null,
+            "death": null,
+            "notes": null,
+            "father_id": null,
+            "mother_id": null
           }
         ],
         "children": []
       }
     ]
+  },
+  "_meta": {
+    "version": 2,
+    "schema": "person-centric",
+    "description": "Each person has a unique ID. father_id/mother_id link to parent IDs. unknown_mother=true when mother cannot be determined from data. Add birth, death, notes as needed."
   }
 }
