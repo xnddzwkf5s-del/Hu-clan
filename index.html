@@ -3507,6 +3507,20 @@ function loadBranch(code) {
       controls.appendChild(upBtn);
     }
 
+    // Details toggle
+    var detBtn = document.createElement('button');
+    detBtn.className = 'focus-btn focus-btn-details';
+    detBtn.innerHTML = '📋 All';
+    detBtn.title = 'Show/hide birth, death, notes on all cards';
+    (function(detBtn) {
+      detBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        wrapper.classList.toggle('show-details');
+        detBtn.classList.toggle('active');
+      });
+    })(detBtn);
+    controls.appendChild(detBtn);
+
     var exitBtn = document.createElement('button');
     exitBtn.className = 'focus-btn focus-btn-exit';
     exitBtn.innerHTML = '✕ Exit';
@@ -3709,21 +3723,17 @@ function loadBranch(code) {
 
       card.appendChild(row);
 
-      // Dates
-      if (p.birth || p.death) {
-        var dates = document.createElement('div');
-        dates.className = 'fv-dates';
-        if (p.birth) dates.textContent += 'b.' + p.birth + ' ';
-        if (p.death) dates.textContent += 'd.' + p.death;
-        card.appendChild(dates);
-      }
-
-      // Notes
-      if (p.notes) {
-        var notes = document.createElement('div');
-        notes.className = 'fv-notes';
-        notes.textContent = p.notes;
-        card.appendChild(notes);
+      // Inline details (hidden by default, toggled with 📋 button)
+      var hasDetail = p.birth || p.death || p.notes;
+      if (hasDetail) {
+        var detailDiv = document.createElement('div');
+        detailDiv.className = 'fv-inline-detail';
+        var parts = [];
+        if (p.birth) parts.push('Born ' + p.birth);
+        if (p.death) parts.push('Died ' + p.death);
+        if (p.notes) parts.push(p.notes);
+        detailDiv.textContent = parts.join(' · ');
+        card.appendChild(detailDiv);
       }
     });
 
@@ -4569,6 +4579,8 @@ function loadBranch(code) {
 }
 .focus-btn:hover { background: #f5f0e8; border-color: #c89b3c; }
 .focus-btn-up { color: #7a5c1a; border-color: #c89b3c; }
+.focus-btn-details { color: #555; border-color: #d8d0c0; }
+.focus-btn-details.active { background: #1a1a2e; color: #c89b3c; border-color: #1a1a2e; }
 .focus-breadcrumb {
   font-size: 13px;
   font-weight: 600;
@@ -4806,6 +4818,19 @@ function loadBranch(code) {
   font-style: italic;
   margin-top: 3px;
 }
+/* Inline detail (toggled via 📋 button on Focus View) */
+.fv-inline-detail {
+  display: none;
+  font-size: 9px;
+  color: #888;
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid #f0ece4;
+  line-height: 1.4;
+}
+.show-details .fv-inline-detail { display: block; }
+/* Self card always shows details */
+.fv-card-self .fv-inline-detail { display: block; }
 /* Banner (enter-focus prompt) */
 .focus-banner {
   position: sticky;
