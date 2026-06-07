@@ -1723,7 +1723,7 @@ function loadBranch(code) {
     '?':  { text: '?',  bg: '#6b7280', cls: 'rel-unknown' },
   };
 
-  const DEFAULT_EXPAND_GENS = 2;  // top N generations expanded by default
+  const DEFAULT_EXPAND_GENS = 1;  // top N generations expanded by default
 
   // ========================================================================
   // STATE
@@ -1907,8 +1907,9 @@ function loadBranch(code) {
    */
   function createPersonBadge(person, branchColor, nodePath) {
     var relStyle = REL_STYLES[person.rel] || REL_STYLES['?'];
+    var isHu = person.name && person.name.charAt(0) === '胡';
     var card = document.createElement('div');
-    card.className = 'person-card';
+    card.className = 'person-card' + (isHu ? ' person-primary' : ' person-secondary');
     card.setAttribute('data-path', nodePath);
     card.setAttribute('data-queryable', '1');
 
@@ -2634,7 +2635,7 @@ function loadBranch(code) {
     '?': '?',
   };
 
-  const DEFAULT_EXPAND_GENS = 2;
+  const DEFAULT_EXPAND_GENS = 1;
 
   // ========================================================================
   // STATE
@@ -3790,29 +3791,35 @@ function loadBranch(code) {
 
     // Name (vertical writing)
     var persons = node.persons || [];
-    var primaryName = persons.length > 0 ? persons[0].name : '?';
+    // Primary person = first with 胡 surname; fallback to first person
+    var primaryPerson = persons.find(function(p) { return p.name && p.name.charAt(0) === '胡'; }) || persons[0];
+    var primaryName = primaryPerson ? primaryPerson.name : '?';
+    // Mark card if no 胡 person (pure in-law node)
+    var hasHu = persons.some(function(p) { return p.name && p.name.charAt(0) === '胡'; });
+    if (!hasHu) card.classList.add('fp-card-inlaw');
 
     var nameEl = document.createElement('div');
     nameEl.className = 'fp-name';
     nameEl.textContent = primaryName;
     card.appendChild(nameEl);
 
-    // Rel badge (first person's rel, or aggregate)
+    // Rel badge — use the 胡 person's rel if available
     if (persons.length > 0) {
       var relBadge = document.createElement('div');
       relBadge.className = 'fp-rel';
-
-      // If multiple people, show count
+      var relSource = primaryPerson || persons[0];
       if (persons.length === 1) {
-        var relText = persons[0].rel || '?';
+        var relText = relSource.rel || '?';
         var displayRel = REL_LABELS[relText] || relText;
         relBadge.setAttribute('data-rel', displayRel);
         relBadge.style.background = REL_COLORS[relText] || '#6b7280';
         relBadge.textContent = displayRel;
       } else {
-        // Multiple persons in this node (couple) — show a combined indicator
-        relBadge.setAttribute('data-rel', 'couple');
-        relBadge.style.background = '#6b7280';
+        // Couple — show 胡 person's rel + in-law indicator
+        var relText = relSource.rel || '?';
+        var displayRel = REL_LABELS[relText] || relText;
+        relBadge.setAttribute('data-rel', displayRel);
+        relBadge.style.background = REL_COLORS[relText] || '#6b7280';
         relBadge.textContent = persons.length + '人';
       }
       card.appendChild(relBadge);
@@ -4182,6 +4189,24 @@ function loadBranch(code) {
 }
 .fp-card:hover {
   border-color: #c8b8a0;
+}
+/* In-law (no 胡 surname) cards are visually secondary */
+.fp-card-inlaw {
+  opacity: 0.55;
+  font-style: italic;
+}
+.fp-card-inlaw .fp-name {
+  color: #888;
+  font-weight: 400;
+}
+/* person-card primary/secondary for horizontal mode */
+.person-secondary {
+  opacity: 0.55;
+}
+.person-secondary .card-name {
+  color: #999;
+  font-style: italic;
+  font-weight: 400;
 }
 .fp-card.search-match {
   box-shadow: 0 0 0 2px #e74c3c;
