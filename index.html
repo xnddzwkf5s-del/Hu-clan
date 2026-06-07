@@ -2700,13 +2700,13 @@ function loadBranch(code) {
     '?': '#6b7280',
   };
   const REL_LABELS = {
-    '祖': '祖',
-    '儿': '儿',
-    '兒': '儿',
-    '女': '女',
-    '媳': '媳',
-    '婿': '婿',
-    '妻': '妻',
+    '祖': '祖 Founder',
+    '儿': '儿 Son',
+    '兒': '儿 Son',
+    '女': '女 Daughter',
+    '媳': '媳 Wife',
+    '婿': '婿 Husband',
+    '妻': '妻 Wife',
     '?': '?',
   };
 
@@ -4385,10 +4385,9 @@ function loadBranch(code) {
   justify-content: center;
 }
 .fp-rel {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  display: flex;
+  padding: 2px 8px;
+  border-radius: 10px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 9px;
@@ -4396,6 +4395,7 @@ function loadBranch(code) {
   color: #fff;
   flex-shrink: 0;
   margin-top: 4px;
+  white-space: nowrap;
 }
 .fp-toggle {
   font-size: 10px;
