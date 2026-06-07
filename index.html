@@ -3517,17 +3517,16 @@ function loadBranch(code) {
 
     var node = state.nodeMap[state.focusNode];
 
-    // No node selected — show normal tree with banner prompt
+    // No node selected — auto-focus root (should not normally happen)
     if (!node) {
-      container.innerHTML = '';
-      renderVertical(state.treeData, computeVisibleSet());
-      applySearchHighlights();
-      drawLines();
-      var banner = document.createElement('div');
-      banner.className = 'focus-banner';
-      banner.innerHTML = '<span class="focus-banner-icon">🔍</span> Focus View — click any person card to see their family';
-      container.insertBefore(banner, container.firstChild);
-      return;
+      var rootPath = Object.keys(state.nodeMap).find(function(k) { return state.nodeMap[k]._depth === 0; });
+      if (rootPath) {
+        state.focusNode = rootPath;
+        node = state.nodeMap[state.focusNode];
+        if (!node) return;
+      } else {
+        return;
+      }
     }
 
     // Gather relationships
@@ -3580,18 +3579,6 @@ function loadBranch(code) {
       });
     })(detBtn);
     controls.appendChild(detBtn);
-
-    var exitBtn = document.createElement('button');
-    exitBtn.className = 'focus-btn focus-btn-exit';
-    exitBtn.innerHTML = '✕ Exit';
-    exitBtn.title = 'Return to full tree';
-    exitBtn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      state.focusNode = null;
-      state.layoutMode = 'vertical';
-      render();
-    });
-    controls.appendChild(exitBtn);
 
     // Breadcrumb: show names of focused node
     var crumb = document.createElement('span');
