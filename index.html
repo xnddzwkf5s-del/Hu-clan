@@ -3744,6 +3744,17 @@ function loadBranch(code) {
       }
     });
 
+    // Child count badge on non-self cards
+    if (!isSelf) {
+      var nodeChildCount = node.children ? node.children.length : 0;
+      if (nodeChildCount > 0) {
+        var childBadge = document.createElement('div');
+        childBadge.className = 'fv-child-count';
+        childBadge.textContent = nodeChildCount + (nodeChildCount === 1 ? ' child family' : ' child families');
+        card.appendChild(childBadge);
+      }
+    }
+
     // Click to re-focus (non-self cards)
     if (!isSelf) {
       card.style.cursor = 'pointer';
@@ -4710,6 +4721,19 @@ function loadBranch(code) {
 .fv-desc-children {
   background: #dbeafe;
   color: #1d4ed8;
+}
+/* Child count on non-self cards */
+.fv-child-count {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid #e8dfc8;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #1d4ed8;
+  background: #dbeafe;
+  border-radius: 20px;
+  padding: 2px 9px;
+  display: inline-block;
 }
 .fv-desc-grand {
   background: #ede9fe;
