@@ -82,18 +82,19 @@
           {
             "persons": [
               {
-                "name": "司徒振兴",
-                "rel": "兒",
+                "name": "谢振兴",
+                "rel": "婿",
                 "id": "WX_006",
                 "birth": null,
                 "death": null,
                 "notes": null,
-                "father_id": "WX_004",
-                "mother_id": "WX_005"
+                "father_id": null,
+                "mother_id": "WX_005",
+                "unknown_mother": false
               },
               {
-                "name": "谢运月霞",
-                "rel": "媳",
+                "name": "司徒月霞",
+                "rel": "女",
                 "id": "WX_007",
                 "birth": null,
                 "death": null,
@@ -905,13 +906,24 @@
             "persons": [
               {
                 "name": "黎广文",
-                "rel": "兒",
+                "rel": "婿",
                 "id": "WX_031",
                 "birth": null,
                 "death": null,
                 "notes": null,
-                "father_id": "WX_027",
+                "father_id": null,
                 "mother_id": "WX_028"
+              },
+              {
+                "name": "黄爱玲",
+                "rel": "女",
+                "id": "WX_151",
+                "father_id": "WX_027",
+                "mother_id": "WX_028",
+                "unknown_mother": false,
+                "birth": null,
+                "death": null,
+                "notes": null
               }
             ],
             "children": []
@@ -920,19 +932,14 @@
             "persons": [
               {
                 "name": "黄锦源",
-                "rel": "女",
+                "rel": "婿",
                 "id": "WX_032",
                 "birth": null,
                 "death": null,
                 "notes": null,
-                "father_id": "WX_027",
+                "father_id": null,
                 "mother_id": "WX_028"
-              }
-            ],
-            "children": []
-          },
-          {
-            "persons": [
+              },
               {
                 "name": "黄爱贞",
                 "rel": "女",
