@@ -1,0 +1,504 @@
+{
+  "id": "weida",
+  "code": "WD",
+  "label": "维达公",
+  "color": "#dc2626",
+  "root": {
+    "persons": [
+      {
+        "name": "胡维达",
+        "rel": "祖"
+      },
+      {
+        "name": "周美容",
+        "rel": "妻"
+      }
+    ],
+    "children": [
+      {
+        "persons": [
+          {
+            "name": "杨观新",
+            "rel": "婿"
+          },
+          {
+            "name": "胡美素",
+            "rel": "女"
+          }
+        ],
+        "children": [
+          {
+            "persons": [
+              {
+                "name": "胡碧清",
+                "rel": "女"
+              }
+            ],
+            "children": []
+          },
+          {
+            "persons": [
+              {
+                "name": "杨雪虹",
+                "rel": "女"
+              }
+            ],
+            "children": []
+          },
+          {
+            "persons": [
+              {
+                "name": "杨雪莉",
+                "rel": "女"
+              }
+            ],
+            "children": []
+          },
+          {
+            "persons": [
+              {
+                "name": "李义祥",
+                "rel": "婿"
+              },
+              {
+                "name": "林爱婷",
+                "rel": "女"
+              }
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "persons": [
+          {
+            "name": "林国汉",
+            "rel": "婿"
+          },
+          {
+            "name": "胡美缘",
+            "rel": "女"
+          }
+        ],
+        "children": [
+          {
+            "persons": [
+              {
+                "name": "林爱婷",
+                "rel": "女"
+              }
+            ],
+            "children": []
+          },
+          {
+            "persons": [
+              {
+                "name": "林培育",
+                "rel": "兒"
+              }
+            ],
+            "children": []
+          },
+          {
+            "persons": [
+              {
+                "name": "林培志",
+                "rel": "兒"
+              },
+              {
+                "name": "谢莉志",
+                "rel": "媳"
+              }
+            ],
+            "children": []
+          },
+          {
+            "persons": [
+              {
+                "name": "郭晓薇",
+                "rel": "媳"
+              }
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "persons": [
+          {
+            "name": "游秀",
+            "rel": "婿"
+          },
+          {
+            "name": "胡美霞",
+            "rel": "女"
+          }
+        ],
+        "children": [
+          {
+            "persons": [
+              {
+                "name": "胡燕铃",
+                "rel": "女"
+              }
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "persons": [
+          {
+            "name": "陈亚旺",
+            "rel": "婿"
+          },
+          {
+            "name": "胡丽丽",
+            "rel": "女"
+          }
+        ],
+        "children": [
+          {
+            "persons": [
+              {
+                "name": "陈淑蓉",
+                "rel": "女"
+              }
+            ],
+            "children": []
+          },
+          {
+            "persons": [
+              {
+                "name": "陈荣耀",
+                "rel": "兒"
+              }
+            ],
+            "children": []
+          },
+          {
+            "persons": [
+              {
+                "name": "陈淑铃",
+                "rel": "女"
+              }
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "persons": [
+          {
+            "name": "龚羽",
+            "rel": "婿"
+          },
+          {
+            "name": "胡华秀",
+            "rel": "女"
+          }
+        ],
+        "children": [
+          {
+            "persons": [
+              {
+                "name": "龚百瀚",
+                "rel": "兒"
+              }
+            ],
+            "children": []
+          },
+          {
+            "persons": [
+              {
+                "name": "龚百阳",
+                "rel": "兒"
+              }
+            ],
+            "children": []
+          },
+          {
+            "persons": [
+              {
+                "name": "龚百炜",
+                "rel": "兒"
+              }
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "persons": [
+          {
+            "name": "关银欢",
+            "rel": "婿"
+          },
+          {
+            "name": "胡欢",
+            "rel": "女"
+          }
+        ],
+        "children": [
+          {
+            "persons": [
+              {
+                "name": "关卓贤",
+                "rel": "兒"
+              }
+            ],
+            "children": []
+          },
+          {
+            "persons": [
+              {
+                "name": "关绮娜",
+                "rel": "女"
+              }
+            ],
+            "children": []
+          },
+          {
+            "persons": [
+              {
+                "name": "关婉梨",
+                "rel": "女"
+              }
+            ],
+            "children": []
+          },
+          {
+            "persons": [
+              {
+                "name": "关卓儒",
+                "rel": "兒"
+              }
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "persons": [
+          {
+            "name": "胡国欢",
+            "rel": "兒"
+          },
+          {
+            "name": "周美月",
+            "rel": "媳"
+          }
+        ],
+        "children": [
+          {
+            "persons": [
+              {
+                "name": "胡雨浣",
+                "rel": "女"
+              }
+            ],
+            "children": []
+          },
+          {
+            "persons": [
+              {
+                "name": "胡兆东",
+                "rel": "兒"
+              }
+            ],
+            "children": [
+              {
+                "persons": [
+                  {
+                    "name": "胡艳芳",
+                    "rel": "女"
+                  }
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "persons": [
+              {
+                "name": "余仲山",
+                "rel": "婿"
+              },
+              {
+                "name": "余凯茵",
+                "rel": "女"
+              }
+            ],
+            "children": [
+              {
+                "persons": [
+                  {
+                    "name": "余海业",
+                    "rel": "兒"
+                  }
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "persons": [
+              {
+                "name": "胡利权",
+                "rel": "兒"
+              }
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "persons": [
+          {
+            "name": "胡瑞球",
+            "rel": "兒"
+          },
+          {
+            "name": "周素心",
+            "rel": "媳"
+          }
+        ],
+        "children": [
+          {
+            "persons": [
+              {
+                "name": "胡文杰",
+                "rel": "兒"
+              },
+              {
+                "name": "麦丽丽",
+                "rel": "媳"
+              }
+            ],
+            "children": [
+              {
+                "persons": [
+                  {
+                    "name": "胡景桐",
+                    "rel": "兒"
+                  }
+                ],
+                "children": []
+              },
+              {
+                "persons": [
+                  {
+                    "name": "胡慧仪",
+                    "rel": "女"
+                  }
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "persons": [
+              {
+                "name": "王家安",
+                "rel": "婿"
+              },
+              {
+                "name": "黄燕杰",
+                "rel": "女"
+              }
+            ],
+            "children": [
+              {
+                "persons": [
+                  {
+                    "name": "王廷深",
+                    "rel": "兒"
+                  }
+                ],
+                "children": []
+              },
+              {
+                "persons": [
+                  {
+                    "name": "王廷亦",
+                    "rel": "兒"
+                  }
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "persons": [
+              {
+                "name": "黄江源",
+                "rel": "兒"
+              }
+            ],
+            "children": [
+              {
+                "persons": [
+                  {
+                    "name": "黄舒怡",
+                    "rel": "女"
+                  }
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "persons": [
+              {
+                "name": "胡媚杰",
+                "rel": "女"
+              }
+            ],
+            "children": []
+          },
+          {
+            "persons": [
+              {
+                "name": "胡城杰",
+                "rel": "兒"
+              }
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "persons": [
+          {
+            "name": "李应玉",
+            "rel": "婿"
+          },
+          {
+            "name": "胡兰",
+            "rel": "女"
+          }
+        ],
+        "children": [
+          {
+            "persons": [
+              {
+                "name": "李慧贞",
+                "rel": "女"
+              }
+            ],
+            "children": []
+          },
+          {
+            "persons": [
+              {
+                "name": "李慧颜",
+                "rel": "女"
+              }
+            ],
+            "children": []
+          }
+        ]
+      }
+    ]
+  }
+}

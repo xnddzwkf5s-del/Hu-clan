@@ -1,0 +1,15 @@
+{
+  "id": "shouhe",
+  "code": "SH",
+  "label": "叟和公",
+  "color": "#2563eb",
+  "root": {
+    "persons": [
+      {
+        "name": "胡叟和",
+        "rel": "祖"
+      }
+    ],
+    "children": []
+  }
+}

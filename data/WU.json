@@ -1,0 +1,15 @@
+{
+  "id": "weiyou",
+  "code": "WU",
+  "label": "维有公",
+  "color": "#6b7280",
+  "root": {
+    "persons": [
+      {
+        "name": "胡维有",
+        "rel": "?"
+      }
+    ],
+    "children": []
+  }
+}

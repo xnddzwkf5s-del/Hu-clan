@@ -207,47 +207,36 @@
     .tree-search .clear-btn:hover { opacity: 0.7; }
     .tree-search .clear-btn.visible { display: block; }
 
-    .branch-filter {
+    .branch-selector {
       display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      align-items: center;
-    }
-    .branch-filter .filter-label {
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      opacity: 0.5;
-      margin-right: 4px;
-    }
-    .branch-chip {
-      display: inline-flex;
-      align-items: center;
       gap: 4px;
-      padding: 4px 10px;
-      border-radius: 16px;
-      font-size: 12px;
-      font-weight: 500;
-      cursor: pointer;
-      border: 1.5px solid transparent;
-      background: rgba(0,0,0,0.04);
-      color: #1a1a1a;
-      transition: all 0.15s ease;
-      font-family: inherit;
+      flex-wrap: wrap;
+      align-items: center;
     }
-    .branch-chip:hover { background: rgba(0,0,0,0.07); }
-    .branch-chip .chip-dot {
-      width: 8px;
-      height: 8px;
+    .branch-btn {
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      display: inline-block;
-      flex-shrink: 0;
-    }
-    .branch-chip.active {
-      background: rgba(200, 155, 60, 0.12);
-      border-color: #c89b3c;
+      border: 2px solid #d8c8b8;
+      background: #fff;
+      color: #555;
+      font-size: 11px;
       font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .branch-btn:hover {
+      border-color: #c89b3c;
+      background: #faf6ed;
+    }
+    .branch-btn.active {
+      border-color: #c89b3c;
+      background: #c89b3c;
+      color: #fff;
     }
 
     .tree-actions {
@@ -746,7 +735,7 @@
       .tree-toolbar { flex-direction: column; align-items: stretch; padding: 12px 16px; }
       .tree-search { max-width: 100%; }
       .tree-actions { margin-left: 0; justify-content: flex-end; }
-      .branch-filter { width: 100%; }
+      .branch-selector { justify-content: center; }
       .content-card { padding: 24px; }
       #tree-container { padding: 16px; }
       .legend { padding: 12px 16px; }
@@ -774,7 +763,7 @@
       .legend .legend-title { width: 100%; margin-bottom: 4px; }
       .site-footer { padding: 24px 12px; font-size: 12px; }
       .tree-toolbar { padding: 10px 12px; }
-      .branch-chip { font-size: 11px; padding: 3px 8px; }
+      .branch-btn { width: 32px; height: 32px; font-size: 10px; }
       .genealogy-section { padding: 16px; }
       .gen-table { font-size: 12px; }
       .gen-table th, .gen-table td { padding: 6px 8px; }
@@ -1599,49 +1588,17 @@
             <button class="clear-btn" id="search-clear-btn" aria-label="Clear search">✕</button>
           </div>
 
-          <!-- Branch Filter -->
-          <div class="branch-filter">
-            <span class="filter-label">Branch</span>
-            <button class="branch-chip active" data-branch="all">
-              <span class="chip-dot" style="background:#999;"></span>
-              All
-            </button>
-            <button class="branch-chip" data-branch="weixian">
-              <span class="chip-dot branch-weixian"></span>
-              潍县
-            </button>
-            <button class="branch-chip" data-branch="weida">
-              <span class="chip-dot branch-weida"></span>
-              潍达
-            </button>
-            <button class="branch-chip" data-branch="weifu">
-              <span class="chip-dot branch-weifu"></span>
-              潍福
-            </button>
-            <button class="branch-chip" data-branch="weihao">
-              <span class="chip-dot branch-weihao"></span>
-              潍浩
-            </button>
-            <button class="branch-chip" data-branch="weiyuan">
-              <span class="chip-dot branch-weiyuan"></span>
-              潍源
-            </button>
-            <button class="branch-chip" data-branch="weiyou">
-              <span class="chip-dot branch-weiyou"></span>
-              潍有
-            </button>
-            <button class="branch-chip" data-branch="qinghe">
-              <span class="chip-dot branch-qinghe"></span>
-              清河
-            </button>
-            <button class="branch-chip" data-branch="wangzhong">
-              <span class="chip-dot branch-wangzhong"></span>
-              王忠
-            </button>
-            <button class="branch-chip" data-branch="shouhe">
-              <span class="chip-dot branch-shouhe"></span>
-              守和
-            </button>
+          <!-- Branch Selector -->
+          <div class="branch-selector" id="branch-selector">
+            <button class="branch-btn active" data-branch="WX" title="维显公">WX</button>
+            <button class="branch-btn" data-branch="WD" title="维达公">WD</button>
+            <button class="branch-btn" data-branch="WF" title="维富公">WF</button>
+            <button class="branch-btn" data-branch="WH" title="维豪公">WH</button>
+            <button class="branch-btn" data-branch="WY" title="维源公">WY</button>
+            <button class="branch-btn" data-branch="WU" title="维有公">WU</button>
+            <button class="branch-btn" data-branch="QH" title="清和公">QH</button>
+            <button class="branch-btn" data-branch="WZ" title="旺忠公">WZ</button>
+            <button class="branch-btn" data-branch="SH" title="叟和公">SH</button>
           </div>
 
           <!-- Actions -->
@@ -1692,488 +1649,42 @@
   <script>
 // Hu Clan Family Tree Data
 // 9 branches, hierarchical structure
-window.HU_TREE_DATA = [
-  {
-    "id": "weixian",
-    "code": "WX",
-    "label": "维显公",
-    "color": "#7c3aed",
-    "root": {
-      "persons": [
-        {"name":"胡维显","rel":"祖"},
-        {"name":"黄金凤","rel":"妻"},
-        {"name":"周秀菊","rel":"妻"}
-      ],
-      "children": [
-        {
-          "persons": [{"name":"司徒元洪","rel":"婿"},{"name":"胡运美","rel":"女"}],
-          "children": [
-            {
-              "persons": [{"name":"司徒振兴","rel":"兒"},{"name":"谢运月霞","rel":"媳"}],
-              "children": []
-            },
-            {
-              "persons": [{"name":"司徒少霞","rel":"女"},{"name":"陈东兴","rel":"婿"}],
-              "children": []
-            },
-            {
-              "persons": [{"name":"司徒永全","rel":"兒"},{"name":"陈金英","rel":"媳"}],
-              "children": [
-                {
-                  "persons": [{"name":"陈国华","rel":"兒"},{"name":"胡诗韵","rel":"媳"}],
-                  "children": [
-                    {"persons":[{"name":"陈俊延","rel":"兒"}],"children":[]},
-                    {"persons":[{"name":"陈子豪","rel":"兒"}],"children":[]},
-                    {"persons":[{"name":"陈雯芊","rel":"女"}],"children":[]}
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "persons": [{"name":"胡龙亿","rel":"兒"},{"name":"冯桂霞","rel":"媳"}],
-          "children": [
-            {
-              "persons": [{"name":"刘敬宽","rel":"兒"},{"name":"刘佩玲","rel":"媳"}],
-              "children": [
-                {
-                  "persons": [{"name":"胡帼洋","rel":"兒"},{"name":"林依蓓","rel":"媳"}],
-                  "children": [
-                    {"persons":[{"name":"胡滕林","rel":"兒"}],"children":[]},
-                    {"persons":[{"name":"胡照岚","rel":"女"}],"children":[]},
-                    {"persons":[{"name":"胡乔淇","rel":"女"}],"children":[]}
-                  ]
-                },
-                {
-                  "persons": [{"name":"胡帼震","rel":"女"}],
-                  "children": []
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "persons": [{"name":"黄家强","rel":"婿"},{"name":"胡美花","rel":"女"}],
-          "children": [
-            {"persons":[{"name":"黄维星","rel":"兒"},{"name":"林金梅","rel":"媳"}],"children":[]},
-            {"persons":[{"name":"黎广文","rel":"兒"}],"children":[]},
-            {"persons":[{"name":"黄锦源","rel":"女"}],"children":[]},
-            {"persons":[{"name":"黄爱贞","rel":"女"}],"children":[]},
-            {"persons":[{"name":"黄爱奇","rel":"兒"}],"children":[]}
-          ]
-        },
-        {
-          "persons": [{"name":"李锐欢","rel":"婿"},{"name":"胡美多","rel":"女"}],
-          "children": [
-            {"persons":[{"name":"俞小玲","rel":"媳"}],"children":[]},
-            {"persons":[{"name":"李清坤","rel":"兒"}],"children":[]},
-            {"persons":[{"name":"李清标","rel":"兒"}],"children":[]},
-            {"persons":[{"name":"黄芝心","rel":"媳"}],"children":[]}
-          ]
-        },
-        {
-          "persons": [{"name":"胡龙科","rel":"兒"},{"name":"吴凤德","rel":"媳"}],
-          "children": [
-            {"persons":[{"name":"郭特维","rel":"婿"},{"name":"李惠真","rel":"女"}],"children":[]},
-            {
-              "persons": [{"name":"胡渐彦","rel":"兒"},{"name":"蔡群力","rel":"媳"}],
-              "children": [
-                {"persons":[{"name":"胡翠珊","rel":"女"}],"children":[]},
-                {"persons":[{"name":"胡翠雯","rel":"女"}],"children":[]}
-              ]
-            },
-            {"persons":[{"name":"胡渐雄","rel":"兒"},{"name":"钟玉芬","rel":"媳"}],"children":[]},
-            {"persons":[{"name":"周碧文","rel":"女"}],"children":[]},
-            {"persons":[{"name":"胡碧君","rel":"女"}],"children":[]},
-            {"persons":[{"name":"胡碧勋","rel":"兒"}],"children":[]},
-            {"persons":[{"name":"胡培郁","rel":"兒"}],"children":[]}
-          ]
-        },
-        {
-          "persons": [{"name":"胡龙森","rel":"兒"},{"name":"黄月玉","rel":"媳"}],
-          "children": [
-            {
-              "persons": [{"name":"叶绍强","rel":"婿"},{"name":"胡碧琳","rel":"女"}],
-              "children": [
-                {"persons":[{"name":"叶瑾熙","rel":"兒"}],"children":[]},
-                {"persons":[{"name":"叶瑾毅","rel":"兒"}],"children":[]}
-              ]
-            },
-            {
-              "persons": [{"name":"胡渐植","rel":"兒"},{"name":"黎淑菁","rel":"媳"}],
-              "children": [
-                {"persons":[{"name":"胡嘉玮","rel":"女"}],"children":[]},
-                {"persons":[{"name":"胡轩瑜","rel":"女"}],"children":[]},
-                {"persons":[{"name":"胡轩厚","rel":"兒"}],"children":[]}
-              ]
-            },
-            {"persons":[{"name":"胡渐彪","rel":"兒"}],"children":[]}
-          ]
-        },
-        {
-          "persons": [{"name":"胡龙弼","rel":"兒"},{"name":"吕宝珍","rel":"媳"}],
-          "children": [
-            {
-              "persons": [{"name":"胡渐锋","rel":"兒"},{"name":"陈德煊","rel":"媳"}],
-              "children": [
-                {"persons":[{"name":"胡嘉盈","rel":"女"}],"children":[]},
-                {"persons":[{"name":"胡嘉馨","rel":"女"}],"children":[]},
-                {"persons":[{"name":"胡嘉厚","rel":"兒"}],"children":[]}
-              ]
-            },
-            {
-              "persons": [{"name":"江钰彬","rel":"婿"},{"name":"胡碧欣","rel":"女"}],
-              "children": [
-                {"persons":[{"name":"江钰琦","rel":"女"}],"children":[]},
-                {"persons":[{"name":"江钰莹","rel":"女"}],"children":[]}
-              ]
-            },
-            {"persons":[{"name":"胡渐镇","rel":"兒"}],"children":[]}
-          ]
-        },
-        {
-          "persons": [{"name":"胡龙勇","rel":"兒"},{"name":"陈翠媚","rel":"媳"}],
-          "children": [
-            {
-              "persons": [{"name":"胡渐逸","rel":"兒"},{"name":"胡慧慧","rel":"媳"}],
-              "children": [
-                {"persons":[{"name":"胡嘉绚","rel":"女"}],"children":[]}
-              ]
-            },
-            {"persons":[{"name":"胡蕾芝","rel":"女"}],"children":[]},
-            {"persons":[{"name":"丁纳福","rel":"婿"},{"name":"胡蕾莎","rel":"女"}],"children":[]}
-          ]
-        },
-        {"persons":[{"name":"胡龙赞","rel":"兒"}],"children":[]},
-        {
-          "persons": [{"name":"杨观新","rel":"婿"},{"name":"胡美素","rel":"女"}],
-          "children": [
-            {"persons":[{"name":"杨晋飞","rel":"兒"}],"children":[]},
-            {"persons":[{"name":"杨雪虹","rel":"女"}],"children":[]},
-            {"persons":[{"name":"杨雪莉","rel":"女"}],"children":[]},
-            {"persons":[{"name":"胡碧清","rel":"女"}],"children":[]}
-          ]
-        },
-        {
-          "persons": [{"name":"林国汉","rel":"婿"},{"name":"胡美缘","rel":"女"}],
-          "children": [
-            {"persons":[{"name":"林爱婷","rel":"女"}],"children":[]},
-            {"persons":[{"name":"林爱祥","rel":"兒"}],"children":[]},
-            {"persons":[{"name":"胡碧勋","rel":"兒"}],"children":[]},
-            {"persons":[{"name":"郭晓旭","rel":"儿"},{"name":"谢源涛","rel":"婿"}],"children":[]},
-            {"persons":[{"name":"胡培旭","rel":"兒"}],"children":[]}
-          ]
-        }
-      ]
-    }
-  },
-  {
-    "id": "weida",
-    "code": "WD",
-    "label": "维达公",
-    "color": "#dc2626",
-    "root": {
-      "persons": [
-        {"name":"胡维达","rel":"祖"},
-        {"name":"周美容","rel":"妻"}
-      ],
-      "children": [
-        {
-          "persons": [{"name":"杨观新","rel":"婿"},{"name":"胡美素","rel":"女"}],
-          "children": [
-            {"persons":[{"name":"胡碧清","rel":"女"}],"children":[]},
-            {"persons":[{"name":"杨雪虹","rel":"女"}],"children":[]},
-            {"persons":[{"name":"杨雪莉","rel":"女"}],"children":[]},
-            {"persons":[{"name":"李义祥","rel":"婿"},{"name":"林爱婷","rel":"女"}],"children":[]}
-          ]
-        },
-        {
-          "persons": [{"name":"林国汉","rel":"婿"},{"name":"胡美缘","rel":"女"}],
-          "children": [
-            {"persons":[{"name":"林爱婷","rel":"女"}],"children":[]},
-            {"persons":[{"name":"林培育","rel":"兒"}],"children":[]},
-            {"persons":[{"name":"林培志","rel":"兒"},{"name":"谢莉志","rel":"媳"}],"children":[]},
-            {"persons":[{"name":"郭晓薇","rel":"媳"}],"children":[]}
-          ]
-        },
-        {
-          "persons": [{"name":"游秀","rel":"婿"},{"name":"胡美霞","rel":"女"}],
-          "children": [
-            {"persons":[{"name":"胡燕铃","rel":"女"}],"children":[]}
-          ]
-        },
-        {
-          "persons": [{"name":"陈亚旺","rel":"婿"},{"name":"胡丽丽","rel":"女"}],
-          "children": [
-            {"persons":[{"name":"陈淑蓉","rel":"女"}],"children":[]},
-            {"persons":[{"name":"陈荣耀","rel":"兒"}],"children":[]},
-            {"persons":[{"name":"陈淑铃","rel":"女"}],"children":[]}
-          ]
-        },
-        {
-          "persons": [{"name":"龚羽","rel":"婿"},{"name":"胡华秀","rel":"女"}],
-          "children": [
-            {"persons":[{"name":"龚百瀚","rel":"兒"}],"children":[]},
-            {"persons":[{"name":"龚百阳","rel":"兒"}],"children":[]},
-            {"persons":[{"name":"龚百炜","rel":"兒"}],"children":[]}
-          ]
-        },
-        {
-          "persons": [{"name":"关银欢","rel":"婿"},{"name":"胡欢","rel":"女"}],
-          "children": [
-            {"persons":[{"name":"关卓贤","rel":"兒"}],"children":[]},
-            {"persons":[{"name":"关绮娜","rel":"女"}],"children":[]},
-            {"persons":[{"name":"关婉梨","rel":"女"}],"children":[]},
-            {"persons":[{"name":"关卓儒","rel":"兒"}],"children":[]}
-          ]
-        },
-        {
-          "persons": [{"name":"胡国欢","rel":"兒"},{"name":"周美月","rel":"媳"}],
-          "children": [
-            {"persons":[{"name":"胡雨浣","rel":"女"}],"children":[]},
-            {
-              "persons": [{"name":"胡兆东","rel":"兒"}],
-              "children": [
-                {"persons":[{"name":"胡艳芳","rel":"女"}],"children":[]}
-              ]
-            },
-            {
-              "persons": [{"name":"余仲山","rel":"婿"},{"name":"余凯茵","rel":"女"}],
-              "children": [
-                {"persons":[{"name":"余海业","rel":"兒"}],"children":[]}
-              ]
-            },
-            {"persons":[{"name":"胡利权","rel":"兒"}],"children":[]}
-          ]
-        },
-        {
-          "persons": [{"name":"胡瑞球","rel":"兒"},{"name":"周素心","rel":"媳"}],
-          "children": [
-            {
-              "persons": [{"name":"胡文杰","rel":"兒"},{"name":"麦丽丽","rel":"媳"}],
-              "children": [
-                {"persons":[{"name":"胡景桐","rel":"兒"}],"children":[]},
-                {"persons":[{"name":"胡慧仪","rel":"女"}],"children":[]}
-              ]
-            },
-            {
-              "persons": [{"name":"王家安","rel":"婿"},{"name":"黄燕杰","rel":"女"}],
-              "children": [
-                {"persons":[{"name":"王廷深","rel":"兒"}],"children":[]},
-                {"persons":[{"name":"王廷亦","rel":"兒"}],"children":[]}
-              ]
-            },
-            {
-              "persons": [{"name":"黄江源","rel":"兒"}],
-              "children": [
-                {"persons":[{"name":"黄舒怡","rel":"女"}],"children":[]}
-              ]
-            },
-            {"persons":[{"name":"胡媚杰","rel":"女"}],"children":[]},
-            {"persons":[{"name":"胡城杰","rel":"兒"}],"children":[]}
-          ]
-        },
-        {
-          "persons": [{"name":"李应玉","rel":"婿"},{"name":"胡兰","rel":"女"}],
-          "children": [
-            {"persons":[{"name":"李慧贞","rel":"女"}],"children":[]},
-            {"persons":[{"name":"李慧颜","rel":"女"}],"children":[]}
-          ]
-        }
-      ]
-    }
-  },
-  {
-    "id": "weifu",
-    "code": "WF",
-    "label": "维富公",
-    "color": "#ea580c",
-    "root": {
-      "persons": [
-        {"name":"胡维富","rel":"祖"},
-        {"name":"关月眉","rel":"妻"}
-      ],
-      "children": [
-        {
-          "persons": [{"name":"胡现龙","rel":"兒"},{"name":"李亚明","rel":"媳"}],
-          "children": [
-            {
-              "persons": [{"name":"陈潮生","rel":"婿"},{"name":"胡月莲","rel":"女"}],
-              "children": [
-                {"persons":[{"name":"陈素仪","rel":"女"}],"children":[]}
-              ]
-            },
-            {
-              "persons": [{"name":"洪及元","rel":"婿"},{"name":"胡元英","rel":"女"}],
-              "children": [
-                {"persons":[{"name":"洪楚彬","rel":"兒"}],"children":[]},
-                {"persons":[{"name":"洪有瑞","rel":"女"}],"children":[]}
-              ]
-            }
-          ]
-        },
-        {"persons":[{"name":"胡业龙","rel":"兒"}],"children":[]},
-        {
-          "persons": [{"name":"胡均龙","rel":"兒"},{"name":"关如娣","rel":"媳"}],
-          "children": [
-            {
-              "persons": [{"name":"胡志雄","rel":"兒"},{"name":"陈祖梅","rel":"媳"}],
-              "children": [
-                {"persons":[{"name":"胡宏骏","rel":"兒"}],"children":[]},
-                {"persons":[{"name":"胡诗敏","rel":"女"}],"children":[]},
-                {"persons":[{"name":"胡诗雅","rel":"女"}],"children":[]}
-              ]
-            },
-            {"persons":[{"name":"胡齐爱","rel":"女"}],"children":[]},
-            {"persons":[{"name":"胡西回","rel":"兒"}],"children":[]}
-          ]
-        },
-        {
-          "persons": [{"name":"胡锐龙","rel":"兒"}],
-          "children": [
-            {"persons":[{"name":"胡景群","rel":"女"}],"children":[]}
-          ]
-        },
-        {"persons":[{"name":"胡运女","rel":"女"}],"children":[]},
-        {
-          "persons": [{"name":"麦志光","rel":"婿"},{"name":"胡超仪","rel":"女"}],
-          "children": [
-            {"persons":[{"name":"麦永海","rel":"兒"}],"children":[]},
-            {"persons":[{"name":"麦永曙","rel":"兒"}],"children":[]},
-            {"persons":[{"name":"麦永岳","rel":"兒"}],"children":[]},
-            {"persons":[{"name":"麦永波","rel":"兒"}],"children":[]},
-            {"persons":[{"name":"麦美英","rel":"女"}],"children":[]}
-          ]
-        }
-      ]
-    }
-  },
-  {
-    "id": "weihao",
-    "code": "WH",
-    "label": "维豪公",
-    "color": "#db2777",
-    "root": {
-      "persons": [
-        {"name":"胡维豪","rel":"祖"},
-        {"name":"关金笑","rel":"妻"}
-      ],
-      "children": [
-        {
-          "persons": [{"name":"胡开基","rel":"兒"},{"name":"刘桂春","rel":"媳"},{"name":"刘开兰","rel":"媳"}],
-          "children": [
-            {
-              "persons": [{"name":"胡健明","rel":"兒"},{"name":"陈惠珠","rel":"媳"}],
-              "children": [
-                {"persons":[{"name":"陈翔辉","rel":"婿"}],"children":[]},
-                {"persons":[{"name":"陈凤芬","rel":"女"}],"children":[]},
-                {"persons":[{"name":"陈翔伟","rel":"兒"}],"children":[]}
-              ]
-            },
-            {
-              "persons": [{"name":"胡辉强","rel":"兒"},{"name":"谢士莲","rel":"媳"}],
-              "children": [
-                {"persons":[{"name":"胡淑娴","rel":"女"}],"children":[]},
-                {"persons":[{"name":"胡淑蓉","rel":"女"}],"children":[]}
-              ]
-            },
-            {"persons":[{"name":"胡辉光","rel":"兒"},{"name":"林细妹","rel":"媳"}],"children":[]},
-            {"persons":[{"name":"胡辉鸿","rel":"兒"}],"children":[]},
-            {"persons":[{"name":"李发","rel":"婿"},{"name":"胡玉宝","rel":"女"}],"children":[]}
-          ]
-        },
-        {
-          "persons": [{"name":"张伟瑶","rel":"婿"},{"name":"胡美娟","rel":"女"}],
-          "children": [
-            {
-              "persons": [{"name":"刘丰登","rel":"婿"},{"name":"张玉莲","rel":"女"}],
-              "children": []
-            }
-          ]
-        },
-        {"persons":[{"name":"张国明","rel":"兒"},{"name":"邱郁敏","rel":"媳"}],"children":[]},
-        {"persons":[{"name":"陈锦适","rel":"婿"},{"name":"张玉萍","rel":"女"}],"children":[]}
-      ]
-    }
-  },
-  {
-    "id": "weiyuan",
-    "code": "WY",
-    "label": "维源公",
-    "color": "#0891b2",
-    "root": {
-      "persons": [
-        {"name":"胡维源","rel":"祖"},
-        {"name":"关氏","rel":"妻"}
-      ],
-      "children": []
-    }
-  },
-  {
-    "id": "weiyou",
-    "code": "WU",
-    "label": "维有公",
-    "color": "#6b7280",
-    "root": {
-      "persons": [
-        {"name":"胡维有","rel":"?"}
-      ],
-      "children": []
-    }
-  },
-  {
-    "id": "qinghe",
-    "code": "QH",
-    "label": "清和公",
-    "color": "#d97706",
-    "root": {
-      "persons": [
-        {"name":"胡清和","rel":"祖"},
-        {"name":"关亚好","rel":"妻"}
-      ],
-      "children": []
-    }
-  },
-  {
-    "id": "wangzhong",
-    "code": "WZ",
-    "label": "旺忠公",
-    "color": "#059669",
-    "root": {
-      "persons": [
-        {"name":"胡旺忠","rel":"?"}
-      ],
-      "children": [
-        {"persons":[{"name":"胡顺兴","rel":"兒"}],"children":[]},
-        {"persons":[{"name":"胡顺华","rel":"兒"}],"children":[]},
-        {"persons":[{"name":"胡顺均","rel":"兒"}],"children":[]},
-        {"persons":[{"name":"胡顺五","rel":"兒"}],"children":[]},
-        {"persons":[{"name":"胡顺肇","rel":"兒"}],"children":[]},
-        {"persons":[{"name":"胡金儿","rel":"女"}],"children":[]}
-      ]
-    }
-  },
-  {
-    "id": "shouhe",
-    "code": "SH",
-    "label": "叟和公",
-    "color": "#2563eb",
-    "root": {
-      "persons": [
-        {"name":"胡叟和","rel":"祖"}
-      ],
-      "children": []
-    }
+window.HU_TREE_DATA = [];
+window.HU_BRANCH_DATA = {};
+
+function loadBranch(code) {
+  if (window.HU_BRANCH_DATA[code]) {
+    window.HU_TREE_DATA = [window.HU_BRANCH_DATA[code]];
+    if (window.HUTreeScroll && window.reloadTree) window.reloadTree();
+    return;
   }
-];
-
-// Primary: load from external JSON (overrides inline data)
-fetch('data/tree-data.json').then(function(r){return r.json()}).then(function(d){
-  window.HU_TREE_DATA = d;
-  if (window.HUTreeScroll && window.reloadTree) window.reloadTree();
-}).catch(function(){/* fine, inline data works */});
-
+  fetch('data/' + code + '.json')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      window.HU_BRANCH_DATA[code] = data;
+      window.HU_TREE_DATA = [data];
+      if (window.HUTreeScroll && window.reloadTree) window.reloadTree();
+    })
+    .catch(function() {
+      // Fallback: try combined data
+      fetch('data/tree-data.json')
+        .then(function(r) { return r.json(); })
+        .then(function(allData) {
+          for (var i = 0; i < allData.length; i++) {
+            if (allData[i].code === code) {
+              window.HU_BRANCH_DATA[code] = allData[i];
+              window.HU_TREE_DATA = [allData[i]];
+              if (window.HUTreeScroll && window.reloadTree) window.reloadTree();
+              return;
+            }
+          }
+          console.error('Branch ' + code + ' not found in combined data');
+        })
+        .catch(function(e) {
+          console.error('Failed to load branch data:', e);
+        });
+    });
+}
 </script>
   <script>
 /**
@@ -4112,30 +3623,6 @@ fetch('data/tree-data.json').then(function(r){return r.json()}).then(function(d)
 
     controls.appendChild(searchWrap);
 
-    // Branch chips
-    var chipWrap = document.createElement('div');
-    chipWrap.className = 'ts-chips';
-
-    var allChip = document.createElement('button');
-    allChip.className = 'ts-chip' + (state.activeBranch === 'all' ? ' active' : '');
-    allChip.textContent = 'All';
-    allChip.addEventListener('click', function () { state.activeBranch = 'all'; render(); });
-    chipWrap.appendChild(allChip);
-
-    state.treeData.forEach(function (branch) {
-      var chip = document.createElement('button');
-      chip.className = 'ts-chip' + (state.activeBranch === branch.id ? ' active' : '');
-      var chipDot = document.createElement('span');
-      chipDot.className = 'ts-chip-dot';
-      chipDot.style.background = branch.color;
-      chip.appendChild(chipDot);
-      chip.appendChild(document.createTextNode(branch.label));
-      chip.addEventListener('click', function () { state.activeBranch = branch.id; render(); });
-      chipWrap.appendChild(chip);
-    });
-
-    controls.appendChild(chipWrap);
-
     container.insertBefore(controls, container.firstChild);
 
     // Search listener
@@ -4194,41 +3681,6 @@ fetch('data/tree-data.json').then(function(r){return r.json()}).then(function(d)
   color: #8a7a6a;
   white-space: nowrap;
 }
-.ts-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  align-items: center;
-}
-.ts-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  padding: 3px 10px;
-  border-radius: 14px;
-  font-size: 12px;
-  border: 1.5px solid transparent;
-  background: rgba(0,0,0,0.04);
-  color: #333;
-  cursor: pointer;
-  font-family: inherit;
-  transition: all 0.15s;
-  white-space: nowrap;
-}
-.ts-chip:hover { background: rgba(0,0,0,0.08); }
-.ts-chip.active {
-  background: rgba(200,155,60,0.12);
-  border-color: #c89b3c;
-  font-weight: 600;
-}
-.ts-chip-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  display: inline-block;
-  flex-shrink: 0;
-}
-
 /* ===== BAND (one per branch) ===== */
 .ts-band {
   margin-bottom: 16px;
@@ -4694,7 +4146,7 @@ fetch('data/tree-data.json').then(function(r){return r.json()}).then(function(d)
       var treeContainer = document.getElementById('tree-container');
       var searchInput = document.getElementById('tree-search-input');
       var clearBtn = document.getElementById('search-clear-btn');
-      var branchChips = document.querySelectorAll('.branch-chip');
+      var branchBtns = document.querySelectorAll('.branch-btn');
       var collapseBtn = document.getElementById('collapse-all-btn');
       var treeFirstShown = false;
 
@@ -4770,59 +4222,18 @@ fetch('data/tree-data.json').then(function(r){return r.json()}).then(function(d)
         searchInput.focus();
       });
 
-      /* ---------- Branch filter (wire toolbar chips to HUTree) ---------- */
-      for (var b = 0; b < branchChips.length; b++) {
-        branchChips[b].addEventListener('click', function() {
-          var isActive = this.classList.contains('active');
-
-          // Toggle behavior for "All" chip
-          if (this.dataset.branch === 'all') {
-            // Deactivate all other chips, activate All
-            for (var k = 0; k < branchChips.length; k++) {
-              branchChips[k].classList.remove('active');
-            }
-            this.classList.add('active');
-          } else {
-            // Deactivate "All" chip
-            document.querySelector('.branch-chip[data-branch="all"]').classList.remove('active');
-            // Toggle this chip
-            this.classList.toggle('active');
-
-            // If no branch chips active, reactivate "All"
-            var anyActive = false;
-            for (var m = 0; m < branchChips.length; m++) {
-              if (branchChips[m].dataset.branch !== 'all' && branchChips[m].classList.contains('active')) {
-                anyActive = true;
-                break;
-              }
-            }
-            if (!anyActive) {
-              document.querySelector('.branch-chip[data-branch="all"]').classList.add('active');
-            }
+      /* ---------- Branch selector (wire toolbar buttons to loadBranch) ---------- */
+      for (var b = 0; b < branchBtns.length; b++) {
+        branchBtns[b].addEventListener('click', function() {
+          var code = this.getAttribute('data-branch');
+          // Deactivate all, activate this
+          for (var i = 0; i < branchBtns.length; i++) {
+            branchBtns[i].classList.remove('active');
           }
-
-          // Collect active branches
-          var activeBranches = [];
-          var allActive = document.querySelector('.branch-chip[data-branch="all"]').classList.contains('active');
-          if (allActive) {
-            activeBranches = null; // show all
-          } else {
-            for (var n = 0; n < branchChips.length; n++) {
-              if (branchChips[n].dataset.branch !== 'all' && branchChips[n].classList.contains('active')) {
-                activeBranches.push(branchChips[n].dataset.branch);
-              }
-            }
-          }
-
-          // Apply filter via HUTree
-          if (typeof window.HUTreeScroll !== 'undefined' && window.HUTreeScroll.filterBranch) {
-            // HUTree.filterBranch takes a single branch id or 'all'
-            // If multiple branches selected, just use first one for now (HUTree limitation)
-            if (activeBranches && activeBranches.length === 1) {
-              window.HUTreeScroll.filterBranch(activeBranches[0]);
-            } else {
-              window.HUTreeScroll.filterBranch('all');
-            }
+          this.classList.add('active');
+          // Load the branch
+          if (typeof loadBranch === 'function') {
+            loadBranch(code);
           }
         });
       }
@@ -4860,6 +4271,11 @@ fetch('data/tree-data.json').then(function(r){return r.json()}).then(function(d)
       /* ---------- Expose for external use ---------- */
       window.navigateTo = navigateTo;
       window.reloadTree = renderTree;
+
+      // Load default branch on page load
+      if (typeof loadBranch === 'function') {
+        loadBranch('WX');
+      }
 
     })();
   </script>

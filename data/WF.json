@@ -1,0 +1,258 @@
+{
+  "id": "weifu",
+  "code": "WF",
+  "label": "维富公",
+  "color": "#ea580c",
+  "root": {
+    "persons": [
+      {
+        "name": "胡维富",
+        "rel": "祖"
+      },
+      {
+        "name": "关月眉",
+        "rel": "妻"
+      }
+    ],
+    "children": [
+      {
+        "persons": [
+          {
+            "name": "胡现龙",
+            "rel": "兒"
+          },
+          {
+            "name": "李亚明",
+            "rel": "媳"
+          }
+        ],
+        "children": [
+          {
+            "persons": [
+              {
+                "name": "陈潮生",
+                "rel": "婿"
+              },
+              {
+                "name": "胡月莲",
+                "rel": "女"
+              }
+            ],
+            "children": [
+              {
+                "persons": [
+                  {
+                    "name": "陈素仪",
+                    "rel": "女"
+                  }
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "persons": [
+              {
+                "name": "洪及元",
+                "rel": "婿"
+              },
+              {
+                "name": "胡元英",
+                "rel": "女"
+              }
+            ],
+            "children": [
+              {
+                "persons": [
+                  {
+                    "name": "洪楚彬",
+                    "rel": "兒"
+                  }
+                ],
+                "children": []
+              },
+              {
+                "persons": [
+                  {
+                    "name": "洪有瑞",
+                    "rel": "女"
+                  }
+                ],
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "persons": [
+          {
+            "name": "胡业龙",
+            "rel": "兒"
+          }
+        ],
+        "children": []
+      },
+      {
+        "persons": [
+          {
+            "name": "胡均龙",
+            "rel": "兒"
+          },
+          {
+            "name": "关如娣",
+            "rel": "媳"
+          }
+        ],
+        "children": [
+          {
+            "persons": [
+              {
+                "name": "胡志雄",
+                "rel": "兒"
+              },
+              {
+                "name": "陈祖梅",
+                "rel": "媳"
+              }
+            ],
+            "children": [
+              {
+                "persons": [
+                  {
+                    "name": "胡宏骏",
+                    "rel": "兒"
+                  }
+                ],
+                "children": []
+              },
+              {
+                "persons": [
+                  {
+                    "name": "胡诗敏",
+                    "rel": "女"
+                  }
+                ],
+                "children": []
+              },
+              {
+                "persons": [
+                  {
+                    "name": "胡诗雅",
+                    "rel": "女"
+                  }
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "persons": [
+              {
+                "name": "胡齐爱",
+                "rel": "女"
+              }
+            ],
+            "children": []
+          },
+          {
+            "persons": [
+              {
+                "name": "胡西回",
+                "rel": "兒"
+              }
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "persons": [
+          {
+            "name": "胡锐龙",
+            "rel": "兒"
+          }
+        ],
+        "children": [
+          {
+            "persons": [
+              {
+                "name": "胡景群",
+                "rel": "女"
+              }
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "persons": [
+          {
+            "name": "胡运女",
+            "rel": "女"
+          }
+        ],
+        "children": []
+      },
+      {
+        "persons": [
+          {
+            "name": "麦志光",
+            "rel": "婿"
+          },
+          {
+            "name": "胡超仪",
+            "rel": "女"
+          }
+        ],
+        "children": [
+          {
+            "persons": [
+              {
+                "name": "麦永海",
+                "rel": "兒"
+              }
+            ],
+            "children": []
+          },
+          {
+            "persons": [
+              {
+                "name": "麦永曙",
+                "rel": "兒"
+              }
+            ],
+            "children": []
+          },
+          {
+            "persons": [
+              {
+                "name": "麦永岳",
+                "rel": "兒"
+              }
+            ],
+            "children": []
+          },
+          {
+            "persons": [
+              {
+                "name": "麦永波",
+                "rel": "兒"
+              }
+            ],
+            "children": []
+          },
+          {
+            "persons": [
+              {
+                "name": "麦美英",
+                "rel": "女"
+              }
+            ],
+            "children": []
+          }
+        ]
+      }
+    ]
+  }
+}

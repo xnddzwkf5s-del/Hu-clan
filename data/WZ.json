@@ -1,0 +1,70 @@
+{
+  "id": "wangzhong",
+  "code": "WZ",
+  "label": "旺忠公",
+  "color": "#059669",
+  "root": {
+    "persons": [
+      {
+        "name": "胡旺忠",
+        "rel": "?"
+      }
+    ],
+    "children": [
+      {
+        "persons": [
+          {
+            "name": "胡顺兴",
+            "rel": "兒"
+          }
+        ],
+        "children": []
+      },
+      {
+        "persons": [
+          {
+            "name": "胡顺华",
+            "rel": "兒"
+          }
+        ],
+        "children": []
+      },
+      {
+        "persons": [
+          {
+            "name": "胡顺均",
+            "rel": "兒"
+          }
+        ],
+        "children": []
+      },
+      {
+        "persons": [
+          {
+            "name": "胡顺五",
+            "rel": "兒"
+          }
+        ],
+        "children": []
+      },
+      {
+        "persons": [
+          {
+            "name": "胡顺肇",
+            "rel": "兒"
+          }
+        ],
+        "children": []
+      },
+      {
+        "persons": [
+          {
+            "name": "胡金儿",
+            "rel": "女"
+          }
+        ],
+        "children": []
+      }
+    ]
+  }
+}

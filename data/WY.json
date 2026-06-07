@@ -1,0 +1,19 @@
+{
+  "id": "weiyuan",
+  "code": "WY",
+  "label": "维源公",
+  "color": "#0891b2",
+  "root": {
+    "persons": [
+      {
+        "name": "胡维源",
+        "rel": "祖"
+      },
+      {
+        "name": "关氏",
+        "rel": "妻"
+      }
+    ],
+    "children": []
+  }
+}

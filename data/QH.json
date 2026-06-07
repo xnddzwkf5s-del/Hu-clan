@@ -1,0 +1,19 @@
+{
+  "id": "qinghe",
+  "code": "QH",
+  "label": "清和公",
+  "color": "#d97706",
+  "root": {
+    "persons": [
+      {
+        "name": "胡清和",
+        "rel": "祖"
+      },
+      {
+        "name": "关亚好",
+        "rel": "妻"
+      }
+    ],
+    "children": []
+  }
+}
