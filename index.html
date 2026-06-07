@@ -3735,7 +3735,19 @@ function loadBranch(code) {
       var nameEl = document.createElement('span');
       nameEl.className = 'fv-name' + (gFv === 'm' ? ' fv-name-male' : gFv === 'f' ? ' fv-name-female' : '');
       var gIconFv = gFv === 'm' ? '♂︎ ' : gFv === 'f' ? '♀︎ ' : '';
-      nameEl.textContent = gIconFv + p.name;
+
+      // Colored role dot before name
+      var dotColor = REL_COLORS[p.rel] || '#6b7280';
+      var dot = document.createElement('span');
+      dot.className = 'fv-role-dot';
+      dot.style.background = dotColor;
+      dot.textContent = '●';
+      nameEl.appendChild(dot);
+
+      // Name text
+      var nameText = document.createElement('span');
+      nameText.textContent = gIconFv + p.name;
+      nameEl.appendChild(nameText);
 
       // Build hover tooltip with full metadata
       var tipParts = [p.id];
@@ -4744,6 +4756,13 @@ function loadBranch(code) {
 .fv-name {
   font-weight: 600;
   color: #2c2018;
+}
+.fv-role-dot {
+  font-size: 7px;
+  margin-right: 3px;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1;
 }
 /* Hover tooltip for person metadata */
 .fv-name.has-tip {
