@@ -4884,6 +4884,10 @@ function loadBranch(code) {
       processData();
       expandDefaults();
 
+      // Auto-focus root node for Focus View by default
+      var rootPath = Object.keys(state.nodeMap).find(function(k) { return state.nodeMap[k]._depth === 0; });
+      if (rootPath) state.focusNode = rootPath;
+
       buildControls();
       render();
       buildLegend();
