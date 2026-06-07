@@ -2941,14 +2941,14 @@
           {
             "persons": [
               {
-                "name": "龚百阳",
+                "name": "龚百陽",
                 "rel": "兒",
                 "id": "WX_118",
                 "father_id": "WX_114",
                 "mother_id": "WX_115",
                 "birth": null,
                 "death": null,
-                "notes": null
+                "notes": "Born in Australia. English name: Kevin Koong"
               }
             ],
             "children": []
