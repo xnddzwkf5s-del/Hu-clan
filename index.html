@@ -2698,6 +2698,34 @@ function loadBranch(code) {
     return c;
   }
 
+  function computeVisibleSet() {
+    var set = new Set();
+    var data = state.treeData || [];
+    data.forEach(function(branch) {
+      walkVisible(branch.root, true);
+    });
+    function walkVisible(node, parentVisible) {
+      var expanded = state.expanded.has(node._path);
+      var show = parentVisible || node._depth < DEFAULT_EXPAND_GENS;
+      if (show) set.add(node._path);
+      node.children.forEach(function(child) {
+        walkVisible(child, show && expanded);
+      });
+    }
+    // Apply search expansions
+    if (state.searchQuery) {
+      var q = state.searchQuery.toLowerCase();
+      Object.keys(state.nodeMap).forEach(function(path) {
+        var n = state.nodeMap[path];
+        if (nodeMatchesSearch(n, q)) {
+          set.add(path);
+          getAncestorPaths(path).forEach(function(ap) { set.add(ap); });
+        }
+      });
+    }
+    return set;
+  }
+
   function getAncestorPaths(path) {
     var parts = path.split('-');
     var ancestors = [];
@@ -2737,12 +2765,6 @@ function loadBranch(code) {
     var container = state.container;
     if (!container) return;
     container.innerHTML = '';
-
-    // Focus mode short-circuits normal tree rendering
-    if (state.layoutMode === 'focus') {
-      renderFocus();
-      return;
-    }
 
     // Determine visible branches
     var visible = state.activeBranch === 'all'
@@ -3391,15 +3413,18 @@ function loadBranch(code) {
   function renderFocus() {
     var container = state.container;
     if (!container) return;
-    container.innerHTML = '';
 
     var node = state.nodeMap[state.focusNode];
     if (!node) {
-      // No node focused — show instruction
-      var msg = document.createElement('div');
-      msg.className = 'focus-empty';
-      msg.textContent = 'Click a person in the tree to focus on their family';
-      container.appendChild(msg);
+      // No node focused — render normal tree with focus prompt banner
+      container.innerHTML = '';
+      renderVertical(state.treeData, computeVisibleSet());
+      applySearchHighlights();
+      drawLines();
+      var banner = document.createElement('div');
+      banner.className = 'focus-banner';
+      banner.innerHTML = '<span class="focus-banner-icon">🔍</span> Focus View — click any person to see their family';
+      container.insertBefore(banner, container.firstChild);
       return;
     }
 
@@ -4381,6 +4406,17 @@ function loadBranch(code) {
   color: #999;
   font-size: 18px;
   font-weight: 400;
+}
+.focus-banner {
+  padding: 10px 16px;
+  background: #fefcf7;
+  border-bottom: 1px solid rgba(200,155,60,0.25);
+  font-size: 13px;
+  color: #7a5c1a;
+  text-align: center;
+}
+.focus-banner-icon {
+  margin-right: 6px;
 }
 .fp-person {
   margin: 3px 0;
