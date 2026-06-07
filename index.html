@@ -3676,6 +3676,17 @@ function loadBranch(code) {
       nameEl.className = 'fv-name' + (gFv === 'm' ? ' fv-name-male' : gFv === 'f' ? ' fv-name-female' : '');
       var gIconFv = gFv === 'm' ? '♂︎ ' : gFv === 'f' ? '♀︎ ' : '';
       nameEl.textContent = gIconFv + p.name;
+
+      // Build hover tooltip with full metadata
+      var tipParts = [p.id];
+      if (p.birth) tipParts.push('Born ' + p.birth);
+      if (p.death) tipParts.push('Died ' + p.death);
+      if (p.notes) tipParts.push(p.notes);
+      if (tipParts.length > 1) {
+        nameEl.setAttribute('data-tip', tipParts.join(' · '));
+        nameEl.classList.add('has-tip');
+      }
+
       row.appendChild(nameEl);
 
       // Role badge
@@ -4673,6 +4684,29 @@ function loadBranch(code) {
 .fv-name {
   font-weight: 600;
   color: #2c2018;
+}
+/* Hover tooltip for person metadata */
+.fv-name.has-tip {
+  cursor: help;
+  position: relative;
+}
+.fv-name.has-tip:hover::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a1a2e;
+  color: #fff;
+  font-size: 0.67rem;
+  font-weight: 400;
+  padding: 4px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  z-index: 9999;
+  pointer-events: none;
+  margin-bottom: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 /* Descendant counters on self card */
 .fv-desc-counters {
