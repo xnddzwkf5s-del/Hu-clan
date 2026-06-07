@@ -11,7 +11,7 @@
         "id": "WX_001",
         "birth": null,
         "death": null,
-        "notes": null,
+        "notes": "Born in China, migrated to Malaysia",
         "father_id": null,
         "mother_id": null
       },
@@ -45,7 +45,7 @@
             "id": "WX_087",
             "birth": null,
             "death": null,
-            "notes": null,
+            "notes": "Born in Malaysia",
             "father_id": "WX_001",
             "mother_id": "WX_002",
             "unknown_mother": false
@@ -890,7 +890,7 @@
             "id": "WX_005",
             "birth": null,
             "death": null,
-            "notes": null,
+            "notes": "Born in Malaysia",
             "father_id": "WX_001",
             "mother_id": "WX_002",
             "unknown_mother": false
@@ -983,7 +983,7 @@
             "id": "WX_017",
             "birth": null,
             "death": null,
-            "notes": null,
+            "notes": "Born in Malaysia",
             "father_id": "WX_001",
             "mother_id": "WX_002",
             "unknown_mother": false
@@ -1704,7 +1704,7 @@
             "id": "WX_028",
             "birth": null,
             "death": null,
-            "notes": null,
+            "notes": "Born in Malaysia",
             "father_id": "WX_001",
             "mother_id": "WX_002",
             "unknown_mother": false
@@ -1823,7 +1823,7 @@
             "id": "WX_036",
             "birth": null,
             "death": null,
-            "notes": null,
+            "notes": "Born in Malaysia",
             "father_id": "WX_001",
             "mother_id": "WX_002",
             "unknown_mother": false
@@ -1925,7 +1925,7 @@
             "id": "WX_041",
             "birth": null,
             "death": null,
-            "notes": null,
+            "notes": "Born in Malaysia",
             "father_id": "WX_001",
             "mother_id": "WX_002",
             "unknown_mother": false
@@ -2202,7 +2202,7 @@
             "id": "WX_089",
             "birth": null,
             "death": null,
-            "notes": null,
+            "notes": "Born in Malaysia",
             "father_id": "WX_001",
             "mother_id": "WX_002",
             "unknown_mother": false
@@ -2275,7 +2275,7 @@
             "id": "WX_095",
             "birth": null,
             "death": null,
-            "notes": null,
+            "notes": "Born in Malaysia",
             "father_id": "WX_001",
             "mother_id": "WX_002",
             "unknown_mother": false
@@ -2377,7 +2377,7 @@
             "id": "WX_055",
             "birth": null,
             "death": null,
-            "notes": null,
+            "notes": "Born in Malaysia",
             "father_id": "WX_001",
             "mother_id": "WX_002",
             "unknown_mother": false
@@ -2547,7 +2547,7 @@
             "id": "WX_067",
             "birth": null,
             "death": null,
-            "notes": null,
+            "notes": "Born in Malaysia",
             "father_id": "WX_001",
             "mother_id": "WX_003",
             "unknown_mother": false
@@ -2780,7 +2780,7 @@
             "unknown_mother": false,
             "birth": null,
             "death": null,
-            "notes": null
+            "notes": "Born in Malaysia"
           },
           {
             "name": "游秀霞",
@@ -2832,7 +2832,7 @@
             "unknown_mother": false,
             "birth": null,
             "death": null,
-            "notes": null
+            "notes": "Born in Malaysia"
           }
         ],
         "children": [
@@ -2904,7 +2904,7 @@
             "unknown_mother": false,
             "birth": null,
             "death": null,
-            "notes": "Born in Malaysia, migrated to Australia"
+            "notes": "Born in Malaysia"
           }
         ],
         "children": [
@@ -2963,7 +2963,7 @@
             "id": "WX_079",
             "birth": null,
             "death": null,
-            "notes": null,
+            "notes": "Born in Malaysia",
             "father_id": "WX_001",
             "mother_id": "WX_003",
             "unknown_mother": false
